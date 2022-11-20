@@ -6,7 +6,7 @@ import Subject from '../types/Subject'
 const SubjectSchema = new Schema<Subject>(
     {
         subject_name : { type : String , required : true},
-        functions : { type : Array},
+        functions : [{function : {type : String}}],
         is_deleted : { type : Boolean },
         is_approved : { type : Boolean },
     },

@@ -6,7 +6,7 @@ import Exam from '../types/Exam'
 const ExamSchema = new Schema<Exam>(
     {
     author : { type : String , required : true },
-    question : { type : String , required : true , ref : MODELS.question },
+    questions : { type : String , required : true , ref : MODELS.question },
     subject : { type : String , required : true , ref : MODELS.subject },
     is_deleted : { type : Boolean },
     is_approved : { type : Boolean },

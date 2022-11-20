@@ -1,7 +1,7 @@
 import {Document} from 'mongoose'
 import Subject from './Subject';
 
-export default interface Document extends Document {
+export default interface Documents extends Document {
     title : string;
     description : string;
     subject : Subject;

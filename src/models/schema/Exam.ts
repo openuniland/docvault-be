@@ -1,7 +1,7 @@
 import { model, Model, Schema } from 'mongoose'
 
-import { MODELS } from '../../utils/constants/models'
-import Exam from '../types/Exam'
+import { MODELS } from 'utils/constants/models'
+import Exam from 'models/types/Exam'
 
 const ExamSchema = new Schema<Exam>(
     {

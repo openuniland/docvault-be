@@ -1,7 +1,7 @@
 import { model, Model, Schema } from 'mongoose'
 
-import { MODELS } from '../../utils/constants/models'
-import Subject from '../types/Subject'
+import { MODELS } from 'utils/constants/models'
+import Subject from 'models/types/Subject'
 
 const SubjectSchema = new Schema<Subject>(
     {

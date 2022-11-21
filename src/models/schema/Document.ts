@@ -1,7 +1,7 @@
 import { model, Model, Schema } from 'mongoose'
 
-import { MODELS } from '../../utils/constants/models'
-import Documents from '../types/Document'
+import { MODELS } from 'utils/constants/models'
+import Documents from 'models/types/Document'
 
 const DocumentSchema = new Schema<Documents>(
     {

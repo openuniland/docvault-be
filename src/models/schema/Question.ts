@@ -23,5 +23,6 @@ const QuestionSchema = new Schema<Question>(
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
     }
 )
+QuestionSchema.index({content : 1})
 const QuestionModel : Model<Question> = model<Question>(MODELS.question, QuestionSchema , MODELS.question)
 export default QuestionModel

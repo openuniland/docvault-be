@@ -1,6 +1,6 @@
 import { model, Model, Schema } from 'mongoose'
 
-import { MODELS } from 'utils/constants/models'
+import { MODELS } from '../../utils/constants/models'
 import Question from '../types/Question'
 
 
@@ -10,9 +10,12 @@ const QuestionSchema = new Schema<Question>(
         image : { type : String},
         subject : { type : String, required : true , ref : MODELS.subject },
         correct_answer : { type : String, required : true , ref : MODELS.answer },
-        answers : [{answer : {type : String, required : true}}],
+        answers : [{
+            type : Schema.Types.ObjectId,
+            ref : MODELS.answer
+        }],
         is_deleted : { type : Boolean},
-        accuracy : { type : String , enum : ['absolute' , 'relative'] },
+        accuracy : { type : String , enum : ['high' ,'medium', 'low'] },
         is_essay : { type : Boolean},
         is_approved : { type : Boolean },
     },

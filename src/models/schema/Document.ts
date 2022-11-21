@@ -1,7 +1,7 @@
 import { model, Model, Schema } from 'mongoose'
 
-import { MODELS } from 'utils/constants/models'
-import Documents from 'models/types/Document'
+import { MODELS } from '../../utils/constants/models'
+import Documents from '../types/Document'
 
 const DocumentSchema = new Schema<Documents>(
     {
@@ -16,6 +16,7 @@ const DocumentSchema = new Schema<Documents>(
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
     }
 )
+DocumentSchema.index({ title : 1 , description : 1})
 
 const DocumentModel : Model<Document> = model<Document>(MODELS.document , DocumentSchema , MODELS.document)
 export default DocumentModel

@@ -11,6 +11,8 @@ import routers from 'apis';
 import configs from 'configs';
 import initializeResources from 'resources';
 
+import {login} from 'apis/v1/login/service';
+
 const app = express();
 
 app.use(cors());
@@ -49,6 +51,13 @@ initializeSecurity();
 initializeMiddlewares();
 app.use(APP_CONSTANTS.apiPrefix, routers);
 initializeErrorHandler();
+
+app.get('/login',(req, res) => {
+  res.json({
+    data : login
+  })
+})
+
 
 export const listen = async () => {
   await initializeResources();

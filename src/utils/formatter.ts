@@ -1,6 +1,7 @@
 /**
  * Helper functions to standardize responses formats.
  */
+import { Response } from 'express';
 import ApiResponse from './rest/response';
 
 /**
@@ -16,7 +17,7 @@ export class Formatter {
     message?: string,
     total?: number,
     currentPage?: number
-  ): ApiResponse => {
+  ): ApiResponse<Object> => {
     let numRecords: number = 0;
     let errors: Error = null;
     let data: any = null;
@@ -32,16 +33,20 @@ export class Formatter {
       data = result;
     }
 
-    const response: ApiResponse = {
+    const response: ApiResponse<Object> = {
       data,
-      errors,
+      // errors,
       message: message ? message : null,
-      meta: {
-        length: numRecords,
-        took: time,
-        ...(isResultArray && { currentPage }),
-        total: total ? total : numRecords,
-      },
+      // meta: {
+      //   length: numRecords,
+      //   took: time,
+      //   ...(isResultArray && { currentPage }),
+      //   total: total ? total : numRecords,
+      // },
+      status: 200,
+      send: function (res: Response<any, Record<string, any>>): void {
+        throw new Error('Function not implemented.');
+      }
     };
 
     return response;

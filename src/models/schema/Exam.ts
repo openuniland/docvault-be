@@ -16,5 +16,6 @@ const ExamSchema = new Schema<Exam>(
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
     }
 )
+ExamSchema.index({ author : 1})
 const ExamModel : Model<Exam> = model<Exam>(MODELS.exam , ExamSchema , MODELS.exam)
 export default ExamModel

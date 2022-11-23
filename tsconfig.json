@@ -14,7 +14,8 @@
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    
   },
   "include": ["./src"],
   "exclude": ["dist", "node_modules"]

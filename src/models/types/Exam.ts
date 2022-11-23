@@ -1,4 +1,4 @@
-import { Document } from 'mongoose'
+import { Document } from 'mongoose';
 
 import Question from './Question';
 import Subject from './Subject';

@@ -1,4 +1,4 @@
-import {Document, ExtractMongooseArray} from 'mongoose'
+import {Document} from 'mongoose'
 import Question from './Question';
 import Exam from './Exam';
 import Answer from './Answer';

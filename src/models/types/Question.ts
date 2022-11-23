@@ -9,7 +9,7 @@ export default interface Question extends Document {
     correctAnswer: Answer;
     answers: Answer[];
     isDeleted: boolean;
-    accuracy: Enumerator;
+    accuracy: string;
     isEssay: boolean;
     isApproved: boolean;
 }

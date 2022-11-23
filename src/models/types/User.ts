@@ -4,5 +4,5 @@ export default interface User extends Document {
     fullname: string;
     email: string;
     isBlocked: boolean;
-    roles: Enumerator;
+    enum: string;
 }

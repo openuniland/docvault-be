@@ -4,12 +4,17 @@ import {MODELS} from 'utils/constants/models';
 
 import User from 'models/types/User';
 
+enum Roles{
+    ADMIN,
+    APPROVER,
+    USER
+}
 const UserSchema = new Schema<User>(
     {
         fullname: { type: String, required: true},
         email: {type: String, required: true, unique: true},
         isBlocked: {type: Boolean, default: false},
-        roles: {type: String, enum: ['ADMIN','APPROVER','USER']},
+        roles: {enum: Roles}
     },
     {
         timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

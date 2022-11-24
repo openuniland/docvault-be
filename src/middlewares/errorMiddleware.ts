@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { logger } from 'utils/logger';
 import fmt from 'utils/formatter';
 import { HttpException } from 'exceptions';
@@ -10,7 +10,7 @@ import { HttpException } from 'exceptions';
  * @param response
  * @param next
  */
-const errorMiddleware = (error: HttpException, request: Request, response: Response, next: NextFunction) => {
+const errorMiddleware = (error: HttpException, request: Request, response: Response) => {
   const apiErrorStatus = (error as any).response?.status;
   const status = apiErrorStatus || error.status || 500;
   const message = error.message || 'Something went wrong';

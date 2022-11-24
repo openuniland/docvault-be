@@ -1,8 +1,8 @@
-import {Document} from 'mongoose'
+import { Document } from 'mongoose';
 
 export default interface User extends Document {
-   fullname : string;
-   email : string;
-   is_blocked : boolean;
-   roles : 'ADIM' | 'USER';
+  fullname: string;
+  email: string;
+  is_blocked: boolean;
+  roles: string;
 }

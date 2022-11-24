@@ -4,6 +4,6 @@ import { asyncRouteHandler } from 'middlewares';
 
 const router = Router();
 
-router.post('/', asyncRouteHandler(login));
+router.post('/login', asyncRouteHandler(login));
 
 export default router;

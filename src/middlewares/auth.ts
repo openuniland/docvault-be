@@ -1,43 +1,39 @@
-import  ApiResponse  from 'utils/rest/response';
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken'
+import { Response, NextFunction } from 'express';
 
-const authMiddleware = async(req : Request, res : Response, next: NextFunction)=>{
-    const token = req.headers.token_login;
-    try {
-        const data = jwt.verify(token.toString(), process.env.JWT_KEY)
-         if(data){
-            req.body.user = data;
-            next();
+import { ErrorCodes, HttpException } from 'exceptions';
+import { verifyAccessToken } from 'helpers/jwt';
+import RequestWithUser from 'utils/rest/request';
+import JWTPayload from 'utils/types';
+import { HOU_ENDPOINT, ROLES } from 'utils/constants';
 
-         }
+const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  const token = req.headers?.authorization;
+  try {
+    const data: JWTPayload = verifyAccessToken(token);
 
-
-    }
-    catch (err) {
-        new ApiResponse(err,'Login failed', 401).send(res);
-
-    }
+    req.user = data;
+    next();
+  } catch (err) {
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
 };
 
-const adminMiddleware = (req : Request, res : Response, next: NextFunction) =>{
-    const user = req.body.user;
-    if(!user || user.roles != 'ADMIN'){
-        new ApiResponse(null,'Login failed', 401).send(res);
-
-    }else{
-        next();
-    }
+const adminMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
+  const user = req.user;
+  if (!user || user.role != ROLES.ADMIN) {
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  } else {
+    next();
+  }
 };
 
-const houMailMiddleware = (req : Request, res : Response, next: NextFunction) =>{
-    const user = req.body.user;
-    const houMail : string = '.hou.edu.vn'
-    if(!user || !(user.email.include(houMail)) ){
-        new ApiResponse(null,'Login failed', 401).send(res);
-    }
-    else{
-        next();
-    }
-}
-export {authMiddleware,adminMiddleware, houMailMiddleware};
+const houMailMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
+  const user = req.user;
+  const houMail: string = HOU_ENDPOINT;
+  if (!user || !user.email.include(houMail)) {
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  } else {
+    next();
+  }
+};
+export { authMiddleware, adminMiddleware, houMailMiddleware };

@@ -1,4 +1,3 @@
-import { UserDto } from './../user/dto/UserDto';
 import configs from 'configs';
 import { ErrorCodes, HttpException } from 'exceptions';
 
@@ -9,6 +8,7 @@ import JWTPayload from 'utils/types';
 import { LoginDto } from './dto/LoginDto';
 import { createUser } from '../user/service';
 import { HOU_ENDPOINT } from 'utils/constants';
+import { UserDto } from '../user/dto/UserDto';
 
 const client = new OAuth2Client(configs.google.clientID);
 
@@ -66,7 +66,6 @@ export const login = async function (input: LoginDto) {
 
     const accessToken = await signRefreshToken(payload);
     const refreshToken = await signAccessToken(payload);
-
     return {
       accessToken,
       refreshToken,

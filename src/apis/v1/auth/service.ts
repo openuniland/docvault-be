@@ -10,8 +10,11 @@ import { LoginDto } from './dto/LoginDto';
 import { createUser } from '../user/service';
 import { HOU_ENDPOINT } from 'utils/constants';
 import { UserDto } from '../user/dto/UserDto';
+<<<<<<< HEAD
 import { RefreshTokenDto } from './dto/RefreshTokenDto';
 import { UserinfoByGoogleApiResponse } from 'utils/types/auth';
+=======
+>>>>>>> 964a63c (Feat/#8 (#25))
 
 const client = new OAuth2Client(configs.google.clientID);
 
@@ -82,9 +85,14 @@ export const login = async function (input: LoginDto) {
       _id: user._id,
     };
 
+<<<<<<< HEAD
     const accessToken = signAccessToken(payload);
     const refreshToken = signRefreshToken(payload);
 
+=======
+    const accessToken = await signRefreshToken(payload);
+    const refreshToken = await signAccessToken(payload);
+>>>>>>> 964a63c (Feat/#8 (#25))
     return {
       accessToken,
       refreshToken,

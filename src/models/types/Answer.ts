@@ -1,7 +1,6 @@
-import {Document} from 'mongoose'
-
+import Document from 'mongoose';
 export default interface Answer extends Document {
-    content: string;
-    isDeleted: boolean;
-    status: boolean;
+  content: string;
+  isDeleted: boolean;
+  status: boolean;
 }

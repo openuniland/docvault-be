@@ -1,7 +1,7 @@
-import {Document} from 'mongoose'
+import { Document } from 'mongoose';
 
-export default interface Subject extends Document{
-    subjectName: string;
-    isDeleted: boolean;
-    isApproved: boolean;
+export default interface Subject extends Document {
+  subjectName: string;
+  isDeleted: boolean;
+  isApproved: boolean;
 }

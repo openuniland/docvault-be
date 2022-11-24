@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { JwtPayload } from 'jsonwebtoken';
 import URLParams from './urlparams';
 
 /**
@@ -6,7 +7,7 @@ import URLParams from './urlparams';
  */
 export default interface RequestWithUser extends Request {
   // To use userId and role, please inject the same in a middleware, by decoding an access token.
-  userId: string; // Zalo Id
+  user: JwtPayload;
   customerId: number;
   customerToken: string;
   role: string;

@@ -22,6 +22,8 @@ export default {
   jwt: {
     accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || '',
     refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || '',
+    accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || '1h',
+    refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '45d',
   },
   elasticsearch: {
     protocol: process.env.ELASTIC_PROTOCOL,
@@ -39,4 +41,8 @@ export default {
     api_secret: process.env.API_SECRET,
   },
   redisHost: process.env.REDIS_HOST || '6379',
+  google: {
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  },
 };

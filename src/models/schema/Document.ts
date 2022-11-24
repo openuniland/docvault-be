@@ -16,6 +16,7 @@ const DocumentSchema = new Schema<Documents>(
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   }
 );
+DocumentSchema.index({ title: 1, description: 1 });
 
 const DocumentModel: Model<Document> = model<Document>(MODELS.document, DocumentSchema, MODELS.document);
 export default DocumentModel;

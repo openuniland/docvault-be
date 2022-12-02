@@ -12,21 +12,26 @@ import { LoginDto } from './dto/LoginDto';
 const client = new OAuth2Client(configs.google.clientID);
 
 const verify = async (tokenGoogle: string) => {
-  const ticket = await client.verifyIdToken({
-    idToken: tokenGoogle,
-    audience: configs.google.clientID,
-  });
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: tokenGoogle,
+      audience: configs.google.clientID,
+    });
 
-  const payload = ticket.getPayload();
-  const userId = payload.sub;
-  const name = payload.name;
-  const email = payload.email;
-  const user = {
-    name,
-    email,
-    userId,
-  };
-  return user;
+    const payload = ticket.getPayload();
+    const userId = payload.sub;
+    const name = payload.name;
+    const email = payload.email;
+    const user = {
+      name,
+      email,
+      userId,
+    };
+    return user;
+  } catch (error) {
+    logger.error(`Error while login: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
 };
 
 const findRole = async (email: string) => {
@@ -54,6 +59,7 @@ const login = async function (input: LoginDto) {
     return {
       accessToken,
       refreshToken,
+      payload,
     };
   } catch (error) {
     logger.error(`Error while login: ${error}`);
@@ -61,4 +67,4 @@ const login = async function (input: LoginDto) {
   }
 };
 
-export { login };
+export { login, verify };

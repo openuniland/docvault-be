@@ -21,7 +21,7 @@ const getExam  = async (req : RequestWithUser , res : Response) => {
 }
 
 const getExamOfSubject = async (req : RequestWithUser , res : Response) => {
-    const input = req.params.subject_name
+    const input = req.body.subject_name
     const subjectName : GetExamOfSubject = {nameOfSubject : input}
 
     const result = await service.getExamOfSubject(subjectName)

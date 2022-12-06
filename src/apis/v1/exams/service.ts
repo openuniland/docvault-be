@@ -1,113 +1,86 @@
-import { ErrorCodes, ERROR_CODES, HttpException } from 'exceptions';
-import { ExamModel , SubjectModel} from "models"
-import Subject from 'models/types/Subject';
-import { GetExamDto , GetExamOfSubject , CreatExam , UpdateExam , DeleteExam} from './dto/Exams';
+import { ErrorCodes, HttpException } from 'exceptions';
+import { ExamModel } from 'models';
+import {
+  ParamGetExamDto,
+  GetExamsOfSubjectDto,
+  ExamDto,
+  UpdateExamDto,
+  ParamDeleteExamDto,
+  ParamUpdateExamDto,
+} from './dto/Exams';
 import { logger } from 'utils/logger';
 
-
-const getExams = async () => {
-    try {
-        const exams = await ExamModel.find({})
-
-        return exams
-    } catch (error) {
-        logger.error(`Error: ${error}`);
-        throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE)
-    }
-}
-
-const getExam = async (input : GetExamDto ) =>  {
-   try {
-     const {id} = input
-     const exam = await ExamModel.findById(id)
-       .populate('question')
-       .populate('subject')
-     
-     return exam
-   } catch (error) { 
-      logger.error(`Error: ${error}`);
-      throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE)
-   }
-}
-
-
-const getExamOfSubject = async (input : GetExamOfSubject) => {
-    try {
-       const subject = input.nameOfSubject
-       const examOfSubject = await ExamModel.findOne({
-          where : {subject}
-       })
-       .populate('question')
-       .populate('subject')
-
-       return examOfSubject
-    } catch (error) { 
-      logger.error(`Error: ${error}`);
-      throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE)
-    }
-}
-
-
-const createExam = async (input : CreatExam ) => {
-   try {
-      const {author , nameOfSubject , question , isApproved} = input
-      let subject = {
-        subject_name : nameOfSubject,
-        is_deleted : false,
-        is_approved : true
-      } as Subject
-
-      const existingSubject = await SubjectModel.findOne({
-        where : {subject_name : nameOfSubject}
-      })
-
-      if(!existingSubject) {
-        const infoSubject = await SubjectModel.create(subject)
-        subject = infoSubject
-      }
-
-      const newExam = {
-        author,
-        question,
-        subject,
-        is_approved : isApproved 
-       }
-       const data = await ExamModel.create(newExam)
-
-       return data
-   } catch (error) { 
-     logger.error(`Error: ${error}`);
-     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE)
-   }
-
-}
-
-const updateExam = async (input : UpdateExam) => {
-   try {
-     const {id , exam} = input
-     const data = await ExamModel.findByIdAndUpdate(id,exam)
-
-     return data
-   } catch (error) { 
-    logger.error(`Error: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE)
-   }
-}
-
-const deleteExam = async (input : DeleteExam ) => {
+export const getExams = async () => {
   try {
-     const id = input.id
-     const data = await ExamModel.findByIdAndDelete(id)
-    
-     return data
+    const data = await ExamModel.find();
 
+    return data;
+  } catch (error) {
+    logger.error(`Error while get exams: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
-  catch (error) {
-    logger.error(`Error: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE)
+};
+
+export const getExam = async (input: ParamGetExamDto) => {
+  try {
+    const { id } = input;
+    const data = await ExamModel.findById(id).populate('question').populate('subject');
+
+    return data;
+  } catch (error) {
+    logger.error(`Error while get a exam: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
-}
+};
 
+export const getExamOfSubject = async (input: GetExamsOfSubjectDto) => {
+  try {
+    const { subjectId } = input;
+    const data = await ExamModel.findOne({
+      subject: subjectId,
+    })
+      .populate('question')
+      .populate('subject');
 
+    return data;
+  } catch (error) {
+    logger.error(`Error while get all exams of subject: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
 
-export { getExam , getExams , getExamOfSubject , createExam , updateExam , deleteExam} 
+export const createExam = async (input: ExamDto) => {
+  try {
+    const data = await ExamModel.create(input);
+
+    return data;
+  } catch (error) {
+    logger.error(`Error while create a exam: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const updateExam = async (input: UpdateExamDto, id: ParamUpdateExamDto) => {
+  try {
+    const data = await ExamModel.findByIdAndUpdate(id, {
+      $set: input,
+    });
+
+    return data;
+  } catch (error) {
+    logger.error(`Error while update a exam: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const deleteExam = async (input: ParamDeleteExamDto) => {
+  try {
+    const { id } = input;
+    const data = await ExamModel.findOneAndDelete({ _id: id });
+
+    return data;
+  } catch (error) {
+    logger.error(`Error while delete a exam: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};

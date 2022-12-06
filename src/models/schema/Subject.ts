@@ -5,7 +5,7 @@ import Subject from 'models/types/Subject';
 
 const SubjectSchema = new Schema<Subject>(
   {
-    subject_name: { type: String, required: true },
+    subject_name: { type: String, required: true, unique: true },
     is_deleted: { type: Boolean },
     is_approved: { type: Boolean },
   },

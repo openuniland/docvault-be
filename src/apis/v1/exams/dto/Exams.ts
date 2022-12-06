@@ -1,50 +1,54 @@
-import { IsBoolean, IsDefined, IsObject, IsString , isBoolean } from "class-validator";
+import { IsDefined, IsObject, IsString } from 'class-validator';
+import { ObjectId } from 'mongoose';
 
-
-
-export class GetExamDto {
-    @IsString()
-    @IsDefined()
-    id : string
+export class ParamGetExamDto {
+  @IsString()
+  @IsDefined()
+  id: string;
 }
 
-export class GetExamOfSubject {
-    @IsString()
-    @IsDefined()
-    nameOfSubject : string
+export class GetExamsOfSubjectDto {
+  @IsString()
+  @IsDefined()
+  subjectId: ObjectId;
 }
 
-export class CreatExam {
-    @IsString()
-    @IsDefined()
-    author : string
+export class ExamDto {
+  @IsString()
+  @IsDefined()
+  author: string;
 
-    @IsObject()
-    @IsDefined()
-    question : object
+  @IsObject()
+  @IsDefined()
+  question: object;
 
-    @IsString()
-    @IsDefined()
-    nameOfSubject : string
-
-    @IsBoolean()
-    @IsDefined()
-    isApproved : boolean
-
+  @IsObject()
+  @IsDefined()
+  subject: ObjectId;
 }
 
-export class UpdateExam {
-    @IsString()
-    @IsDefined()
-    id : string
-
-    @IsObject()
-    @IsDefined()
-    exam : object
+export class ParamUpdateExamDto {
+  @IsString()
+  @IsDefined()
+  id: string;
 }
 
-export class DeleteExam {
-    @IsString()
-    @IsDefined()
-    id : string
+export class UpdateExamDto {
+  @IsObject()
+  @IsDefined()
+  author: string;
+
+  @IsObject()
+  @IsDefined()
+  questions: ObjectId[];
+
+  @IsObject()
+  @IsDefined()
+  subject: ObjectId;
+}
+
+export class ParamDeleteExamDto {
+  @IsString()
+  @IsDefined()
+  id: string;
 }

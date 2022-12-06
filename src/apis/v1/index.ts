@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import loginRouter from './auth';
-import examsRouter from './exams'
+import examsRouter from './exams';
 
 const router = Router();
 

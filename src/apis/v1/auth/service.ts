@@ -56,6 +56,9 @@ const login = async function (input: LoginDto) {
 
     const accessToken = await signRefreshToken(payload);
     const refreshToken = await signAccessToken(payload);
+
+    //create new user if not exist
+
     return {
       accessToken,
       refreshToken,

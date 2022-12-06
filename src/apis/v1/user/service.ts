@@ -6,7 +6,7 @@ import { UserDto } from './dto/UserDto';
 export const createUser = async function (input: UserDto) {
   try {
     const user = await UserModel.create(input);
-
+    logger.info(`Created user ${input.fullname} successfully`);
     return user;
   } catch (error) {
     logger.error(`Error while create new user: ${error}`);

@@ -9,11 +9,10 @@ export class UserDto {
   @IsDefined()
   email: string;
 
-  @IsString()
   @IsDefined()
   is_blocked: boolean;
 
   @IsString()
   @IsDefined()
-  roles: string;
+  role: string;
 }

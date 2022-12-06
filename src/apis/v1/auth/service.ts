@@ -8,6 +8,7 @@ import User from 'models/types/User';
 import { logger } from 'utils/logger';
 import JWTPayload from 'utils/types';
 import { LoginDto } from './dto/LoginDto';
+import { createUser } from '../user/service';
 
 const client = new OAuth2Client(configs.google.clientID);
 
@@ -39,6 +40,15 @@ const findRole = async (email: string) => {
 
   return user?.roles;
 };
+const findUserByEmail = async function (email: string) {
+  try {
+    const findByEmail = await UserModel.find({ email: email });
+    return findByEmail;
+  } catch (error) {
+    logger.error(`Error while create new user: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
 
 const login = async function (input: LoginDto) {
   try {
@@ -53,11 +63,19 @@ const login = async function (input: LoginDto) {
       email: result.email,
       role,
     };
+    const user = {
+      fullname: result.name,
+      email: result.email,
+      is_blocked: false,
+      role: role,
+    };
 
     const accessToken = await signRefreshToken(payload);
     const refreshToken = await signAccessToken(payload);
 
     //create new user if not exist
+    const checkUserExist = await findUserByEmail(result.email);
+    if (!checkUserExist) createUser(user);
 
     return {
       accessToken,

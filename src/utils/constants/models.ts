@@ -7,4 +7,3 @@ export const MODELS = {
   user_answer: 'user_answer',
   document: 'document',
 };
-

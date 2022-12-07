@@ -66,6 +66,7 @@ export const login = async function (input: LoginDto) {
 
     const accessToken = await signRefreshToken(payload);
     const refreshToken = await signAccessToken(payload);
+
     return {
       accessToken,
       refreshToken,

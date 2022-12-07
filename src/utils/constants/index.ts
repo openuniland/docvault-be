@@ -1,6 +1,10 @@
 export const APP_CONSTANTS = {
   apiPrefix: '/revise',
   service: 'Revise API',
+  params: 'params',
+  query: 'query',
+  body: 'body',
+  file: 'file',
 };
 
 export const DEFAULT_PAGING = {

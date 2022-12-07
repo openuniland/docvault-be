@@ -1,4 +1,4 @@
-import { IsString, IsDefined } from 'class-validator';
+import { IsString, IsDefined, IsBoolean, IsOptional } from 'class-validator';
 
 export class UserDto {
   @IsString()
@@ -9,10 +9,11 @@ export class UserDto {
   @IsDefined()
   email: string;
 
-  @IsDefined()
+  @IsOptional()
+  @IsBoolean()
   is_blocked: boolean;
 
+  @IsOptional()
   @IsString()
-  @IsDefined()
   role: string;
 }

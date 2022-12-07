@@ -92,7 +92,11 @@ export const login = async function (input: LoginDto) {
 =======
     const accessToken = await signRefreshToken(payload);
     const refreshToken = await signAccessToken(payload);
+<<<<<<< HEAD
 >>>>>>> 964a63c (Feat/#8 (#25))
+=======
+
+>>>>>>> dcf8db9 (feat/#4 (#30))
     return {
       accessToken,
       refreshToken,

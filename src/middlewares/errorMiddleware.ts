@@ -11,21 +11,21 @@ import { HttpException } from 'exceptions';
  * @param next
  */
 const errorMiddleware = (error: HttpException, request: Request, response: Response) => {
-  const apiErrorStatus = (error as any).response?.status;
-  const status = apiErrorStatus || error.status || 500;
-  const message = error.message || 'Something went wrong';
-  const errorCode = error.errorCode || 'ERROR_CODE_NOT_FOUND';
-  const validationErrors = error.validationErrors;
+  const apiErrorStatus = (error as any)?.response?.status;
+  const status = apiErrorStatus || error?.status || 500;
+  const message = error?.message || 'Something went wrong';
+  const errorCode = error?.errorCode || 'ERROR_CODE_NOT_FOUND';
+  const validationErrors = error?.validationErrors;
   const additionalInfo = error?.response?.data;
   if (status === 500) {
     logger.error(
-      error.message +
-        ` Error Info:${JSON.stringify(additionalInfo)} Request Config:${JSON.stringify((error as any).config)}`
+      error?.message +
+        ` Error Info:${JSON.stringify(additionalInfo)} Request Config:${JSON.stringify((error as any)?.config)}`
     );
   } else {
     logger.warn(
-      error.message +
-        ` Warn Info:${JSON.stringify(additionalInfo)} Request Config:${JSON.stringify((error as any).config)}`
+      error?.message +
+        ` Warn Info:${JSON.stringify(additionalInfo)} Request Config:${JSON.stringify((error as any)?.config)}`
     );
     if (validationErrors) {
       logger.warn(`validation errors : ${JSON.stringify(validationErrors)}`);

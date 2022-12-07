@@ -1,11 +1,21 @@
-const APP_CONSTANTS = {
+export const APP_CONSTANTS = {
   apiPrefix: '/revise',
   service: 'Revise API',
+  params: 'params',
+  query: 'query',
+  body: 'body',
+  file: 'file',
 };
 
-const DEFAULT_PAGING = {
+export const DEFAULT_PAGING = {
   limit: 100,
   skip: 0,
 };
 
-export { APP_CONSTANTS, DEFAULT_PAGING };
+export const ROLES = {
+  ADMIN: 'ADMIN',
+  APPOVER: 'APPOVER',
+  USER: 'USER',
+};
+
+export const HOU_ENDPOINT = '.hou.edu.vn';

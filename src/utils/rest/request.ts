@@ -15,4 +15,7 @@ export default interface RequestWithUser extends Request {
   userAgent?: { [key: string]: any };
   searchParams?: URLParams; // TODO: perhaps change to Dto and add validation,
   appName: string;
+  params: {
+    id: string;
+  };
 }

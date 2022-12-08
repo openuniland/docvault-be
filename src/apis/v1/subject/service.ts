@@ -1,7 +1,7 @@
 import { ErrorCodes, HttpException } from 'exceptions';
 import { SubjectModel } from 'models';
 import { logger } from 'utils/logger';
-import { ParamsSubjectDto, SubjectDto, UpdateSubjectDto } from './dto/SubjectDto';
+import { SubjectDto, UpdateSubjectDto } from './dto/SubjectDto';
 
 export const getSubjects = async () => {
   try {
@@ -25,11 +25,16 @@ export const createSubject = async (input: SubjectDto) => {
   }
 };
 
-export const updateSubject = async (input: UpdateSubjectDto, id: ParamsSubjectDto) => {
+export const updateSubject = async (input: UpdateSubjectDto, id: string) => {
   try {
-    const data = await SubjectModel.findByIdAndUpdate(id, {
-      $set: input,
-    });
+    const data = await SubjectModel.findByIdAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        $set: input,
+      }
+    );
 
     return data;
   } catch (error) {
@@ -38,7 +43,7 @@ export const updateSubject = async (input: UpdateSubjectDto, id: ParamsSubjectDt
   }
 };
 
-export const deleteSubject = async (id: ParamsSubjectDto) => {
+export const deleteSubject = async (id: string) => {
   try {
     const data = await SubjectModel.findOneAndDelete({ _id: id });
 

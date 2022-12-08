@@ -3,25 +3,25 @@ import { IsBoolean, IsDefined, IsString } from 'class-validator';
 export class SubjectDto {
   @IsString()
   @IsDefined()
-  subjectName: string;
+  subject_name: string;
 }
 
 export class UpdateSubjectDto {
   @IsString()
   @IsDefined()
-  subjectName: string;
+  subject_name: string;
 
   @IsBoolean()
   @IsDefined()
-  isDelete: boolean;
+  is_deleted: boolean;
 
   @IsBoolean()
   @IsDefined()
-  isApproved: boolean;
+  is_approved: boolean;
 }
 
 export class ParamsSubjectDto {
-  @IsString()
   @IsDefined()
+  @IsString()
   id: string;
 }

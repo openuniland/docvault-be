@@ -16,6 +16,10 @@ router.put(
   validationMiddleware(UpdateUserDto, APP_CONSTANTS.body),
   asyncRouteHandler(controller.updateUser)
 );
-router.delete('/:id', validationMiddleware(UserDto, APP_CONSTANTS.params), asyncRouteHandler(controller.deleteUser));
+router.delete(
+  '/:id',
+  validationMiddleware(ParamsUserDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.deleteUser)
+);
 
 export default router;

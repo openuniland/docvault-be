@@ -1,6 +1,7 @@
 import { ErrorCodes, HttpException } from 'exceptions';
 import UserModel from 'models/schema/User';
 import { logger } from 'utils/logger';
+
 import { UserDto, UpdateUserDto } from './dto/UserDto';
 
 export const createUser = async function (input: UserDto) {
@@ -68,3 +69,4 @@ export const deleteUser = async function (id: string) {
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
+

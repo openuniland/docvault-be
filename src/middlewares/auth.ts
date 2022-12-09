@@ -9,6 +9,11 @@ import { HOU_ENDPOINT, ROLES } from 'utils/constants';
 const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   const token = req.headers?.authorization;
   try {
+    if (!token) {
+      return res.status(404).json({
+        message: 'Token is invalid',
+      });
+    }
     const data: JWTPayload = verifyAccessToken(token);
 
     req.user = data;

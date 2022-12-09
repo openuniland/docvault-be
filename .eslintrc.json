@@ -38,6 +38,7 @@
         "ignoreStrings": true
       }
     ],
+    "prettier/prettier": ["error", { "endOfLine": "auto" }],
     "operator-linebreak": "off"
   }
 }

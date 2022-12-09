@@ -1,8 +1,7 @@
-import { Document } from 'mongoose'
+import { Document } from 'mongoose';
 
 import Question from './Question';
 import Subject from './Subject';
-
 export default interface Exam extends Document {
   author: string;
   question: Question;

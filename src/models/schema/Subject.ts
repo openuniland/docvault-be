@@ -5,9 +5,9 @@ import Subject from 'models/types/Subject';
 
 const SubjectSchema = new Schema<Subject>(
   {
-    subject_name: { type: String, required: true },
-    is_deleted: { type: Boolean },
-    is_approved: { type: Boolean },
+    subject_name: { type: String, required: true, unique: true },
+    is_deleted: { type: Boolean, default: false },
+    is_approved: { type: Boolean, default: false },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

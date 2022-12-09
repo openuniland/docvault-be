@@ -1,10 +1,11 @@
-import {Document} from 'mongoose'
+import { Document } from 'mongoose';
+
 import Question from './Question';
-import Exam from './Exam';
 import Answer from './Answer';
+import UserExam from './UserExam';
 export default interface UserAnswer extends Document {
-    question: Question;
-    exam: Exam;
-    answer: Answer;
-    isDeleted: boolean;
+  question: Question;
+  answer: Answer;
+  user_exam: UserExam;
+  is_deleted: boolean;
 }

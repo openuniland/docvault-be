@@ -1,19 +1,16 @@
 import { Document } from 'mongoose';
+
 import Subject from './Subject';
 import Answer from './Answer';
 
-enum Accuracy {
-  Absolute,
-  Relatively,
-}
 export default interface Question extends Document {
   content: string;
   image: string;
   subject: Subject;
-  correctAnswer: Answer;
+  correct_answer: Answer;
   answers: Answer[];
-  isDeleted: boolean;
-  accuracy: Accuracy;
-  isEssay: boolean;
-  isApproved: boolean;
+  is_deleted: boolean;
+  accuracy: string;
+  is_essay: boolean;
+  is_approved: boolean;
 }

@@ -33,4 +33,16 @@ router.delete(
   asyncRouteHandler(controller.deleteUser)
 );
 
+router.put(
+  '/:id',
+  validationMiddleware(ParamsUserDto, APP_CONSTANTS.params),
+  validationMiddleware(UpdateUserDto, APP_CONSTANTS.body),
+  asyncRouteHandler(controller.updateUser)
+);
+router.delete(
+  '/:id',
+  validationMiddleware(ParamsUserDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.deleteUser)
+);
+
 export default router;

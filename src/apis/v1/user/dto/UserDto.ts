@@ -17,3 +17,24 @@ export class UserDto {
   @IsString()
   role: string;
 }
+
+
+export class UpdateUserDto {
+  @IsString()
+  @IsDefined()
+  fullname: string;
+
+  @IsOptional()
+  @IsBoolean()
+  is_blocked: boolean;
+
+  @IsOptional()
+  @IsString()
+  role: string;
+}
+export class ParamsUserDto {
+  @IsString()
+  @IsDefined()
+  id: string;
+}
+

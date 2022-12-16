@@ -5,8 +5,8 @@ import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 import { AnswerDto, ParamsAnswerDto, UpdateAnswerDto } from './dto/AnswerDto';
 
-export const getAnswer = async (req: RequestWithUser, res: Response) => {
-  const result = await service.getAnswer();
+export const getAnswers = async (req: RequestWithUser, res: Response) => {
+  const result = await service.getAnswers();
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

@@ -8,7 +8,7 @@ import { AnswerDto, UpdateAnswerDto, ParamsAnswerDto } from './dto/AnswerDto';
 
 const router = Router();
 
-router.get('/', asyncRouteHandler(controller.getAnswer));
+router.get('/', asyncRouteHandler(controller.getAnswers));
 router.post('/', validationMiddleware(AnswerDto, APP_CONSTANTS.body), asyncRouteHandler(controller.createAnswer));
 router.put(
   '/:id',

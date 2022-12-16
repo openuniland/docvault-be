@@ -3,7 +3,7 @@ import { AnswerModel } from 'models';
 import { logger } from 'utils/logger';
 import { AnswerDto, UpdateAnswerDto } from './dto/AnswerDto';
 
-export const getAnswer = async () => {
+export const getAnswers = async () => {
   try {
     const data = await AnswerModel.find();
 

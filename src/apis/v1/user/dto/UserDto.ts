@@ -18,7 +18,6 @@ export class UserDto {
   role: string;
 }
 
-
 export class UpdateUserDto {
   @IsString()
   @IsDefined()
@@ -37,4 +36,3 @@ export class ParamsUserDto {
   @IsDefined()
   id: string;
 }
-

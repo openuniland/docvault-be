@@ -6,7 +6,6 @@ import fmt from 'utils/formatter';
 
 import { UserDto, UpdateUserDto, ParamsUserDto } from './dto/UserDto';
 
-
 export const createUser = async (request: RequestWithUser, response: Response) => {
   const input: UserDto = request.body;
 
@@ -32,4 +31,3 @@ export const deleteUser = async (request: RequestWithUser, response: Response) =
   const result = await service.deleteUser(params.id);
   response.send(fmt.formatResponse(result, Date.now() - request.startTime, 'OK'));
 };
-

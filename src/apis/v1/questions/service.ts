@@ -18,7 +18,7 @@ export const createQuestion = async function (input: QuestionDto) {
 
 export const getQuestions = async function () {
   try {
-    const question = await QuestionModel.find();
+    const question = await QuestionModel.find().populate('subject').populate('correct_answer').populate('answers');
     logger.info(`Get questions successfully`);
 
     return question;

@@ -1,6 +1,5 @@
-// import Subject from 'models/types/Subject';
-import Answer from 'models/types/Answer';
-import { IsString, IsDefined, IsArray, IsOptional } from 'class-validator';
+import { IsString, IsDefined, IsArray, IsOptional, IsBoolean } from 'class-validator';
+import { ObjectId } from 'mongoose';
 export class QuestionDto {
   @IsString()
   @IsDefined()
@@ -12,23 +11,27 @@ export class QuestionDto {
 
   @IsDefined()
   @IsString()
-  subject: string;
+  subject: ObjectId;
 
   @IsDefined()
   @IsString()
-  correct_answer: string;
+  correct_answer: ObjectId;
 
   @IsOptional()
   @IsArray()
-  answers: Answer[];
+  answers: ObjectId[];
 
-  @IsOptional()
+  @IsDefined()
   @IsString()
   accuracy: string;
 
-  //   @IsOptional()
-  //   @IsBoolean()
-  //   is_essay: boolean;
+  @IsOptional()
+  @IsBoolean()
+  is_essay: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  is_approved: boolean;
 }
 
 export class UpdateQuestionDto {
@@ -42,15 +45,15 @@ export class UpdateQuestionDto {
 
   @IsDefined()
   @IsString()
-  subject: string;
+  subject: ObjectId;
 
   @IsDefined()
   @IsString()
-  correct_answer: string;
+  correct_answer: ObjectId;
 
   @IsOptional()
   @IsArray()
-  answers: Answer[];
+  answers: ObjectId[];
 }
 export class ParamsQuestionDto {
   @IsDefined()

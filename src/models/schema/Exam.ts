@@ -6,10 +6,16 @@ import Exam from 'models/types/Exam';
 const ExamSchema = new Schema<Exam>(
   {
     author: { type: String, required: true },
-    question: { type: Schema.Types.ObjectId, required: true, ref: MODELS.question },
+    questions: [
+      {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: MODELS.question,
+      },
+    ],
     subject: { type: Schema.Types.ObjectId, required: true, ref: MODELS.subject },
-    is_deleted: { type: Boolean },
-    is_approved: { type: Boolean },
+    is_deleted: { type: Boolean, default: false },
+    is_approved: { type: Boolean, default: false },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

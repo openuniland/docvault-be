@@ -10,7 +10,7 @@ const DocumentSchema = new Schema<Documents>(
     description: { type: String },
     subject: { type: Schema.Types.ObjectId, required: true, ref: MODELS.subject },
     status: { type: Boolean, required: true },
-    is_deleted: { type: Boolean },
+    is_deleted: { type: Boolean, default: false },
     content: { type: Object, required: true },
   },
   {

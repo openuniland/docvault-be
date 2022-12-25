@@ -4,3 +4,10 @@ export default interface JWTPayload {
   email: string;
   is_blocked: boolean;
 }
+
+export interface Content {
+  name: string;
+  image?: string;
+  file?: string;
+  description?: string;
+}

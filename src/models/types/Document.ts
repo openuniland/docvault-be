@@ -1,5 +1,6 @@
 import { Document } from 'mongoose';
 
+import { Content } from 'utils/types';
 import Subject from './Subject';
 
 export default interface Documents extends Document {
@@ -7,7 +8,7 @@ export default interface Documents extends Document {
   title: string;
   description: string;
   subject: Subject;
-  status: boolean;
+  is_approved: boolean;
   is_deleted: boolean;
-  content: Object;
+  content: Content[];
 }

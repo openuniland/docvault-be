@@ -5,6 +5,7 @@ import userRouter from './user';
 import subjectRouter from './subject';
 import questionRouter from './questions';
 import answerRouter from './answer';
+import documentRouter from './documents';
 import examRouter from './exam';
 
 const router = Router();
@@ -14,6 +15,7 @@ router.use('/users', userRouter);
 router.use('/subjects', subjectRouter);
 router.use('/questions', questionRouter);
 router.use('/answers', answerRouter);
+router.use('/document', documentRouter);
 router.use('/exams', examRouter);
 
 export default router;

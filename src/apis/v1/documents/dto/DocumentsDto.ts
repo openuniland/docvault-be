@@ -1,5 +1,6 @@
-import { IsString, IsDefined, IsOptional, IsBoolean, IsObject } from 'class-validator';
+import { IsString, IsDefined, IsOptional, IsBoolean, IsArray } from 'class-validator';
 import { ObjectId } from 'mongoose';
+import { Content } from 'utils/types';
 export class DocumentDto {
   @IsString()
   @IsDefined()
@@ -17,13 +18,13 @@ export class DocumentDto {
   @IsString()
   subject: ObjectId;
 
-  @IsDefined()
+  @IsOptional()
   @IsBoolean()
-  status: Boolean;
+  is_approved: boolean;
 
   @IsDefined()
-  @IsObject()
-  content: Object;
+  @IsArray()
+  content: Array<Content>;
 }
 export class UpdateDocumentDto {
   @IsString()
@@ -38,9 +39,13 @@ export class UpdateDocumentDto {
   @IsOptional()
   description: string;
 
+  @IsOptional()
+  @IsBoolean()
+  is_approved: boolean;
+
   @IsDefined()
-  @IsObject()
-  content: Object;
+  @IsArray()
+  content: Array<Content>;
 }
 export class ParamsDocumentDto {
   @IsDefined()

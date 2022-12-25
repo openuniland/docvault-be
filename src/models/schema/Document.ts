@@ -2,6 +2,7 @@ import { model, Model, Schema } from 'mongoose';
 
 import { MODELS } from 'utils/constants/models';
 import Documents from 'models/types/Document';
+import { Content } from 'utils/types';
 
 const DocumentSchema = new Schema<Documents>(
   {
@@ -9,9 +10,9 @@ const DocumentSchema = new Schema<Documents>(
     title: { type: String, required: true },
     description: { type: String },
     subject: { type: Schema.Types.ObjectId, required: true, ref: MODELS.subject },
-    status: { type: Boolean, required: true },
+    is_approved: { type: Boolean, required: true, default: false },
     is_deleted: { type: Boolean, default: false },
-    content: { type: Object, required: true },
+    content: Array<Content>,
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

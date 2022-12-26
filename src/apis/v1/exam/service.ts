@@ -5,7 +5,25 @@ import { ExamDto, UpdateExamDto } from './dto/ExamDto';
 
 export const getExams = async () => {
   try {
-    const data = await ExamModel.find().populate('questions').populate('subject');
+    const data = await ExamModel.find()
+      .populate({
+        path: 'questions',
+        populate: [
+          {
+            path: 'subject',
+            model: 'subject',
+          },
+          {
+            path: 'correct_answer',
+            model: 'answer',
+          },
+          {
+            path: 'answers',
+            model: 'answer',
+          },
+        ],
+      })
+      .populate('subject');
 
     return data;
   } catch (error) {
@@ -16,7 +34,25 @@ export const getExams = async () => {
 
 export const getExam = async (id: string) => {
   try {
-    const data = await ExamModel.findById({ _id: id }).populate('questions').populate('subject');
+    const data = await ExamModel.findById({ _id: id })
+      .populate({
+        path: 'questions',
+        populate: [
+          {
+            path: 'subject',
+            model: 'subject',
+          },
+          {
+            path: 'correct_answer',
+            model: 'answer',
+          },
+          {
+            path: 'answers',
+            model: 'answer',
+          },
+        ],
+      })
+      .populate('subject');
 
     return data;
   } catch (error) {
@@ -28,7 +64,25 @@ export const getExam = async (id: string) => {
 export const getExamBySubject = async (input: string) => {
   try {
     const subjectId = await SubjectModel.findOne({ subject_name: input });
-    const data = await ExamModel.find({ subject: subjectId }).populate('questions').populate('subject');
+    const data = await ExamModel.find({ subject: subjectId })
+      .populate({
+        path: 'questions',
+        populate: [
+          {
+            path: 'subject',
+            model: 'subject',
+          },
+          {
+            path: 'correct_answer',
+            model: 'answer',
+          },
+          {
+            path: 'answers',
+            model: 'answer',
+          },
+        ],
+      })
+      .populate('subject');
 
     return data;
   } catch (error) {

@@ -5,8 +5,13 @@ import UserAnswer from 'models/types/UserAnswer';
 
 const UserAnswerSchema = new Schema<UserAnswer>(
   {
-    question: { type: Schema.Types.ObjectId, ref: MODELS.question, required: true },
-    answer: { type: Schema.Types.ObjectId, ref: MODELS.answer, required: true },
+    answer: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: MODELS.answer,
+        required: true,
+      },
+    ],
     user_exam: { type: Schema.Types.ObjectId, ref: MODELS.user_exam, required: true },
     is_deleted: { type: Boolean, default: false },
   },

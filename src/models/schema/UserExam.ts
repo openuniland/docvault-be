@@ -15,5 +15,5 @@ const UserExamSchema = new Schema<UserExam>(
 );
 
 UserExamSchema.index({ author: 1, exam: 1 });
-const UserModel: Model<UserExam> = model<UserExam>(MODELS.user_exam, UserExamSchema, MODELS.user_exam);
-export default UserModel;
+const UserExamModel: Model<UserExam> = model<UserExam>(MODELS.user_exam, UserExamSchema, MODELS.user_exam);
+export default UserExamModel;

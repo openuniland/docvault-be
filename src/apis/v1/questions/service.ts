@@ -33,11 +33,13 @@ export const updateQuestion = async function (input: UpdateQuestionDto, id: stri
     const question = await QuestionModel.findOneAndUpdate(
       { _id: id },
       {
-        content: input.content,
-        image: input.image,
-        subject: input.subject,
-        correct_answer: input.correct_answer,
-        answers: input.answers,
+        $set: {
+          content: input.content,
+          image: input.image,
+          subject: input.subject,
+          correct_answer: input.correct_answer,
+          answers: input.answers,
+        },
       }
     );
     logger.info(`Update question successfully`);

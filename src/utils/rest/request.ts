@@ -18,7 +18,4 @@ export default interface RequestWithUser extends Request {
   params: {
     id: string;
   };
-  query: {
-    subject_name: string;
-  };
 }

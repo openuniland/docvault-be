@@ -7,7 +7,9 @@ const UserExamSchema = new Schema<UserExam>(
   {
     author: { type: Schema.Types.ObjectId, ref: MODELS.user, required: true },
     exam: { type: Schema.Types.ObjectId, ref: MODELS.exam, required: true },
+    duration: { type: Schema.Types.Number, required: true },
     is_deleted: { type: Boolean, default: false },
+    is_completed: { type: Boolean, default: false },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
@@ -15,5 +17,5 @@ const UserExamSchema = new Schema<UserExam>(
 );
 
 UserExamSchema.index({ author: 1, exam: 1 });
-const UserModel: Model<UserExam> = model<UserExam>(MODELS.user_exam, UserExamSchema, MODELS.user_exam);
-export default UserModel;
+const UserExamModel: Model<UserExam> = model<UserExam>(MODELS.user_exam, UserExamSchema, MODELS.user_exam);
+export default UserExamModel;

@@ -7,6 +7,7 @@ import questionRouter from './questions';
 import answerRouter from './answer';
 import documentRouter from './documents';
 import examRouter from './exam';
+import userExamRouter from './UserExam';
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.use('/questions', questionRouter);
 router.use('/answers', answerRouter);
 router.use('/document', documentRouter);
 router.use('/exams', examRouter);
+router.use('/user-exam', userExamRouter);
 
 export default router;

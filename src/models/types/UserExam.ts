@@ -8,5 +8,5 @@ export default interface UserExam extends Document {
   exam: Exam;
   is_deleted: boolean;
   duration: number;
-  is_complete: boolean;
+  is_completed: boolean;
 }

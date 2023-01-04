@@ -32,7 +32,7 @@ export class UpdateUserExamDto {
 
   @IsOptional()
   @IsBoolean()
-  is_complete: boolean;
+  is_completed: boolean;
 }
 
 export class ParamsUserExamDto {

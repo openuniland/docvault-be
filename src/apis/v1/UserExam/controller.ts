@@ -4,7 +4,7 @@ import * as service from './service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 
-import { UserExamDto, ParamsUserExamDto } from './dto/UserExamDto';
+import { UserExamDto, ParamsUserExamDto, UpdateUserExamDto } from './dto/UserExamDto';
 
 export const getUserExams = async (req: RequestWithUser, res: Response) => {
   const result = await service.getUserExams();
@@ -19,7 +19,7 @@ export const createUserExam = async (req: RequestWithUser, res: Response) => {
 
 export const updateUserExam = async (req: RequestWithUser, res: Response) => {
   const params: ParamsUserExamDto = req.params;
-  const input: UserExamDto = req.body;
+  const input: UpdateUserExamDto = req.body;
 
   const result = await service.updateUserExam(input, params.id);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));

@@ -2,7 +2,7 @@ import { ErrorCodes, HttpException } from 'exceptions';
 import UserExamModel from 'models/schema/UserExam';
 import { logger } from 'utils/logger';
 
-import { UserExamDto } from './dto/UserExamDto';
+import { UserExamDto, UpdateUserExamDto } from './dto/UserExamDto';
 
 export const getUserExams = async () => {
   try {
@@ -28,7 +28,7 @@ export const createUserExam = async (input: UserExamDto) => {
   }
 };
 
-export const updateUserExam = async (input: UserExamDto, id: string) => {
+export const updateUserExam = async (input: UpdateUserExamDto, id: string) => {
   try {
     const userExam = await UserExamModel.findOneAndUpdate(
       { _id: id },

@@ -18,6 +18,6 @@ router.use('/questions', questionRouter);
 router.use('/answers', answerRouter);
 router.use('/document', documentRouter);
 router.use('/exams', examRouter);
-router.use('/user_exam', userExamRouter);
+router.use('/user-exam', userExamRouter);
 
 export default router;

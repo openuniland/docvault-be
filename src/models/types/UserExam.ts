@@ -7,4 +7,6 @@ export default interface UserExam extends Document {
   author: User;
   exam: Exam;
   is_deleted: boolean;
+  duration: number;
+  is_completed: boolean;
 }

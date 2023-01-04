@@ -11,7 +11,22 @@ export const getUserExams = async () => {
 
     return userExam;
   } catch (error) {
-    logger.error(`Error while get user exame: ${error}`);
+    logger.error(`Error while get user exam: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+//Get user's exam that completed by user id
+export const getUserExamsCompletedByUserId = async (userId: string) => {
+  try {
+    const userEmail = await UserExamModel.find({ author: userId, is_completed: true })
+      .populate('author')
+      .populate('exam');
+    logger.info(`Get user exams by user id succesfully`);
+
+    return userEmail;
+  } catch (error) {
+    logger.error(`Error while get user exam by user id: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -23,7 +38,7 @@ export const createUserExam = async (input: UserExamDto) => {
 
     return userExam;
   } catch (error) {
-    logger.error(`Error while create user exame: ${error}`);
+    logger.error(`Error while create user exam: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

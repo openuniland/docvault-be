@@ -11,6 +11,13 @@ export const getUserExams = async (req: RequestWithUser, res: Response) => {
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
+export const getUserExamsCompletedByUserId = async (req: RequestWithUser, res: Response) => {
+  const params: ParamsUserExamDto = req.params;
+  const result = await service.getUserExamsCompletedByUserId(params.id);
+
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};
+
 export const createUserExam = async (req: RequestWithUser, res: Response) => {
   const input: UserExamDto = req.body;
   const result = await service.createUserExam(input);

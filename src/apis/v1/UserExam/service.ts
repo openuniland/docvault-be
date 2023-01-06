@@ -16,21 +16,6 @@ export const getUserExams = async () => {
   }
 };
 
-//Get user's exam that completed by user id
-export const getUserExamsCompletedByUserId = async (userId: string) => {
-  try {
-    const userEmail = await UserExamModel.find({ author: userId, is_completed: true })
-      .populate('author')
-      .populate('exam');
-    logger.info(`Get user exams by user id succesfully`);
-
-    return userEmail;
-  } catch (error) {
-    logger.error(`Error while get user exam by user id: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
-  }
-};
-
 export const createUserExam = async (input: UserExamDto) => {
   try {
     const userExam = await UserExamModel.create(input);

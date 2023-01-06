@@ -19,11 +19,6 @@ router.get(
   validationMiddleware(ParamsExamDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.getExamById)
 );
-router.get(
-  '/search-user-id/:id',
-  validationMiddleware(ParamsExamDto, APP_CONSTANTS.params),
-  asyncRouteHandler(controller.getUserExamsPostedByUserId)
-);
 
 router.post('/', validationMiddleware(ExamDto, APP_CONSTANTS.body), asyncRouteHandler(controller.createExam));
 router.put(

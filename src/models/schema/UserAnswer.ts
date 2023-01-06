@@ -5,7 +5,7 @@ import UserAnswer from 'models/types/UserAnswer';
 
 const UserAnswerSchema = new Schema<UserAnswer>(
   {
-    answer: [
+    answers: [
       {
         type: Schema.Types.ObjectId,
         ref: MODELS.answer,
@@ -21,5 +21,5 @@ const UserAnswerSchema = new Schema<UserAnswer>(
 );
 
 UserAnswerSchema.index({ fullname: 1, email: 1 });
-const UserModel: Model<UserAnswer> = model<UserAnswer>(MODELS.user_answer, UserAnswerSchema, MODELS.user_answer);
-export default UserModel;
+const UserAnswerModel: Model<UserAnswer> = model<UserAnswer>(MODELS.user_answer, UserAnswerSchema, MODELS.user_answer);
+export default UserAnswerModel;

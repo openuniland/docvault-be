@@ -4,6 +4,7 @@ import { logger } from 'utils/logger';
 
 import { UserExamDto, UpdateUserExamDto } from './dto/UserExamDto';
 
+//Get all user's user-exams
 export const getUserExams = async () => {
   try {
     const userExam = await UserExamModel.find().populate('author').populate('exam');
@@ -11,7 +12,20 @@ export const getUserExams = async () => {
 
     return userExam;
   } catch (error) {
-    logger.error(`Error while get user exame: ${error}`);
+    logger.error(`Error while get user exam: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+//Get a user-exam by id
+export const getUserExamById = async (id: string) => {
+  try {
+    const userExam = await UserExamModel.find({ _id: id }).populate('author').populate('exam');
+    logger.info(`Get a user exam successfully`);
+
+    return userExam;
+  } catch (error) {
+    logger.error(`Error while get a user exam by id: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -23,7 +37,7 @@ export const createUserExam = async (input: UserExamDto) => {
 
     return userExam;
   } catch (error) {
-    logger.error(`Error while create user exame: ${error}`);
+    logger.error(`Error while create user exam: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

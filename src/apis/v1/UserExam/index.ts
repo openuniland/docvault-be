@@ -11,6 +11,12 @@ const router = Router();
 
 router.get('/', asyncRouteHandler(controller.getUserExams));
 
+router.get(
+  '/:id',
+  validationMiddleware(ParamsUserExamDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.getUserExamById)
+);
+
 router.post('/', validationMiddleware(UserExamDto, APP_CONSTANTS.body), asyncRouteHandler(controller.createUserExam));
 
 router.put(

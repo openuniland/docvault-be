@@ -3,6 +3,7 @@ import { ExamModel, SubjectModel } from 'models';
 import { logger } from 'utils/logger';
 import { ExamDto, UpdateExamDto } from './dto/ExamDto';
 
+//Get all user's exams
 export const getExams = async () => {
   try {
     const data = await ExamModel.find()
@@ -32,9 +33,11 @@ export const getExams = async () => {
   }
 };
 
-export const getExam = async (id: string) => {
+//Get a user's exam by id
+export const getExamById = async (id: string) => {
   try {
     const data = await ExamModel.findById({ _id: id })
+      .populate('author')
       .populate({
         path: 'questions',
         populate: [
@@ -65,6 +68,7 @@ export const getExamBySubject = async (input: string) => {
   try {
     const subjectId = await SubjectModel.findOne({ subject_name: input });
     const data = await ExamModel.find({ subject: subjectId })
+      .populate('author')
       .populate({
         path: 'questions',
         populate: [

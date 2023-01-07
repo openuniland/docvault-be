@@ -5,7 +5,7 @@ import Exam from 'models/types/Exam';
 
 const ExamSchema = new Schema<Exam>(
   {
-    author: { type: String, required: true },
+    author: { type: Schema.Types.ObjectId, ref: MODELS.user, required: true },
     questions: [
       {
         type: Schema.Types.ObjectId,

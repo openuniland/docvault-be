@@ -13,6 +13,7 @@ export const getUserExams = async () => {
     return userExam;
   } catch (error) {
     logger.error(`Error while get user exam: ${error}`);
+
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

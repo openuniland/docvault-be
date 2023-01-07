@@ -14,7 +14,12 @@ router.get(
   validationMiddleware(QueryExamDto, APP_CONSTANTS.query),
   asyncRouteHandler(controller.getExamBySubject)
 );
-router.get('/:id', validationMiddleware(ParamsExamDto, APP_CONSTANTS.params), asyncRouteHandler(controller.getExam));
+router.get(
+  '/:id',
+  validationMiddleware(ParamsExamDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.getExamById)
+);
+
 router.post('/', validationMiddleware(ExamDto, APP_CONSTANTS.body), asyncRouteHandler(controller.createExam));
 router.put(
   '/:id',

@@ -12,9 +12,9 @@ export const getExams = async (req: RequestWithUser, res: Response) => {
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
-export const getExam = async (req: RequestWithUser, res: Response) => {
+export const getExamById = async (req: RequestWithUser, res: Response) => {
   const input: ParamsExamDto = req.params;
-  const result = await service.getExam(input.id);
+  const result = await service.getExamById(input.id);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

@@ -17,17 +17,24 @@ router.get(
 );
 router.get(
   '/:id',
+<<<<<<< HEAD
   authMiddleware,
+=======
+>>>>>>> 4920e19 (feat/#48 (#58))
   validationMiddleware(ParamsExamDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.getExamById)
 );
 
+<<<<<<< HEAD
 router.post(
   '/',
   authMiddleware,
   validationMiddleware(ExamDto, APP_CONSTANTS.body),
   asyncRouteHandler(controller.createExam)
 );
+=======
+router.post('/', validationMiddleware(ExamDto, APP_CONSTANTS.body), asyncRouteHandler(controller.createExam));
+>>>>>>> 4920e19 (feat/#48 (#58))
 router.put(
   '/:id',
   authMiddleware,

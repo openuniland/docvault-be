@@ -1,5 +1,6 @@
 import { ErrorCodes, HttpException } from 'exceptions';
 import UserExamModel from 'models/schema/UserExam';
+import UserAnswerModel from 'models/schema/UserAnswer';
 import { logger } from 'utils/logger';
 
 import { UserExamDto, UpdateUserExamDto } from './dto/UserExamDto';
@@ -21,10 +22,37 @@ export const getUserExams = async () => {
 //Get a user-exam by id
 export const getUserExamById = async (id: string) => {
   try {
-    const userExam = await UserExamModel.find({ _id: id }).populate('author').populate('exam');
+    const userExam = await UserExamModel.find({ _id: id })
+      .populate('author')
+      .populate({
+        path: 'exam',
+        populate: {
+          path: 'questions',
+          populate: [
+            {
+              path: 'subject',
+              model: 'subject',
+            },
+            {
+              path: 'correct_answer',
+              model: 'answer',
+            },
+            {
+              path: 'answers',
+              model: 'answer',
+            },
+          ],
+        },
+      });
+    const userAnswer = await UserAnswerModel.find({ _id: id }).populate('user_exam');
+    const arrayQuestions: Object[] = [];
+    userExam.forEach((item) => {
+      arrayQuestions.push(item.exam);
+    });
+    logger.info(arrayQuestions);
     logger.info(`Get a user exam successfully`);
 
-    return userExam;
+    return userAnswer;
   } catch (error) {
     logger.error(`Error while get a user exam by id: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);

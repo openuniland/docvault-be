@@ -17,6 +17,12 @@ router.get(
   asyncRouteHandler(controller.getUserExamById)
 );
 
+router.get(
+  '/UserExam-and-UserAnswers/:id',
+  validationMiddleware(ParamsUserExamDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.getUserExamAndUserAnswerById)
+);
+
 router.post('/', validationMiddleware(UserExamDto, APP_CONSTANTS.body), asyncRouteHandler(controller.createUserExam));
 
 router.put(

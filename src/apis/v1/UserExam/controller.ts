@@ -37,3 +37,9 @@ export const deleteUserExam = async (req: RequestWithUser, res: Response) => {
   const result = await service.deleteUserExam(params.id);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
+
+export const getUserExamAndUserAnswerById = async (req: RequestWithUser, res: Response) => {
+  const params: ParamsUserExamDto = req.params;
+  const result = await service.getUserExamAndUserAnswerById(params.id);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};

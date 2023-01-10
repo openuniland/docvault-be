@@ -10,7 +10,6 @@ export const getAnswers = async () => {
     return data;
   } catch (error) {
     logger.error(`Error while get answer: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
 

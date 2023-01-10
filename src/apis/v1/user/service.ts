@@ -25,7 +25,7 @@ export const createUser = async function (input: UserDto) {
     return user;
   } catch (error) {
     logger.error(`Error while create new user: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+    throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
 

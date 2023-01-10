@@ -1,34 +1,51 @@
 import { Response, NextFunction } from 'express';
 
-import { ErrorCodes, HttpException } from 'exceptions';
 import { verifyAccessToken } from 'helpers/jwt';
 import RequestWithUser from 'utils/rest/request';
 import JWTPayload from 'utils/types';
 import { HOU_ENDPOINT, ROLES } from 'utils/constants';
+import { HttpException } from 'exceptions';
+import { logger } from 'utils/logger';
 
 const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
-  const token = req.headers?.authorization;
+  const authHeader = req.headers?.authorization;
+
+  const bearerToken = authHeader?.split(' ');
+  if (!authHeader) {
+    return next(new HttpException(400, 'Unauthorized', 'UNAUTHORIZED'));
+  }
+
+  if (!bearerToken || bearerToken[0] !== 'Bearer') {
+    return next(new HttpException(400, 'Not a Bearer token', 'BEARER_TOKEN'));
+  }
+
+  const token = bearerToken[1];
+
   try {
     if (!token) {
-      return res.status(404).json({
-        message: 'Token is invalid',
-      });
+      return next(new HttpException(404, 'Token is invalid', 'INVALID_TOKEN'));
     }
     const data: JWTPayload = verifyAccessToken(token);
 
     req.user = data;
-    next();
+    return next();
   } catch (err) {
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+    logger.error(`Error in authMiddleware: ${err}`);
+    next(new HttpException(401, err, 'Unauthorized'));
   }
 };
 
 const adminMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
-  const user = req.user;
-  if (!user || user.role != ROLES.ADMIN) {
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
-  } else {
-    next();
+  try {
+    const user = req.user;
+    if (!user || user.role != ROLES.ADMIN) {
+      return next(new HttpException(401, 'Unauthorized', 'NOT_ADMIN'));
+    } else {
+      next();
+    }
+  } catch (error) {
+    logger.error(`Error in adminMiddleware: ${error}`);
+    next(error);
   }
 };
 
@@ -36,7 +53,9 @@ const houMailMiddleware = (req: RequestWithUser, res: Response, next: NextFuncti
   const user = req.user;
   const houMail: string = HOU_ENDPOINT;
   if (!user || !user.email.include(houMail)) {
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+    res.status(401).json({
+      message: 'Not allowed',
+    });
   } else {
     next();
   }

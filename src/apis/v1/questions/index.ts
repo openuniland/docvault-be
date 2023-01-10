@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { asyncRouteHandler } from 'middlewares';
+import { asyncRouteHandler, authMiddleware } from 'middlewares';
 import { validationMiddleware } from 'middlewares/validation';
 import { APP_CONSTANTS } from 'utils/constants';
 import * as controller from './controller';
@@ -9,12 +9,18 @@ import { QuestionDto, UpdateQuestionDto, ParamsQuestionDto } from './dto/Questio
 
 const router = Router();
 
-router.get('/', asyncRouteHandler(controller.getQuestions));
+router.get('/', authMiddleware, asyncRouteHandler(controller.getQuestions));
 
-router.post('/', validationMiddleware(QuestionDto, APP_CONSTANTS.body), asyncRouteHandler(controller.createQuestion));
+router.post(
+  '/',
+  authMiddleware,
+  validationMiddleware(QuestionDto, APP_CONSTANTS.body),
+  asyncRouteHandler(controller.createQuestion)
+);
 
 router.put(
   '/:id',
+  authMiddleware,
   validationMiddleware(UpdateQuestionDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsQuestionDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.updateQuestion)
@@ -22,6 +28,7 @@ router.put(
 
 router.delete(
   '/:id',
+  authMiddleware,
   validationMiddleware(UpdateQuestionDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsQuestionDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.deleteQuestion)

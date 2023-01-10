@@ -5,6 +5,7 @@ import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 
 import { ParamsUserExamDto } from '../UserExam/dto/UserExamDto';
+
 export const getUserExamById = async (req: RequestWithUser, res: Response) => {
   const params: ParamsUserExamDto = req.params;
   const result = await service.getUserExamById(params.id);

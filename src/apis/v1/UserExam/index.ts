@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { asyncRouteHandler } from 'middlewares';
+import { asyncRouteHandler, authMiddleware } from 'middlewares';
 import { validationMiddleware } from 'middlewares/validation';
 import { APP_CONSTANTS } from 'utils/constants';
 import * as controller from './controller';
@@ -9,18 +9,25 @@ import { UserExamDto, ParamsUserExamDto, UpdateUserExamDto } from './dto/UserExa
 
 const router = Router();
 
-router.get('/', asyncRouteHandler(controller.getUserExams));
+router.get('/', authMiddleware, asyncRouteHandler(controller.getUserExams));
 
 router.get(
   '/:id',
+  authMiddleware,
   validationMiddleware(ParamsUserExamDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.getUserExamById)
 );
 
-router.post('/', validationMiddleware(UserExamDto, APP_CONSTANTS.body), asyncRouteHandler(controller.createUserExam));
+router.post(
+  '/',
+  authMiddleware,
+  validationMiddleware(UserExamDto, APP_CONSTANTS.body),
+  asyncRouteHandler(controller.createUserExam)
+);
 
 router.put(
   '/:id',
+  authMiddleware,
   validationMiddleware(UpdateUserExamDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsUserExamDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.updateUserExam)
@@ -28,6 +35,7 @@ router.put(
 
 router.delete(
   '/:id',
+  authMiddleware,
   validationMiddleware(ParamsUserExamDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.deleteUserExam)
 );

@@ -31,3 +31,10 @@ export const deleteDocument = async (req: RequestWithUser, res: Response) => {
   const result = await service.deleteDocument(params.id);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
+
+export const getDocumentsOfUser = async (req: RequestWithUser, res: Response) => {
+  const params: ParamsDocumentDto = req.params;
+  const result = await service.getDocumentsOfUser(params.id);
+
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};

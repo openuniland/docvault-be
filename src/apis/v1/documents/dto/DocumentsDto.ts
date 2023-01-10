@@ -4,7 +4,7 @@ import { Content } from 'utils/types';
 export class DocumentDto {
   @IsString()
   @IsDefined()
-  author: string;
+  author: ObjectId;
 
   @IsDefined()
   @IsString()

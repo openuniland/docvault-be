@@ -6,7 +6,7 @@ import { DocumentDto, UpdateDocumentDto } from './dto/DocumentsDto';
 
 export const getDocuments = async () => {
   try {
-    const Documents = await DocumentModel.find().populate('subject');
+    const Documents = await DocumentModel.find().populate('subject').populate('author');
 
     logger.info(`Get all documents successfully`);
     return Documents;
@@ -56,6 +56,17 @@ export const deleteDocument = async (id: string) => {
     return Document;
   } catch (error) {
     logger.error(`Error while create new document: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const getDocumentsOfUser = async (id: string) => {
+  try {
+    const Document = await DocumentModel.find({ author: id });
+
+    return Document;
+  } catch (error) {
+    logger.error(`Error while get document of user: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

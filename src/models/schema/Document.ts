@@ -6,7 +6,7 @@ import { Content } from 'utils/types';
 
 const DocumentSchema = new Schema<Documents>(
   {
-    author: { type: String, required: true },
+    author: { type: Schema.Types.ObjectId, required: true, ref: MODELS.user },
     title: { type: String, required: true },
     description: { type: String },
     subject: { type: Schema.Types.ObjectId, required: true, ref: MODELS.subject },

@@ -10,6 +10,12 @@ import { DocumentDto, UpdateDocumentDto, ParamsDocumentDto } from './dto/Documen
 const router = Router();
 
 router.get('/', authMiddleware, asyncRouteHandler(controller.getDocument));
+router.get(
+  '/UserDocument/:id',
+  authMiddleware,
+  validationMiddleware(ParamsDocumentDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.getDocumentsOfUser)
+);
 
 router.post(
   '/',

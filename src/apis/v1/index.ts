@@ -7,8 +7,8 @@ import questionRouter from './questions';
 import answerRouter from './answer';
 import documentRouter from './documents';
 import examRouter from './exam';
-import userExamRouter from './UserExam';
-import userAnswerRouter from './UserAnswer';
+import userExamRouter from './userExam';
+import userAnswerRouter from './userAnswer';
 
 const router = Router();
 
@@ -17,9 +17,9 @@ router.use('/users', userRouter);
 router.use('/subjects', subjectRouter);
 router.use('/questions', questionRouter);
 router.use('/answers', answerRouter);
-router.use('/document', documentRouter);
+router.use('/documents', documentRouter);
 router.use('/exams', examRouter);
-router.use('/user-exam', userExamRouter);
+router.use('/user-exams', userExamRouter);
 router.use('/user-answers', userAnswerRouter);
 
 export default router;

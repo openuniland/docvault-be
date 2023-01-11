@@ -21,7 +21,7 @@ router.get(
   '/:id',
   authMiddleware,
   validationMiddleware(ParamsUserExamDto, APP_CONSTANTS.params),
-  asyncRouteHandler(controller.getUserExamByUser)
+  asyncRouteHandler(controller.getUserExamsByUser)
 );
 
 router.put(

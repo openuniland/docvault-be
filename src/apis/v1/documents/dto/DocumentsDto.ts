@@ -2,10 +2,6 @@ import { IsString, IsDefined, IsOptional, IsBoolean, IsArray } from 'class-valid
 import { ObjectId } from 'mongoose';
 import { Content } from 'utils/types';
 export class DocumentDto {
-  @IsString()
-  @IsDefined()
-  author: string;
-
   @IsDefined()
   @IsString()
   title: string;
@@ -27,10 +23,6 @@ export class DocumentDto {
   content: Array<Content>;
 }
 export class UpdateDocumentDto {
-  @IsString()
-  @IsDefined()
-  author: string;
-
   @IsDefined()
   @IsString()
   title: string;

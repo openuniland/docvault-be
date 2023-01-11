@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { JwtPayload } from 'jsonwebtoken';
+import JWTPayload from 'utils/types';
 import URLParams from './urlparams';
 
 /**
@@ -7,7 +7,7 @@ import URLParams from './urlparams';
  */
 export default interface RequestWithUser extends Request {
   // To use userId and role, please inject the same in a middleware, by decoding an access token.
-  user: JwtPayload;
+  user: JWTPayload;
   customerId: number;
   customerToken: string;
   role: string;

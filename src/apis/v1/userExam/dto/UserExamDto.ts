@@ -35,7 +35,7 @@ export class UpdateUserExamDto {
   is_completed: boolean;
 }
 
-export class authorIdDto {
+export class AuthorIdDto {
   @IsDefined()
   @IsString()
   author: ObjectId;

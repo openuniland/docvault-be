@@ -1,17 +1,11 @@
 import { Model, model, Schema } from 'mongoose';
 
 import { MODELS } from 'utils/constants/models';
-import UserAnswer from 'models/types/UserAnswer';
+import UserAnswer, { AnswerInterface } from 'models/types/UserAnswer';
 
 const UserAnswerSchema = new Schema<UserAnswer>(
   {
-    answers: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: MODELS.answer,
-        required: true,
-      },
-    ],
+    answers: Array<AnswerInterface>,
     user_exam: { type: Schema.Types.ObjectId, ref: MODELS.user_exam, required: true },
     is_deleted: { type: Boolean, default: false },
   },

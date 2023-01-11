@@ -1,5 +1,6 @@
 import { ErrorCodes, HttpException } from 'exceptions';
 import { ExamModel, SubjectModel } from 'models';
+import { ObjectId } from 'mongoose';
 import { logger } from 'utils/logger';
 import { ExamDto, UpdateExamDto } from './dto/ExamDto';
 
@@ -7,6 +8,7 @@ import { ExamDto, UpdateExamDto } from './dto/ExamDto';
 export const getExams = async () => {
   try {
     const data = await ExamModel.find()
+      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate({
         path: 'questions',
         populate: [
@@ -37,7 +39,7 @@ export const getExams = async () => {
 export const getExamById = async (id: string) => {
   try {
     const data = await ExamModel.findById({ _id: id })
-      .populate('author')
+      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate({
         path: 'questions',
         populate: [
@@ -95,9 +97,13 @@ export const getExamBySubject = async (input: string) => {
   }
 };
 
-export const createExam = async (input: ExamDto) => {
+export const createExam = async (input: ExamDto, author: ObjectId) => {
   try {
-    const data = await ExamModel.create(input);
+    const exam = {
+      author,
+      ...input,
+    };
+    const data = await ExamModel.create(exam);
 
     return data;
   } catch (error) {

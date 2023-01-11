@@ -5,6 +5,7 @@ import Answer from 'models/types/Answer';
 import Question from 'models/types/Question';
 import { logger } from 'utils/logger';
 import { UserExamDto, UpdateUserExamDto } from './dto/UserExamDto';
+import { ObjectId } from 'mongoose';
 
 //Get all user's user-exams
 export const getUserExams = async () => {
@@ -20,12 +21,16 @@ export const getUserExams = async () => {
   }
 };
 
-export const createUserExam = async (input: UserExamDto) => {
+export const createUserExam = async (input: UserExamDto, author: ObjectId) => {
   try {
-    const userExam = await UserExamModel.create(input);
+    const userExam = {
+      author,
+      ...input,
+    };
+    const result = await UserExamModel.create(userExam);
     logger.info(`Create user exams succesfully`);
 
-    return userExam;
+    return result;
   } catch (error) {
     logger.error(`Error while create user exam: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
@@ -61,7 +66,7 @@ export const deleteUserExam = async (id: string) => {
   }
 };
 
-export const getUserExamByUser = async (id: string) => {
+export const getUserExamsByUser = async (id: string) => {
   try {
     const userExam = await UserExamModel.find({ _id: id })
       .populate('author')

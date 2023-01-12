@@ -9,6 +9,7 @@ import documentRouter from './documents';
 import examRouter from './exam';
 import userExamRouter from './userExam';
 import userAnswerRouter from './userAnswer';
+import adminRouter from './admin';
 
 const router = Router();
 
@@ -21,5 +22,6 @@ router.use('/documents', documentRouter);
 router.use('/exams', examRouter);
 router.use('/user-exams', userExamRouter);
 router.use('/user-answers', userAnswerRouter);
+router.use('/administrator', adminRouter);
 
 export default router;

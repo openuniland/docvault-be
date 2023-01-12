@@ -62,7 +62,7 @@ export const getExamById = async (id: string) => {
     return data;
   } catch (error) {
     logger.error(`Error while get exam: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+    throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
 

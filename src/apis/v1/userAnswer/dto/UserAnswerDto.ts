@@ -1,14 +1,13 @@
-import { IsDefined, IsArray, IsString, IsBoolean } from 'class-validator';
-import { ObjectId } from 'mongoose';
+import { IsDefined, IsString, IsNumber } from 'class-validator';
 
 export class UserAnswerDto {
   @IsDefined()
-  @IsArray()
-  answers: ObjectId[];
+  @IsString()
+  user_exam_id: string;
 
   @IsDefined()
-  @IsString()
-  user_exam: ObjectId;
+  @IsNumber()
+  number_of_answers: number;
 }
 
 export class ParamsUserAnswerDto {
@@ -19,13 +18,10 @@ export class ParamsUserAnswerDto {
 
 export class UpdateUserAnswerDto {
   @IsDefined()
-  @IsArray()
-  answers: ObjectId[];
+  @IsString()
+  answer_id: string;
 
   @IsDefined()
-  @IsString()
-  user_exam: ObjectId;
-
-  @IsBoolean()
-  is_deleted: boolean;
+  @IsNumber()
+  position: number;
 }

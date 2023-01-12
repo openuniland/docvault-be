@@ -3,53 +3,42 @@ import { UserAnswerModel } from 'models';
 import { logger } from 'utils/logger';
 import { UpdateUserAnswerDto, UserAnswerDto } from './dto/UserAnswerDto';
 
-export const getUsersAnswers = async () => {
-  try {
-    const data = await UserAnswerModel.find().populate('answers').populate('user_exam');
-
-    return data;
-  } catch (error) {
-    logger.error(`Error while get all UserAnswers: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
-  }
-};
-
 export const createUserAnswer = async (input: UserAnswerDto) => {
   try {
-    const data = await UserAnswerModel.create(input);
+    const { number_of_answers } = input;
+    const answers_id = Array(number_of_answers).fill('');
 
-    return data;
+    const result = await UserAnswerModel.create({
+      number_of_answers,
+      answers_id,
+    });
+
+    return result;
   } catch (error) {
     logger.error(`Error while create UserAnswer: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+    throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
 
-export const updateUserAnswer = async (id: string, input: UpdateUserAnswerDto) => {
+export const updateUserAnswer = async (userAnswerId: string, input: UpdateUserAnswerDto) => {
   try {
     const data = await UserAnswerModel.findByIdAndUpdate(
       {
-        _id: id,
+        _id: userAnswerId,
       },
       {
-        $set: input,
+        $push: {
+          answers_id: {
+            $each: [input.answer_id],
+            $position: input.position,
+          },
+        },
       }
     );
 
     return data;
   } catch (error) {
     logger.error(`Error while update UserAnswer: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
-  }
-};
-
-export const deleteUserAnswer = async (id: string) => {
-  try {
-    const data = await UserAnswerModel.findOneAndDelete({ _id: id });
-
-    return data;
-  } catch (error) {
-    logger.error(`Error while update UserAnswer: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+    throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

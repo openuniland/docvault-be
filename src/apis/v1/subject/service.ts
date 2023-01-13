@@ -14,6 +14,18 @@ export const getSubjects = async () => {
   }
 };
 
+export const getSubjectIsApprovedTrue = async () => {
+  try {
+    const data = await SubjectModel.find({ is_approved: true });
+    logger.info(`Get subjects with is_approve true successfully`);
+
+    return data;
+  } catch (error) {
+    logger.error(`Error while get subjects with is_approve true: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
 export const createSubject = async (input: SubjectDto) => {
   try {
     const data = await SubjectModel.create(input);

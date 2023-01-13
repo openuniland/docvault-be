@@ -10,6 +10,11 @@ export const getSubjects = async (req: RequestWithUser, res: Response) => {
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
+export const getSubjectsIsApprovedFalse = async (req: RequestWithUser, res: Response) => {
+  const result = await service.getSubjectsIsApprovedFalse();
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};
+
 export const createSubject = async (req: RequestWithUser, res: Response) => {
   const input: SubjectDto = req.body;
 

@@ -15,10 +15,3 @@ export interface Content {
   file?: string;
   description?: string;
 }
-
-export interface Content {
-  name: string;
-  image?: string;
-  file?: string;
-  description?: string;
-}

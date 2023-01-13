@@ -39,11 +39,7 @@ export const getExams = async () => {
 export const getExamById = async (id: string) => {
   try {
     const data = await ExamModel.findById({ _id: id })
-<<<<<<< HEAD
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
-=======
-      .populate('author')
->>>>>>> 4920e19 (feat/#48 (#58))
       .populate({
         path: 'questions',
         populate: [

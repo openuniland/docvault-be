@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { IsString, IsDefined, IsArray, IsBoolean, IsOptional, IsNumber } from 'class-validator';
-=======
-import { IsString, IsDefined, IsArray, IsBoolean, IsOptional } from 'class-validator';
->>>>>>> 4920e19 (feat/#48 (#58))
 import { ObjectId } from 'mongoose';
 
 export class ParamsExamDto {
@@ -18,13 +14,10 @@ export class QueryExamDto {
 }
 
 export class ExamDto {
-<<<<<<< HEAD
-=======
   @IsDefined()
   @IsString()
   author: ObjectId;
 
->>>>>>> 4920e19 (feat/#48 (#58))
   @IsArray()
   @IsDefined()
   questions: ObjectId[];
@@ -47,13 +40,6 @@ export class ExamDto {
 }
 
 export class UpdateExamDto {
-<<<<<<< HEAD
-=======
-  @IsDefined()
-  @IsString()
-  author: ObjectId;
-
->>>>>>> 4920e19 (feat/#48 (#58))
   @IsArray()
   @IsOptional()
   questions: ObjectId[];

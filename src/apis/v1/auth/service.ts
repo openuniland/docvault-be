@@ -1,27 +1,17 @@
+import axios from 'axios';
+import { OAuth2Client } from 'google-auth-library';
+
 import configs from 'configs';
 import { ErrorCodes, HttpException } from 'exceptions';
-import axios from 'axios';
-
-import { OAuth2Client } from 'google-auth-library';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from 'helpers/jwt';
 import { logger } from 'utils/logger';
 import JWTPayload from 'utils/types';
 import { LoginDto } from './dto/LoginDto';
 import { createUser } from '../user/service';
 import { HOU_ENDPOINT } from 'utils/constants';
-<<<<<<< HEAD
 import { UserDto } from '../user/dto/UserDto';
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { RefreshTokenDto } from './dto/RefreshTokenDto';
 import { UserinfoByGoogleApiResponse } from 'utils/types/auth';
-=======
->>>>>>> 964a63c (Feat/#8 (#25))
-=======
-=======
 import { RefreshTokenDto } from './dto/RefreshTokenDto';
->>>>>>> 0f2d5cd (feat: [#5] (#67))
->>>>>>> fab65e0 (feat: [#5] (#67))
 
 const client = new OAuth2Client(configs.google.clientID);
 
@@ -52,11 +42,7 @@ export const verifyCredentials = async (tokenGoogle: string) => {
     };
     return user;
   } catch (error) {
-<<<<<<< HEAD
     logger.error(`Error while verify credentials: ${error}`);
-=======
-    logger.error(`Error while verify: ${error}`);
->>>>>>> fab65e0 (feat: [#5] (#67))
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -96,23 +82,9 @@ export const login = async function (input: LoginDto) {
       _id: user._id,
     };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     const accessToken = signAccessToken(payload);
     const refreshToken = signRefreshToken(payload);
 
-=======
-    const accessToken = await signRefreshToken(payload);
-    const refreshToken = await signAccessToken(payload);
-<<<<<<< HEAD
->>>>>>> 964a63c (Feat/#8 (#25))
-=======
-=======
-    const accessToken = signAccessToken(payload);
-    const refreshToken = signRefreshToken(payload);
->>>>>>> fab65e0 (feat: [#5] (#67))
-
->>>>>>> dcf8db9 (feat/#4 (#30))
     return {
       accessToken,
       refreshToken,
@@ -124,11 +96,7 @@ export const login = async function (input: LoginDto) {
     };
   } catch (error) {
     logger.error(`Error while login: ${error}`);
-<<<<<<< HEAD
     throw new HttpException(403, error?.message, error?.errorCode);
-=======
-    throw new HttpException(400, 'error', ErrorCodes.BAD_REQUEST.CODE);
->>>>>>> fab65e0 (feat: [#5] (#67))
   }
 };
 
@@ -141,10 +109,7 @@ export const refreshToken = async function (input: RefreshTokenDto) {
       email: res.email,
       role: res.role,
       is_blocked: res.is_blocked,
-<<<<<<< HEAD
       _id: res._id,
-=======
->>>>>>> fab65e0 (feat: [#5] (#67))
     };
 
     const accessToken = signAccessToken(payload);

@@ -52,7 +52,7 @@ const adminMiddleware = (req: RequestWithUser, res: Response, next: NextFunction
 const houMailMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
   const user = req.user;
   const houMail: string = HOU_ENDPOINT;
-  if (!user || !user.email.include(houMail)) {
+  if (!user || !user.email.includes(houMail)) {
     res.status(401).json({
       message: 'Not allowed',
     });

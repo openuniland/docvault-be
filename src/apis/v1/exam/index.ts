@@ -21,7 +21,7 @@ router.get(
   validationMiddleware(ParamsExamDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.getExamById)
 );
-
+router.get('/is-approved/false', authMiddleware, asyncRouteHandler(controller.getExamsIsApprovedFalse));
 router.post(
   '/',
   authMiddleware,

@@ -20,6 +20,11 @@ export const getExamById = async (req: RequestWithUser, res: Response) => {
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
+export const getExamsIsApprovedFalse = async (req: RequestWithUser, res: Response) => {
+  const result = await service.getExamsIsApprovedFalse();
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};
+
 export const getExamBySubject = async (req: RequestWithUser, res: Response) => {
   const input: QueryExamDto = req.query;
   const result = await service.getExamBySubject(input.subject_name);

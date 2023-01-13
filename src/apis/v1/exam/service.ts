@@ -66,6 +66,37 @@ export const getExamById = async (id: string) => {
   }
 };
 
+export const getExamsIsApprovedFalse = async () => {
+  try {
+    const data = await ExamModel.find({ is_approved: false })
+      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
+      .populate({
+        path: 'questions',
+        populate: [
+          {
+            path: 'subject',
+            model: 'subject',
+          },
+          {
+            path: 'correct_answer',
+            model: 'answer',
+          },
+          {
+            path: 'answers',
+            model: 'answer',
+          },
+        ],
+      })
+      .populate('subject');
+    logger.info(`Get exams with is_approved false successfully`);
+
+    return data;
+  } catch (error) {
+    logger.error(`Error while get exams with is_approved false: ${error}`);
+    throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
 export const getExamBySubject = async (input: string) => {
   try {
     const subjectId = await SubjectModel.findOne({ subject_name: input });

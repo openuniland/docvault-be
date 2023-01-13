@@ -97,6 +97,36 @@ export const getExamBySubject = async (input: string) => {
   }
 };
 
+export const getExamsIsApprovedTrue = async () => {
+  try {
+    const data = await ExamModel.find({ is_approved: true })
+      .populate('author')
+      .populate({
+        path: 'questions',
+        populate: [
+          {
+            path: 'subject',
+            model: 'subject',
+          },
+          {
+            path: 'correct_answer',
+            model: 'answer',
+          },
+          {
+            path: 'answers',
+            model: 'answer',
+          },
+        ],
+      })
+      .populate('subject');
+    logger.info(`Get exams with is_approved true successfully`);
+
+    return data;
+  } catch (error) {
+    logger.error(`Error while get exams with is_approved true: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
 export const createExam = async (input: ExamDto, author: ObjectId) => {
   try {
     const exam = {

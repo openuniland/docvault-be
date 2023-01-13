@@ -1,9 +1,6 @@
 import { Document } from 'mongoose';
 
-import Answer from './Answer';
-import UserExam from './UserExam';
 export default interface UserAnswer extends Document {
-  answers: Answer;
-  user_exam: UserExam;
+  answers_id: string[];
   is_deleted: boolean;
 }

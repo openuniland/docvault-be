@@ -9,7 +9,7 @@ import { DocumentDto, UpdateDocumentDto, ParamsDocumentDto } from './dto/Documen
 
 const router = Router();
 
-router.get('/', authMiddleware, asyncRouteHandler(controller.getDocument));
+router.get('/', authMiddleware, asyncRouteHandler(controller.getDocuments));
 
 router.post(
   '/',
@@ -32,5 +32,12 @@ router.delete(
   validationMiddleware(UpdateDocumentDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsDocumentDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.deleteDocument)
+);
+
+router.get(
+  '/:id',
+  authMiddleware,
+  validationMiddleware(ParamsDocumentDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.getDocumentById)
 );
 export default router;

@@ -63,6 +63,7 @@ export const login = async function (input: LoginDto) {
       email: user.email,
       role: user.roles,
       is_blocked: user.is_blocked,
+      _id: user._id,
     };
 
     const accessToken = signAccessToken(payload);
@@ -87,6 +88,7 @@ export const refreshToken = async function (input: RefreshTokenDto) {
       email: res.email,
       role: res.role,
       is_blocked: res.is_blocked,
+      _id: res._id,
     };
 
     const accessToken = signAccessToken(payload);

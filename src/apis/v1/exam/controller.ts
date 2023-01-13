@@ -5,6 +5,7 @@ import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 
 import { ParamsExamDto, QueryExamDto, ExamDto, UpdateExamDto } from './dto/ExamDto';
+import { ObjectId } from 'mongoose';
 
 export const getExams = async (req: RequestWithUser, res: Response) => {
   const result = await service.getExams();
@@ -28,7 +29,8 @@ export const getExamBySubject = async (req: RequestWithUser, res: Response) => {
 
 export const createExam = async (req: RequestWithUser, res: Response) => {
   const input: ExamDto = req.body;
-  const result = await service.createExam(input);
+  const author: ObjectId = req?.user?._id;
+  const result = await service.createExam(input, author);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

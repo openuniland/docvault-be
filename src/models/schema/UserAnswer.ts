@@ -5,14 +5,7 @@ import UserAnswer from 'models/types/UserAnswer';
 
 const UserAnswerSchema = new Schema<UserAnswer>(
   {
-    answers: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: MODELS.answer,
-        required: true,
-      },
-    ],
-    user_exam: { type: Schema.Types.ObjectId, ref: MODELS.user_exam, required: true },
+    answers_id: [{ type: Schema.Types.String }],
     is_deleted: { type: Boolean, default: false },
   },
   {
@@ -20,6 +13,5 @@ const UserAnswerSchema = new Schema<UserAnswer>(
   }
 );
 
-UserAnswerSchema.index({ fullname: 1, email: 1 });
 const UserAnswerModel: Model<UserAnswer> = model<UserAnswer>(MODELS.user_answer, UserAnswerSchema, MODELS.user_answer);
 export default UserAnswerModel;

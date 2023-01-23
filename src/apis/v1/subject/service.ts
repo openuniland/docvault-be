@@ -17,6 +17,7 @@ export const getSubjects = async () => {
 export const getSubjectsIsApprovedFalse = async () => {
   try {
     const data = await SubjectModel.find({ is_approved: false });
+    logger.info(`Get subjects with is_approved false successfully`);
 
     return data;
   } catch (error) {

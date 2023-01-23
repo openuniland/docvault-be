@@ -16,7 +16,7 @@ router.put(
   asyncRouteHandler(controller.updateSubject)
 );
 router.get('/', authMiddleware, asyncRouteHandler(controller.getSubjects));
-router.get('/is-approved-false', authMiddleware, asyncRouteHandler(controller.getSubjectsIsApprovedFalse));
+router.get('/is-approved/false', authMiddleware, asyncRouteHandler(controller.getSubjectsIsApprovedFalse));
 router.post(
   '/',
   authMiddleware,

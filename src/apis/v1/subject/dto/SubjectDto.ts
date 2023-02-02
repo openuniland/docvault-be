@@ -25,3 +25,9 @@ export class ParamsSubjectDto {
   @IsString()
   id: string;
 }
+
+export class QuerySubjectDto {
+  @IsDefined()
+  @IsString()
+  is_approved: { type: string; enum: ['true', 'false'] };
+}

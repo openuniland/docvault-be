@@ -1,7 +1,7 @@
 import { ErrorCodes, HttpException } from 'exceptions';
 import { SubjectModel } from 'models';
 import { logger } from 'utils/logger';
-import { SubjectDto, UpdateSubjectDto } from './dto/SubjectDto';
+import { SubjectDto, UpdateSubjectDto, QuerySubjectDto } from './dto/SubjectDto';
 
 export const getSubjects = async () => {
   try {
@@ -14,14 +14,14 @@ export const getSubjects = async () => {
   }
 };
 
-export const getSubjectIsApprovedTrue = async () => {
+export const getSubjectIsApproved = async (input: QuerySubjectDto) => {
   try {
-    const data = await SubjectModel.find({ is_approved: true });
-    logger.info(`Get subjects with is_approve true successfully`);
+    const data = await SubjectModel.find({ is_approved: input.is_approved });
+    logger.info(`Get subjects with is_approve ${input.is_approved} successfully`);
 
     return data;
   } catch (error) {
-    logger.error(`Error while get subjects with is_approve true: ${error}`);
+    logger.error(`Error while get subjects with is_approve ${input.is_approved}: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

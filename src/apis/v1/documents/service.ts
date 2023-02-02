@@ -80,3 +80,13 @@ export const getDocumentById = async (params: ParamsDocumentDto) => {
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
+export const getDocumentOfUser = async (id: ObjectId) => {
+  try {
+    const Document = await DocumentModel.find({ author: id });
+
+    return Document;
+  } catch (error) {
+    logger.error(`Error while get  document of user: ${error}`);
+    throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};

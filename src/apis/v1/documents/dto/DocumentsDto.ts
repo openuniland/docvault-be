@@ -44,3 +44,20 @@ export class ParamsDocumentDto {
   @IsString()
   id: string;
 }
+
+export class UserDto {
+  @IsString()
+  id: string;
+
+  @IsString()
+  email: string;
+
+  @IsBoolean()
+  is_blocked: boolean;
+
+  @IsString()
+  name: string;
+
+  @IsString()
+  role: string;
+}

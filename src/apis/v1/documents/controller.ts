@@ -40,3 +40,10 @@ export const getDocumentById = async (req: RequestWithUser, res: Response) => {
   const result = await service.getDocumentById(params);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
+
+export const getDocumentOfUser = async (req: RequestWithUser, res: Response) => {
+  const id = req.user._id;
+  const result = await service.getDocumentOfUser(id);
+
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};

@@ -4,17 +4,12 @@ import * as service from './service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 
-import { ParamsExamDto, QueryExamDto, ExamDto, UpdateExamDto } from './dto/ExamDto';
+import { ParamsExamDto, QueryExamDto, ExamDto, UpdateExamDto, QueryExamIsApprovedDto } from './dto/ExamDto';
 import { ObjectId } from 'mongoose';
 
 export const getExams = async (req: RequestWithUser, res: Response) => {
-  const result = await service.getExams();
-
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
-};
-
-export const getExamsIsApprovedTrue = async (req: RequestWithUser, res: Response) => {
-  const result = await service.getExamsIsApprovedTrue();
+  const input: QueryExamIsApprovedDto = req.query;
+  const result = await service.getExams(input);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

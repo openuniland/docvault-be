@@ -12,6 +12,12 @@ export class QueryExamDto {
   @IsDefined()
   subject_name: string;
 }
+export class QueryExamIsApprovedDto {
+  @IsString()
+  @IsDefined()
+  @IsOptional()
+  is_approved: string;
+}
 
 export class ExamDto {
   @IsArray()

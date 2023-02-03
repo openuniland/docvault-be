@@ -4,7 +4,7 @@ import * as controller from './controller';
 import { validationMiddleware } from 'middlewares/validation';
 import { APP_CONSTANTS } from 'utils/constants';
 import { adminMiddleware, asyncRouteHandler, authMiddleware } from 'middlewares';
-import { UpdateSubjectDto, SubjectDto, ParamsSubjectDto } from './dto/SubjectDto';
+import { UpdateSubjectDto, SubjectDto, ParamsSubjectDto, QuerySubjectDto } from './dto/SubjectDto';
 
 const router = Router();
 
@@ -15,7 +15,13 @@ router.put(
   validationMiddleware(ParamsSubjectDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.updateSubject)
 );
-router.get('/', authMiddleware, asyncRouteHandler(controller.getSubjects));
+
+router.get(
+  '/',
+  authMiddleware,
+  validationMiddleware(QuerySubjectDto, APP_CONSTANTS.query),
+  asyncRouteHandler(controller.getSubjects)
+);
 router.post(
   '/',
   authMiddleware,

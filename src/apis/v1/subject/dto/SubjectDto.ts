@@ -1,4 +1,4 @@
-import { IsBoolean, IsDefined, IsString } from 'class-validator';
+import { IsBoolean, IsDefined, IsOptional, IsString } from 'class-validator';
 
 export class SubjectDto {
   @IsString()
@@ -24,4 +24,11 @@ export class ParamsSubjectDto {
   @IsDefined()
   @IsString()
   id: string;
+}
+
+export class QuerySubjectDto {
+  @IsDefined()
+  @IsString()
+  @IsOptional()
+  is_approved: string;
 }

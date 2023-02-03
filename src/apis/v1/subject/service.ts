@@ -1,11 +1,11 @@
 import { ErrorCodes, HttpException } from 'exceptions';
 import { SubjectModel } from 'models';
 import { logger } from 'utils/logger';
-import { SubjectDto, UpdateSubjectDto } from './dto/SubjectDto';
+import { SubjectDto, UpdateSubjectDto, QuerySubjectDto } from './dto/SubjectDto';
 
-export const getSubjects = async () => {
+export const getSubjects = async (input: QuerySubjectDto) => {
   try {
-    const data = await SubjectModel.find();
+    const data = await SubjectModel.find(input);
 
     return data;
   } catch (error) {

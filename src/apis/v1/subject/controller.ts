@@ -6,13 +6,8 @@ import RequestWithUser from 'utils/rest/request';
 import { ParamsSubjectDto, SubjectDto, UpdateSubjectDto, QuerySubjectDto } from './dto/SubjectDto';
 
 export const getSubjects = async (req: RequestWithUser, res: Response) => {
-  const result = await service.getSubjects();
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
-};
-
-export const getSubjectIsApproved = async (req: RequestWithUser, res: Response) => {
   const input: QuerySubjectDto = req.query;
-  const result = await service.getSubjectIsApproved(input);
+  const result = await service.getSubjects(input);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 

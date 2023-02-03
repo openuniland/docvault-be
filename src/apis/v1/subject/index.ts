@@ -15,13 +15,13 @@ router.put(
   validationMiddleware(ParamsSubjectDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.updateSubject)
 );
+
 router.get(
-  '/is-approved',
+  '/',
   authMiddleware,
   validationMiddleware(QuerySubjectDto, APP_CONSTANTS.query),
-  asyncRouteHandler(controller.getSubjectIsApproved)
+  asyncRouteHandler(controller.getSubjects)
 );
-router.get('/', authMiddleware, asyncRouteHandler(controller.getSubjects));
 router.post(
   '/',
   authMiddleware,

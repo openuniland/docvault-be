@@ -20,6 +20,6 @@ export default interface RequestWithUser extends Request {
   };
   query: {
     subject_name: string;
-    is_approved: { type: string; enum: ['true', 'false'] };
+    is_approved: string;
   };
 }

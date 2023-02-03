@@ -3,25 +3,13 @@ import { SubjectModel } from 'models';
 import { logger } from 'utils/logger';
 import { SubjectDto, UpdateSubjectDto, QuerySubjectDto } from './dto/SubjectDto';
 
-export const getSubjects = async () => {
+export const getSubjects = async (input: QuerySubjectDto) => {
   try {
-    const data = await SubjectModel.find();
+    const data = await SubjectModel.find(input);
 
     return data;
   } catch (error) {
     logger.error(`Error while get subjects: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
-  }
-};
-
-export const getSubjectIsApproved = async (input: QuerySubjectDto) => {
-  try {
-    const data = await SubjectModel.find({ is_approved: input.is_approved });
-    logger.info(`Get subjects with is_approve ${input.is_approved} successfully`);
-
-    return data;
-  } catch (error) {
-    logger.error(`Error while get subjects with is_approve ${input.is_approved}: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

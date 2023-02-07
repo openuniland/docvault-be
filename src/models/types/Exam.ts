@@ -7,6 +7,7 @@ export default interface Exam extends Document {
   author: User;
   questions: Question[];
   subject: Subject;
+  title: string;
   is_deleted: boolean;
   is_approved: boolean;
 }

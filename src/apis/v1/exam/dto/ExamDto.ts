@@ -21,6 +21,10 @@ export class ExamDto {
   @IsString()
   @IsDefined()
   subject: ObjectId;
+
+  @IsString()
+  @IsDefined()
+  title: string;
 }
 
 export class UpdateExamDto {
@@ -31,6 +35,10 @@ export class UpdateExamDto {
   @IsString()
   @IsOptional()
   subject: ObjectId;
+
+  @IsString()
+  @IsDefined()
+  title: ObjectId;
 
   @IsBoolean()
   is_deleted: boolean;

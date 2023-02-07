@@ -6,6 +6,7 @@ import UserExam from 'models/types/UserExam';
 const UserExamSchema = new Schema<UserExam>(
   {
     author: { type: Schema.Types.ObjectId, ref: MODELS.user, required: true },
+    original_exam: { type: Schema.Types.ObjectId },
     questions: [
       {
         type: Schema.Types.ObjectId,

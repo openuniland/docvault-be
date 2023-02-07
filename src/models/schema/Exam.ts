@@ -6,6 +6,7 @@ import Exam from 'models/types/Exam';
 const ExamSchema = new Schema<Exam>(
   {
     author: { type: Schema.Types.ObjectId, ref: MODELS.user, required: true },
+    semester: { type: String, enum: ['I', 'II'] },
     questions: [
       {
         type: Schema.Types.ObjectId,

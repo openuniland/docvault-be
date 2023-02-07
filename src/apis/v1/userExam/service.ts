@@ -10,6 +10,7 @@ import { createUserAnswer } from 'apis/v1/userAnswer/service';
 export const createUserExam = async (input: UserExamDto, author: ObjectId) => {
   try {
     const exam = await getExamById(input.exam_id);
+
     const userAnswer = await createUserAnswer({
       number_of_answers: exam?.questions?.length,
       user_exam_id: input.exam_id,
@@ -17,6 +18,7 @@ export const createUserExam = async (input: UserExamDto, author: ObjectId) => {
 
     const userExam = {
       author,
+      semester_of_exam: exam.semester,
       questions: exam.questions,
       user_answer_id: userAnswer._id,
       duration: input.duration,

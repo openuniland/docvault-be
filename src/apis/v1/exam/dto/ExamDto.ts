@@ -21,6 +21,10 @@ export class ExamDto {
   @IsString()
   @IsDefined()
   subject: ObjectId;
+
+  @IsString()
+  @IsDefined()
+  semester: string;
 }
 
 export class UpdateExamDto {
@@ -37,4 +41,8 @@ export class UpdateExamDto {
 
   @IsBoolean()
   is_approved: boolean;
+
+  @IsString()
+  @IsDefined()
+  semester: string;
 }

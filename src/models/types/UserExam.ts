@@ -7,6 +7,7 @@ import UserAnswer from './UserAnswer';
 
 export default interface UserExam extends Document {
   author: User;
+  semester_of_exam: string;
   questions: Question;
   subject: Subject;
   is_deleted: boolean;

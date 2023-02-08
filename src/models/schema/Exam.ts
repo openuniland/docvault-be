@@ -15,6 +15,7 @@ const ExamSchema = new Schema<Exam>(
     ],
     subject: { type: Schema.Types.ObjectId, required: true, ref: MODELS.subject },
     title: { type: String, required: true },
+    semester: { type: String, required: true },
     is_deleted: { type: Boolean, default: false },
     is_approved: { type: Boolean, default: false },
   },

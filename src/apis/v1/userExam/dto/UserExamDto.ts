@@ -8,10 +8,6 @@ export class UserExamDto {
   @IsString()
   @IsDefined()
   exam_id: string;
-
-  @IsString()
-  @IsDefined()
-  semester: string;
 }
 export class AuthorIdDto {
   @IsDefined()

@@ -22,16 +22,14 @@ export const createUserAnswer = async (input: UserAnswerDto) => {
 
 export const updateUserAnswer = async (userAnswerId: string, input: UpdateUserAnswerDto) => {
   try {
+    logger.info(`Update UserAnswer: ${userAnswerId} - ${input.answer_id} - ${input.position}`);
     const data = await UserAnswerModel.findByIdAndUpdate(
       {
         _id: userAnswerId,
       },
       {
-        $push: {
-          answers_id: {
-            $each: [input.answer_id],
-            $position: input.position,
-          },
+        $set: {
+          [`answers_id.${input.position}`]: input.answer_id,
         },
       }
     );

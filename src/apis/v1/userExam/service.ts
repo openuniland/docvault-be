@@ -21,6 +21,7 @@ export const createUserExam = async (input: UserExamDto, author: ObjectId) => {
       user_answer_id: userAnswer._id,
       duration: input.duration,
       semester: exam.semester,
+      school_year: exam.school_year,
     };
     const result = await UserExamModel.create(userExam);
     logger.info(`Create a user exam succesfully`);

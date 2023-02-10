@@ -1,4 +1,4 @@
-import { IsString, IsDefined, IsArray, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, IsDefined, IsArray, IsBoolean, IsOptional, IsNumber } from 'class-validator';
 import { ObjectId } from 'mongoose';
 
 export class ParamsExamDto {
@@ -26,9 +26,13 @@ export class ExamDto {
   @IsDefined()
   title: string;
 
+  @IsNumber()
+  @IsDefined()
+  semester: number;
+
   @IsString()
   @IsDefined()
-  semester: string;
+  school_year: string;
 }
 
 export class UpdateExamDto {
@@ -50,7 +54,11 @@ export class UpdateExamDto {
   @IsBoolean()
   is_approved: boolean;
 
+  @IsNumber()
+  @IsDefined()
+  semester: number;
+
   @IsString()
   @IsDefined()
-  semester: string;
+  school_year: string;
 }

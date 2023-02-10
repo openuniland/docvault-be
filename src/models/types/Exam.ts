@@ -8,7 +8,8 @@ export default interface Exam extends Document {
   questions: Question[];
   subject: Subject;
   title: string;
-  semester: string;
+  semester: number;
+  school_year: string;
   is_deleted: boolean;
   is_approved: boolean;
 }

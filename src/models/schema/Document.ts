@@ -10,6 +10,8 @@ const DocumentSchema = new Schema<Documents>(
     title: { type: String, required: true },
     description: { type: String },
     subject: { type: Schema.Types.ObjectId, required: true, ref: MODELS.subject },
+    semester: { type: Number, required: true },
+    school_year: { type: String, required: true },
     is_approved: { type: Boolean, required: true, default: false },
     is_deleted: { type: Boolean, default: false },
     content: Array<Content>,

@@ -9,6 +9,8 @@ export default interface Documents extends Document {
   title: string;
   description: string;
   subject: Subject;
+  semester: number;
+  school_year: string;
   is_approved: boolean;
   is_deleted: boolean;
   content: Content[];

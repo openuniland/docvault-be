@@ -15,6 +15,7 @@ export default interface UserExam extends Document {
   score: number;
   user_answer_id: UserAnswer;
   duration: number;
-  semester: string;
+  semester: number;
+  school_year: string;
   is_completed: boolean;
 }

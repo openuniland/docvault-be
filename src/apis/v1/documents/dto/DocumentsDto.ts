@@ -1,4 +1,4 @@
-import { IsString, IsDefined, IsOptional, IsBoolean, IsArray } from 'class-validator';
+import { IsString, IsDefined, IsOptional, IsBoolean, IsArray, IsNumber } from 'class-validator';
 import { ObjectId } from 'mongoose';
 import { Content } from 'utils/types';
 export class DocumentDto {
@@ -13,6 +13,14 @@ export class DocumentDto {
   @IsDefined()
   @IsString()
   subject: ObjectId;
+
+  @IsDefined()
+  @IsNumber()
+  semester: number;
+
+  @IsDefined()
+  @IsString()
+  school_year: string;
 
   @IsOptional()
   @IsBoolean()

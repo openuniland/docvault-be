@@ -2,15 +2,19 @@ import { model, Model, Schema } from 'mongoose';
 
 import { MODELS } from 'utils/constants/models';
 import Documents from 'models/types/Document';
+import { Content } from 'utils/types';
 
 const DocumentSchema = new Schema<Documents>(
   {
+    author: { type: Schema.Types.ObjectId, ref: MODELS.user, required: true },
     title: { type: String, required: true },
     description: { type: String },
-    subject: { type: String, required: true, ref: MODELS.subject },
-    status: { type: Boolean, required: true },
-    is_deleted: { type: Boolean },
-    content: { type: Object, required: true },
+    subject: { type: Schema.Types.ObjectId, required: true, ref: MODELS.subject },
+    semester: { type: Number, required: true },
+    school_year: { type: String, required: true },
+    is_approved: { type: Boolean, required: true, default: false },
+    is_deleted: { type: Boolean, default: false },
+    content: Array<Content>,
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

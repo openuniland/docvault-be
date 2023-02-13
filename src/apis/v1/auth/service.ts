@@ -1,14 +1,15 @@
-import { UserDto } from './../user/dto/UserDto';
 import configs from 'configs';
 import { ErrorCodes, HttpException } from 'exceptions';
 
 import { OAuth2Client } from 'google-auth-library';
-import { signAccessToken, signRefreshToken } from 'helpers/jwt';
+import { signAccessToken, signRefreshToken, verifyRefreshToken } from 'helpers/jwt';
 import { logger } from 'utils/logger';
 import JWTPayload from 'utils/types';
 import { LoginDto } from './dto/LoginDto';
 import { createUser } from '../user/service';
 import { HOU_ENDPOINT } from 'utils/constants';
+import { UserDto } from '../user/dto/UserDto';
+import { RefreshTokenDto } from './dto/RefreshTokenDto';
 
 const client = new OAuth2Client(configs.google.clientID);
 
@@ -29,7 +30,7 @@ export const verify = async (tokenGoogle: string) => {
     const email = payload.email;
 
     if (!organizationValidation(email)) {
-      throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+      throw new HttpException(403, 'Does not belong to our organization', 'NOT_BELONG_TO_ORGANIZATION');
     }
 
     const user = {
@@ -40,7 +41,7 @@ export const verify = async (tokenGoogle: string) => {
     return user;
   } catch (error) {
     logger.error(`Error while verify: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+    throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
 
@@ -62,10 +63,11 @@ export const login = async function (input: LoginDto) {
       email: user.email,
       role: user.roles,
       is_blocked: user.is_blocked,
+      _id: user._id,
     };
 
-    const accessToken = await signRefreshToken(payload);
-    const refreshToken = await signAccessToken(payload);
+    const accessToken = signAccessToken(payload);
+    const refreshToken = signRefreshToken(payload);
 
     return {
       accessToken,
@@ -73,6 +75,31 @@ export const login = async function (input: LoginDto) {
     };
   } catch (error) {
     logger.error(`Error while login: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+    throw new HttpException(400, 'error', ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const refreshToken = async function (input: RefreshTokenDto) {
+  try {
+    const res = await verifyRefreshToken(input?.refreshToken);
+
+    const payload = {
+      name: res.name,
+      email: res.email,
+      role: res.role,
+      is_blocked: res.is_blocked,
+      _id: res._id,
+    };
+
+    const accessToken = signAccessToken(payload);
+    const newRefreshToken = signRefreshToken(payload);
+
+    return {
+      accessToken,
+      refreshToken: newRefreshToken,
+    };
+  } catch (error) {
+    logger.error(`Error while login: ${error}`);
+    throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

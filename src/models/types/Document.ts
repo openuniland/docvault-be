@@ -1,12 +1,17 @@
-import { Document } from 'mongoose'
+import { Document } from 'mongoose';
 
+import { Content } from 'utils/types';
 import Subject from './Subject';
+import User from './User';
 
 export default interface Documents extends Document {
+  author: User;
   title: string;
   description: string;
   subject: Subject;
-  status: boolean;
+  semester: number;
+  school_year: string;
+  is_approved: boolean;
   is_deleted: boolean;
-  content: Object;
+  content: Content[];
 }

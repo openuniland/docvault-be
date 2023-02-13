@@ -5,5 +5,6 @@ export const MODELS = {
   question: 'question',
   answer: 'answer',
   user_answer: 'user_answer',
+  user_exam: 'user_exam',
   document: 'document',
 };

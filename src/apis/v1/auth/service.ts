@@ -8,11 +8,8 @@ import JWTPayload from 'utils/types';
 import { LoginDto } from './dto/LoginDto';
 import { createUser } from '../user/service';
 import { HOU_ENDPOINT } from 'utils/constants';
-<<<<<<< HEAD
 import { UserDto } from '../user/dto/UserDto';
-=======
 import { RefreshTokenDto } from './dto/RefreshTokenDto';
->>>>>>> 0f2d5cd (feat: [#5] (#67))
 
 const client = new OAuth2Client(configs.google.clientID);
 

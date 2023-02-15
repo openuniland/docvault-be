@@ -14,6 +14,7 @@ export const createUser = async function (input: UserDto) {
       {
         fullname: input.fullname,
         email: input.email,
+        avatar: input.avatar,
         roles: input.role,
         is_blocked: input.is_blocked,
       },

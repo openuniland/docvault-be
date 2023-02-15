@@ -9,6 +9,10 @@ export class UserDto {
   @IsDefined()
   email: string;
 
+  @IsString()
+  @IsOptional()
+  avatar: string;
+
   @IsOptional()
   @IsBoolean()
   is_blocked: boolean;

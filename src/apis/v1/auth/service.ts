@@ -10,8 +10,8 @@ import { LoginDto } from './dto/LoginDto';
 import { createUser } from '../user/service';
 import { HOU_ENDPOINT } from 'utils/constants';
 import { UserDto } from '../user/dto/UserDto';
-import { UserinfoByGoogleApiResponse } from 'utils/types/auth';
 import { RefreshTokenDto } from './dto/RefreshTokenDto';
+import { UserinfoByGoogleApiResponse } from 'utils/types/auth';
 
 const client = new OAuth2Client(configs.google.clientID);
 

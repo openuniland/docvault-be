@@ -68,4 +68,8 @@ export const ErrorCodes: { [key: string]: CustomError } = {
     CODE: 'REWARD_OUT_OF_STOCK',
     MESSAGE: `Don't have enough rewards in the event`,
   },
+  VERIFY_ACCESS_TOKEN_FAILED: {
+    CODE: 'VERIFY_ACCESS_TOKEN_FAILED',
+    MESSAGE: 'Verify access token failed',
+  },
 };

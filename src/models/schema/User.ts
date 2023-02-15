@@ -8,6 +8,7 @@ const UserSchema = new Schema<User>(
   {
     fullname: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    avatar: { type: String, default: '' },
     is_blocked: { type: Boolean, default: false },
     roles: { type: String, default: ROLES.USER },
   },

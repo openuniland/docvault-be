@@ -150,3 +150,15 @@ export const getUserExamOfUser = async (userEmail: string, userExamId: string) =
     );
   }
 };
+
+export const submitTheExam = async (userId: ObjectId, userExamId: ObjectId) => {
+  try {
+    const result = await UserExamModel.findOneAndUpdate({ _id: userExamId, author: userId }, { is_completed: true });
+    logger.info(`Submit the exam successfully`);
+
+    return result;
+  } catch (error) {
+    logger.error(`Error while submit the exam: ${error}`);
+    throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};

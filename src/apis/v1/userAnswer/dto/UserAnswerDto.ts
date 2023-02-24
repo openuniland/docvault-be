@@ -1,4 +1,5 @@
 import { IsDefined, IsString, IsNumber } from 'class-validator';
+import { ObjectId } from 'mongoose';
 
 export class UserAnswerDto {
   @IsDefined()
@@ -20,6 +21,10 @@ export class UpdateUserAnswerDto {
   @IsDefined()
   @IsString()
   answer_id: string;
+
+  @IsDefined()
+  @IsString()
+  user_exam_id: ObjectId;
 
   @IsDefined()
   @IsNumber()

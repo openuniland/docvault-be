@@ -3,7 +3,7 @@ import { ObjectId } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
 import UserExamModel from 'models/schema/UserExam';
 import { logger } from 'utils/logger';
-import { UserExamDto } from './dto/UserExamDto';
+import { UserExamDto, UserExamFilter } from './dto/UserExamDto';
 import { getExamById } from 'apis/v1/exam/service';
 import { createUserAnswer } from 'apis/v1/userAnswer/service';
 
@@ -78,9 +78,9 @@ export const getAllUserExams = async () => {
   }
 };
 
-export const getAllUserExamsOfUser = async (userId: ObjectId) => {
+export const getAllUserExamsOfUser = async (userId: ObjectId, filter: UserExamFilter) => {
   try {
-    const result = await UserExamModel.find({ author: userId })
+    const result = await UserExamModel.find({ author: userId, ...filter })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate({
         path: 'questions',

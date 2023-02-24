@@ -52,3 +52,9 @@ export class ParamsDocumentDto {
   @IsString()
   id: string;
 }
+
+export class DocumentFilter {
+  @IsBoolean()
+  @IsOptional()
+  is_approved?: boolean;
+}

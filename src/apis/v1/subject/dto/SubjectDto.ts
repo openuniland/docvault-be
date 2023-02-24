@@ -27,8 +27,7 @@ export class ParamsSubjectDto {
 }
 
 export class QuerySubjectDto {
-  @IsDefined()
-  @IsString()
   @IsOptional()
-  is_approved: string;
+  @IsString()
+  is_approved?: string;
 }

@@ -4,7 +4,7 @@ import * as service from './service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 
-import { UserExamDto, ParamsUserExamDto } from './dto/UserExamDto';
+import { UserExamDto, ParamsUserExamDto, UserExamFilter } from './dto/UserExamDto';
 import { ObjectId } from 'mongoose';
 
 export const createUserExam = async (req: RequestWithUser, res: Response) => {
@@ -24,7 +24,8 @@ export const deleteUserExam = async (req: RequestWithUser, res: Response) => {
 
 export const getAllUserExamsOfUser = async (req: RequestWithUser, res: Response) => {
   const author: ObjectId = req?.user?._id;
-  const result = await service.getAllUserExamsOfUser(author);
+  const filter: UserExamFilter = req.query;
+  const result = await service.getAllUserExamsOfUser(author, filter);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

@@ -1,13 +1,13 @@
-import DocumentModel from 'models/schema/Document';
 import { ObjectId } from 'mongoose';
-import { logger } from 'utils/logger';
 
+import DocumentModel from 'models/schema/Document';
+import { logger } from 'utils/logger';
 import { ErrorCodes, HttpException } from 'exceptions';
-import { DocumentDto, ParamsDocumentDto, UpdateDocumentDto } from './dto/DocumentsDto';
+import { DocumentDto, DocumentFilter, ParamsDocumentDto, UpdateDocumentDto } from './dto/DocumentsDto';
 
 export const getDocuments = async () => {
   try {
-    const results = await DocumentModel.find()
+    const results = await DocumentModel.find({ is_approved: true })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
@@ -78,5 +78,19 @@ export const getDocumentById = async (params: ParamsDocumentDto) => {
   } catch (error) {
     logger.error(`Error while get a document: ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const getDocumentsByAdmin = async (filter: DocumentFilter) => {
+  try {
+    const results = await DocumentModel.find({ ...filter })
+      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
+      .populate('subject', '-is_deleted -created_at -updated_at -__v');
+
+    logger.info(`Get all documents successfully`);
+    return results;
+  } catch (error) {
+    logger.error(`Error while get documents: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

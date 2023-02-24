@@ -26,3 +26,9 @@ export class UserExamFilter {
   @IsOptional()
   is_completed?: boolean;
 }
+
+export class SubmitTheExamDto {
+  @IsString()
+  @IsDefined()
+  user_exam_id: ObjectId;
+}

@@ -10,7 +10,7 @@ export class ParamsExamDto {
 export class QueryExamDto {
   @IsString()
   @IsDefined()
-  subject_name: string;
+  subject_name?: string;
 }
 
 export class ExamDto {

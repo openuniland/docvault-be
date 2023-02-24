@@ -2,6 +2,7 @@ import { ErrorCodes, HttpException } from 'exceptions';
 import { UserAnswerModel } from 'models';
 import UserExamModel from 'models/schema/UserExam';
 import { logger } from 'utils/logger';
+import { calculateScore } from '../userExam/service';
 import { UpdateUserAnswerDto, UserAnswerDto } from './dto/UserAnswerDto';
 
 export const createUserAnswer = async (input: UserAnswerDto) => {
@@ -38,24 +39,12 @@ export const updateUserAnswer = async (userAnswerId: string, input: UpdateUserAn
       throw new HttpException(400, 'UserExam is completed', 'USER_EXAM_IS_COMPLETED');
     }
 
-    // const isScoreUp = userExam.questions[input.position].correct_answer.toString() === input.answer_id;
-
     if (userExam.duration) {
       const { duration } = userExam;
       //duration is in milliseconds
       const time = new Date().getTime() - userExam.updated_at.getTime();
-      if (time > duration) {
-        const userAnswer = await UserAnswerModel.findOne({ _id: userAnswerId });
-
-        let score = 0;
-
-        for (let i = 0; i < userExam.questions.length; i++) {
-          if (userExam.questions[i].correct_answer.toString() === userAnswer.answers_id[i]) {
-            score++;
-          }
-        }
-
-        await UserExamModel.findOneAndUpdate({ _id: user_exam_id }, { is_completed: true, score });
+      if (time > duration && !userExam.is_completed) {
+        calculateScore(userExam._id, userExam.user_answer_id._id);
 
         throw new HttpException(400, 'Time is up', 'TIME_IS_UP');
       }

@@ -14,6 +14,7 @@ const UserExamSchema = new Schema<UserExam>(
         ref: MODELS.question,
       },
     ],
+    subject: { type: Schema.Types.ObjectId, required: true, ref: MODELS.subject },
     title: { type: String, required: true },
     user_answer_id: { type: Schema.Types.ObjectId, ref: MODELS.user_answer, required: true },
     duration: { type: Schema.Types.Number, required: true },

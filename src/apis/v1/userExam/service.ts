@@ -21,7 +21,7 @@ export const createUserExam = async (input: UserExamDto, author: ObjectId) => {
       author,
       original_exam: input.exam_id,
       title: exam.title,
-      subject: exam.subject,
+      subject: exam?.subject,
       questions: exam.questions,
       user_answer_id: userAnswer._id,
       duration: input.duration,
@@ -114,6 +114,7 @@ export const getAllUserExamsOfUser = async (userId: ObjectId, filter: UserExamFi
   try {
     const result = await UserExamModel.find({ author: userId, ...filter })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
+      .populate('subject')
       .populate({
         path: 'questions',
         model: 'question',
@@ -147,6 +148,7 @@ export const getUserExamOfUser = async (userEmail: string, userExamId: string) =
   try {
     const userExam = await UserExamModel.findOne({ _id: userExamId })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
+      .populate('subject')
       .populate({
         path: 'questions',
         model: 'question',

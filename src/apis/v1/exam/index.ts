@@ -16,6 +16,7 @@ router.get(
   validationMiddleware(QueryExamDto, APP_CONSTANTS.query),
   asyncRouteHandler(controller.getExamBySubject)
 );
+
 router.get(
   '/:id',
   authMiddleware,

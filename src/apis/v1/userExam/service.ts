@@ -21,6 +21,7 @@ export const createUserExam = async (input: UserExamDto, author: ObjectId) => {
       author,
       original_exam: input.exam_id,
       subject: exam.subject,
+      title: exam.title,
       questions: exam.questions,
       user_answer_id: userAnswer._id,
       duration: input.duration,

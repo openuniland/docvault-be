@@ -9,6 +9,7 @@ import UserAnswer from './UserAnswer';
 export default interface UserExam extends Document {
   author: User;
   original_exam: Exam;
+  title: string;
   questions: Question[];
   subject: Subject;
   is_deleted: boolean;

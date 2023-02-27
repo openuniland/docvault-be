@@ -1,8 +1,8 @@
+import axios from 'axios';
+import { OAuth2Client } from 'google-auth-library';
+
 import configs from 'configs';
 import { ErrorCodes, HttpException } from 'exceptions';
-import axios from 'axios';
-
-import { OAuth2Client } from 'google-auth-library';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from 'helpers/jwt';
 import { logger } from 'utils/logger';
 import JWTPayload from 'utils/types';

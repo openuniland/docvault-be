@@ -14,10 +14,6 @@ export class QueryExamDto {
 }
 
 export class ExamDto {
-  @IsDefined()
-  @IsString()
-  author: ObjectId;
-
   @IsArray()
   @IsDefined()
   questions: ObjectId[];

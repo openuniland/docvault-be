@@ -5,7 +5,7 @@ import { validationMiddleware } from 'middlewares/validation';
 import { APP_CONSTANTS } from 'utils/constants';
 import * as controller from './controller';
 
-import { UserExamDto, ParamsUserExamDto } from './dto/UserExamDto';
+import { UserExamDto, ParamsUserExamDto, SubmitTheExamDto } from './dto/UserExamDto';
 
 const router = Router();
 
@@ -25,6 +25,13 @@ router.delete(
   authMiddleware,
   validationMiddleware(ParamsUserExamDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.deleteUserExam)
+);
+
+router.post(
+  '/submit',
+  authMiddleware,
+  validationMiddleware(SubmitTheExamDto, APP_CONSTANTS.body),
+  asyncRouteHandler(controller.submitTheExam)
 );
 
 export default router;

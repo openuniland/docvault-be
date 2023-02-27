@@ -9,7 +9,7 @@ import UserAnswer from './UserAnswer';
 export default interface UserExam extends Document {
   author: User;
   original_exam: Exam;
-  questions: Question;
+  questions: Question[];
   subject: Subject;
   is_deleted: boolean;
   score: number;
@@ -18,4 +18,6 @@ export default interface UserExam extends Document {
   semester: number;
   school_year: string;
   is_completed: boolean;
+  created_at: Date;
+  updated_at: Date;
 }

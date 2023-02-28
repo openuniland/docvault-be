@@ -31,7 +31,7 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
     return next();
   } catch (err) {
     logger.error(`Error in authMiddleware: ${err}`);
-    next(new HttpException(401, err, 'Unauthorized'));
+    next(new HttpException(401, err?.message || err, 'Unauthorized'));
   }
 };
 

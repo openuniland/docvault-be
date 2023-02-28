@@ -121,6 +121,6 @@ export const refreshToken = async function (input: RefreshTokenDto) {
     };
   } catch (error) {
     logger.error(`Error while login: ${error}`);
-    throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
+    throw new HttpException(400, error?.message || error, 'REFRESH_TOKEN_INVALID');
   }
 };

@@ -94,3 +94,17 @@ export const getDocumentsByAdmin = async (filter: DocumentFilter) => {
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
+
+export const getDocumentsBySubjectId = async (subjectId: string) => {
+  try {
+    const results = await DocumentModel.find({ is_approved: true, subject: subjectId })
+      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
+      .populate('subject', '-is_deleted -created_at -updated_at -__v');
+
+    logger.info(`Get all documents by subjectId successfully`);
+    return results;
+  } catch (error) {
+    logger.error(`Error while get documents by subjectId: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};

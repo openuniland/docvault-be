@@ -40,4 +40,11 @@ router.get(
   validationMiddleware(ParamsDocumentDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.getDocumentById)
 );
+
+router.get(
+  '/subject/:id',
+  authMiddleware,
+  validationMiddleware(ParamsDocumentDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.getDocumentsBySubjectId)
+);
 export default router;

@@ -118,6 +118,11 @@ export const refreshToken = async function (input: RefreshTokenDto) {
     return {
       accessToken,
       refreshToken: newRefreshToken,
+      userInfo: {
+        name: res.name,
+        email: res.email,
+        avatar: res.avatar,
+      },
     };
   } catch (error) {
     logger.error(`Error while login: ${error}`);

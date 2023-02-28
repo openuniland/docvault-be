@@ -2,10 +2,6 @@ import { IsString, IsDefined, IsOptional, IsBoolean, IsArray, IsNumber } from 'c
 import { ObjectId } from 'mongoose';
 import { Content } from 'utils/types';
 export class DocumentDto {
-  @IsString()
-  @IsDefined()
-  author: string;
-
   @IsDefined()
   @IsString()
   title: string;

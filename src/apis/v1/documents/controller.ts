@@ -56,3 +56,9 @@ export const getDocumentsByOwner = async (req: RequestWithUser, res: Response) =
   const result = await service.getDocumentsByOwner(author);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
+
+export const getDocumentsBySubjectId = async (req: RequestWithUser, res: Response) => {
+  const input: ParamsDocumentDto = req.params;
+  const result = await service.getDocumentsBySubjectId(input.id);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};

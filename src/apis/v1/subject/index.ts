@@ -22,18 +22,27 @@ router.get(
   validationMiddleware(QuerySubjectDto, APP_CONSTANTS.query),
   asyncRouteHandler(controller.getSubjects)
 );
+
 router.post(
   '/',
   authMiddleware,
   validationMiddleware(SubjectDto, APP_CONSTANTS.body),
   asyncRouteHandler(controller.createSubject)
 );
+
 router.delete(
   '/:id',
   authMiddleware,
   adminMiddleware,
   validationMiddleware(ParamsSubjectDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.deleteSubject)
+);
+
+router.get(
+  '/:id',
+  authMiddleware,
+  validationMiddleware(ParamsSubjectDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.getSubjectById)
 );
 
 export default router;

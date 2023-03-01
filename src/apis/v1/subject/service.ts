@@ -53,3 +53,14 @@ export const deleteSubject = async (id: string) => {
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
+
+export const getSubjectById = async (subjectId: string) => {
+  try {
+    const data = await SubjectModel.findOne({ _id: subjectId });
+
+    return data;
+  } catch (error) {
+    logger.error(`Error while get a subject by id: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};

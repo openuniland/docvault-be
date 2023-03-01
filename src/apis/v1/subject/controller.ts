@@ -32,3 +32,9 @@ export const deleteSubject = async (req: RequestWithUser, res: Response) => {
   const result = await service.deleteSubject(params.id);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
+
+export const getSubjectById = async (req: RequestWithUser, res: Response) => {
+  const params: ParamsSubjectDto = req.params;
+  const result = await service.getSubjectById(params.id);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};

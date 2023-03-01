@@ -4,6 +4,7 @@ import DocumentModel from 'models/schema/Document';
 import { logger } from 'utils/logger';
 import { ErrorCodes, HttpException } from 'exceptions';
 import { DocumentDto, DocumentFilter, ParamsDocumentDto, UpdateDocumentDto } from './dto/DocumentsDto';
+import { SubjectModel } from 'models';
 
 export const getDocuments = async () => {
   try {
@@ -97,12 +98,19 @@ export const getDocumentsByAdmin = async (filter: DocumentFilter) => {
 
 export const getDocumentsBySubjectId = async (subjectId: string) => {
   try {
-    const results = await DocumentModel.find({ is_approved: true, subject: subjectId })
+    const results = DocumentModel.find({ is_approved: true, subject: subjectId })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
+    const subject = SubjectModel.findOne({ _id: subjectId });
+
+    const resultAll = await Promise.all([results, subject]);
+
     logger.info(`Get all documents by subjectId successfully`);
-    return results;
+    return {
+      documents: resultAll[0],
+      subject: resultAll[1],
+    };
   } catch (error) {
     logger.error(`Error while get documents by subjectId: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);

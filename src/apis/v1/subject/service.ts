@@ -21,7 +21,11 @@ export const createSubject = async (input: SubjectDto) => {
     return data;
   } catch (error) {
     logger.error(`Error while create subject: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+    throw new HttpException(
+      400,
+      error?.message || ErrorCodes.BAD_REQUEST.MESSAGE,
+      error?.code || ErrorCodes.BAD_REQUEST.CODE
+    );
   }
 };
 

@@ -7,8 +7,8 @@ import { signAccessToken, signRefreshToken, verifyRefreshToken } from 'helpers/j
 import { logger } from 'utils/logger';
 import JWTPayload from 'utils/types';
 import { LoginDto } from './dto/LoginDto';
-import { createUser } from '../user/service';
-import { HOU_ENDPOINT } from 'utils/constants';
+import { createUser, getUserById } from '../user/service';
+import { HOU_ENDPOINT, ROLES } from 'utils/constants';
 import { UserDto } from '../user/dto/UserDto';
 import { RefreshTokenDto } from './dto/RefreshTokenDto';
 import { UserinfoByGoogleApiResponse } from 'utils/types/auth';
@@ -100,15 +100,61 @@ export const login = async function (input: LoginDto) {
   }
 };
 
+export const adminLogin = async function (input: LoginDto) {
+  try {
+    const { googleToken } = input;
+
+    const result = await verifyGoogleAccessToken(googleToken);
+
+    const newUser = {
+      fullname: result.name,
+      email: result.email,
+      avatar: result.picture,
+    } as UserDto;
+
+    const user = await createUser(newUser);
+
+    if (user.roles !== ROLES.ADMIN) {
+      throw new HttpException(403, 'You are not admin', 'NOT_ADMIN');
+    }
+
+    const payload: JWTPayload = {
+      name: user.fullname,
+      email: user.email,
+      avatar: user.avatar,
+      role: user.roles,
+      is_blocked: user.is_blocked,
+      _id: user._id,
+    };
+
+    const accessToken = signAccessToken(payload);
+    const refreshToken = signRefreshToken(payload);
+
+    return {
+      accessToken,
+      refreshToken,
+      userInfo: {
+        name: user.fullname,
+        email: user.email,
+        avatar: user.avatar,
+      },
+    };
+  } catch (error) {
+    logger.error(`Error while login with admin: ${error}`);
+    throw new HttpException(403, error?.message, error?.errorCode);
+  }
+};
+
 export const refreshToken = async function (input: RefreshTokenDto) {
   try {
-    const res = await verifyRefreshToken(input?.refreshToken);
+    const res = verifyRefreshToken(input?.refreshToken);
+    const user = await getUserById(res._id);
 
     const payload = {
-      name: res.name,
-      email: res.email,
-      role: res.role,
-      is_blocked: res.is_blocked,
+      name: user.fullname,
+      email: user.email,
+      role: user.roles,
+      is_blocked: user.is_blocked,
       _id: res._id,
     };
 

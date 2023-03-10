@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
 import UserModel from 'models/schema/User';
 import { logger } from 'utils/logger';
@@ -37,6 +38,16 @@ export const getUsers = async function () {
     return users;
   } catch (error) {
     logger.error(`Error while get all user: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const getUserById = async function (id: ObjectId) {
+  try {
+    const user = await UserModel.findOne({ _id: id });
+    return user;
+  } catch (error) {
+    logger.error(`Error while get user: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

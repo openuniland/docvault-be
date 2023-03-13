@@ -156,6 +156,7 @@ export const refreshToken = async function (input: RefreshTokenDto) {
       role: user.roles,
       is_blocked: user.is_blocked,
       _id: res._id,
+      avatar: user.avatar,
     };
 
     const accessToken = signAccessToken(payload);
@@ -165,9 +166,9 @@ export const refreshToken = async function (input: RefreshTokenDto) {
       accessToken,
       refreshToken: newRefreshToken,
       userInfo: {
-        name: res.name,
-        email: res.email,
-        avatar: res.avatar,
+        name: user.fullname,
+        email: user.email,
+        avatar: user.avatar,
       },
     };
   } catch (error) {

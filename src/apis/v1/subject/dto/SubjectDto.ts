@@ -1,4 +1,4 @@
-import { IsDefined, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsDefined, IsOptional, IsString } from 'class-validator';
 
 export class SubjectDto {
   @IsString()
@@ -8,8 +8,12 @@ export class SubjectDto {
 
 export class UpdateSubjectDto {
   @IsString()
-  @IsDefined()
+  @IsOptional()
   subject_name: string;
+
+  @IsOptional()
+  @IsBoolean()
+  is_approved?: boolean;
 }
 
 export class ParamsSubjectDto {

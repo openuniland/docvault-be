@@ -51,6 +51,10 @@ export const verifyAccessToken = (token: string): JWTPayload => {
     return JWT.verify(token, secret) as JWTPayload;
   } catch (error) {
     logger.error(`Error while verifying access token: ${error}`);
-    throw new HttpException(403, 'Access token is invalid', 'INVALID_TOKEN');
+    if (error?.message === 'jwt expired') {
+      throw new HttpException(401, 'Access token is expired', 'TOKEN_EXPIRED');
+    } else {
+      throw new HttpException(403, 'Access token is invalid', 'INVALID_TOKEN');
+    }
   }
 };

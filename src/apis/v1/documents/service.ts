@@ -3,7 +3,13 @@ import { ObjectId } from 'mongoose';
 import DocumentModel from 'models/schema/Document';
 import { logger } from 'utils/logger';
 import { ErrorCodes, HttpException } from 'exceptions';
-import { DocumentDto, DocumentFilter, ParamsDocumentDto, UpdateDocumentDto } from './dto/DocumentsDto';
+import {
+  DocumentApproveRequest,
+  DocumentDto,
+  DocumentFilter,
+  ParamsDocumentDto,
+  UpdateDocumentDto,
+} from './dto/DocumentsDto';
 import { SubjectModel } from 'models';
 
 export const getDocuments = async () => {
@@ -113,6 +119,26 @@ export const getDocumentsBySubjectId = async (subjectId: string) => {
     };
   } catch (error) {
     logger.error(`Error while get documents by subjectId: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const approveTheDocument = async (input: DocumentApproveRequest, id: string) => {
+  try {
+    logger.error(`Error while update approveTheDocument: ${(input.is_approved, id)}`);
+    console.log('input.is_approved', input.is_approved);
+
+    const Document = await DocumentModel.findOneAndUpdate(
+      { _id: id },
+      {
+        is_approved: input.is_approved,
+      }
+    );
+
+    logger.info(`Update approveTheDocument successfully`);
+    return Document;
+  } catch (error) {
+    logger.error(`Error while update approveTheDocument: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

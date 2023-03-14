@@ -12,18 +12,18 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
 
   const bearerToken = authHeader?.split(' ');
   if (!authHeader) {
-    return next(new HttpException(400, 'Unauthorized', 'UNAUTHORIZED'));
+    return next(new HttpException(401, 'Unauthorized', 'UNAUTHORIZED'));
   }
 
   if (!bearerToken || bearerToken[0] !== 'Bearer') {
-    return next(new HttpException(400, 'Not a Bearer token', 'BEARER_TOKEN'));
+    return next(new HttpException(401, 'Not a Bearer token', 'BEARER_TOKEN'));
   }
 
   const token = bearerToken[1];
 
   try {
     if (!token) {
-      return next(new HttpException(404, 'Token is invalid', 'INVALID_TOKEN'));
+      return next(new HttpException(403, 'Token is invalid', 'INVALID_TOKEN'));
     }
     const data: JWTPayload = verifyAccessToken(token);
 
@@ -31,7 +31,7 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
     return next();
   } catch (err) {
     logger.error(`Error in authMiddleware: ${err}`);
-    next(new HttpException(401, err?.message || err, 'Unauthorized'));
+    next(new HttpException(err?.status || 401, err?.message || err, err?.errorCode || 'Unauthorized'));
   }
 };
 

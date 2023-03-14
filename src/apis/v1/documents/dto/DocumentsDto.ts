@@ -2,7 +2,6 @@ import { IsString, IsDefined, IsOptional, IsBoolean, IsArray, IsNumber } from 'c
 import { ObjectId } from 'mongoose';
 import { Content } from 'utils/types';
 export class DocumentDto {
-<<<<<<< HEAD
   @IsDefined()
   @IsString()
   title: string;
@@ -33,8 +32,6 @@ export class DocumentDto {
 }
 
 export class CreateDocumentRequestForAdmin {
-=======
->>>>>>> 41bfadf (fix: remove validation for author field in DocumentDto)
   @IsDefined()
   @IsString()
   title: string;

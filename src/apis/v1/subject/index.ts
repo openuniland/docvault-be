@@ -11,6 +11,7 @@ const router = Router();
 router.put(
   '/:id',
   authMiddleware,
+  adminMiddleware,
   validationMiddleware(UpdateSubjectDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsSubjectDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.updateSubject)

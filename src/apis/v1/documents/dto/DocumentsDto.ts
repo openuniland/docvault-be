@@ -58,3 +58,9 @@ export class DocumentFilter {
   @IsOptional()
   is_approved?: boolean;
 }
+
+export class DocumentApproveRequest {
+  @IsBoolean()
+  @IsOptional()
+  is_approved?: boolean;
+}

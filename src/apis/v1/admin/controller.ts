@@ -5,7 +5,7 @@ import * as documentService from 'apis/v1/documents/service';
 import * as authService from 'apis/v1/auth/service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
-import { DocumentFilter } from '../documents/dto/DocumentsDto';
+import { DocumentApproveRequest, DocumentFilter, ParamsDocumentDto } from '../documents/dto/DocumentsDto';
 import { LoginDto } from '../auth/dto/LoginDto';
 
 export const getAllUserExams = async (req: RequestWithUser, res: Response) => {
@@ -25,5 +25,13 @@ export const adminLogin = async (req: RequestWithUser, res: Response) => {
   const token: LoginDto = checker ? { googleToken: input[0] } : { googleToken: input };
 
   const result = await authService.adminLogin(token);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};
+
+export const approveTheDocumentByAdmin = async (req: RequestWithUser, res: Response) => {
+  const body: DocumentApproveRequest = req.body;
+  const params: ParamsDocumentDto = req.params;
+
+  const result = await documentService.approveTheDocument(body, params.id);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

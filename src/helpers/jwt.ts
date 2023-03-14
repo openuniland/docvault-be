@@ -3,6 +3,7 @@ import JWT from 'jsonwebtoken';
 import configs from 'configs';
 import JWTPayload from 'utils/types';
 import { logger } from 'utils/logger';
+import { HttpException } from 'exceptions';
 
 export const signRefreshToken = (payload: JWTPayload) => {
   try {
@@ -39,7 +40,7 @@ export const verifyRefreshToken = (token: string) => {
     return JWT.verify(token, secret) as JWTPayload;
   } catch (error) {
     logger.error(`Error while verifying refresh token: ${error}`);
-    throw error;
+    throw new HttpException(403, 'Refresht token is invalid', 'INVALID_TOKEN');
   }
 };
 
@@ -50,6 +51,6 @@ export const verifyAccessToken = (token: string): JWTPayload => {
     return JWT.verify(token, secret) as JWTPayload;
   } catch (error) {
     logger.error(`Error while verifying access token: ${error}`);
-    throw error;
+    throw new HttpException(403, 'Access token is invalid', 'INVALID_TOKEN');
   }
 };

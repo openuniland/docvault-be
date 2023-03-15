@@ -23,10 +23,36 @@ export class DocumentDto {
   school_year: string;
 
   @IsOptional()
+  @IsArray()
+  content: Array<Content>;
+}
+
+export class CreateDocumentRequestForAdmin {
+  @IsDefined()
+  @IsString()
+  title: string;
+
+  @IsString()
+  @IsOptional()
+  description: string;
+
+  @IsDefined()
+  @IsString()
+  subject: ObjectId;
+
+  @IsDefined()
+  @IsNumber()
+  semester: number;
+
+  @IsDefined()
+  @IsString()
+  school_year: string;
+
+  @IsOptional()
   @IsBoolean()
   is_approved: boolean;
 
-  @IsDefined()
+  @IsOptional()
   @IsArray()
   content: Array<Content>;
 }

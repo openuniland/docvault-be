@@ -3,7 +3,11 @@ import { Router } from 'express';
 import { asyncRouteHandler, authMiddleware, adminMiddleware } from 'middlewares';
 import { validationMiddleware } from 'middlewares/validation';
 import { APP_CONSTANTS } from 'utils/constants';
-import { DocumentApproveRequest, ParamsDocumentDto } from '../documents/dto/DocumentsDto';
+import {
+  CreateDocumentRequestForAdmin,
+  DocumentApproveRequest,
+  ParamsDocumentDto,
+} from '../documents/dto/DocumentsDto';
 import * as controller from './controller';
 
 const router = Router();
@@ -17,6 +21,13 @@ router.patch(
   validationMiddleware(DocumentApproveRequest, APP_CONSTANTS.body),
   validationMiddleware(ParamsDocumentDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.approveTheDocumentByAdmin)
+);
+router.post(
+  '/documents',
+  authMiddleware,
+  adminMiddleware,
+  validationMiddleware(CreateDocumentRequestForAdmin, APP_CONSTANTS.body),
+  asyncRouteHandler(controller.createNewDocumentByAdmin)
 );
 router.post('/login', asyncRouteHandler(controller.adminLogin));
 

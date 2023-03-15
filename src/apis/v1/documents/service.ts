@@ -4,6 +4,7 @@ import DocumentModel from 'models/schema/Document';
 import { logger } from 'utils/logger';
 import { ErrorCodes, HttpException } from 'exceptions';
 import {
+  CreateDocumentRequestForAdmin,
   DocumentApproveRequest,
   DocumentDto,
   DocumentFilter,
@@ -39,6 +40,23 @@ export const createDocument = async (input: DocumentDto, author: ObjectId) => {
     return result;
   } catch (error) {
     logger.error(`Error while create new document: ${error}`);
+    throw new HttpException(400, error?.message, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const createDocumentByAdmin = async (input: CreateDocumentRequestForAdmin, author: ObjectId) => {
+  try {
+    const document = {
+      author,
+      ...input,
+    };
+
+    const result = await DocumentModel.create(document);
+
+    logger.info(`Create new document by admin successfully`);
+    return result;
+  } catch (error) {
+    logger.error(`Error while create new document by admin: ${error}`);
     throw new HttpException(400, error?.message, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

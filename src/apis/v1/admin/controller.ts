@@ -5,8 +5,14 @@ import * as documentService from 'apis/v1/documents/service';
 import * as authService from 'apis/v1/auth/service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
-import { DocumentApproveRequest, DocumentFilter, ParamsDocumentDto } from '../documents/dto/DocumentsDto';
+import {
+  CreateDocumentRequestForAdmin,
+  DocumentApproveRequest,
+  DocumentFilter,
+  ParamsDocumentDto,
+} from '../documents/dto/DocumentsDto';
 import { LoginDto } from '../auth/dto/LoginDto';
+import { ObjectId } from 'mongoose';
 
 export const getAllUserExams = async (req: RequestWithUser, res: Response) => {
   const result = await userExamService.getAllUserExams();
@@ -33,5 +39,13 @@ export const approveTheDocumentByAdmin = async (req: RequestWithUser, res: Respo
   const params: ParamsDocumentDto = req.params;
 
   const result = await documentService.approveTheDocument(body, params.id);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};
+
+export const createNewDocumentByAdmin = async (req: RequestWithUser, res: Response) => {
+  const body: CreateDocumentRequestForAdmin = req.body;
+  const author: ObjectId = req?.user?._id;
+
+  const result = await documentService.createDocumentByAdmin(body, author);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

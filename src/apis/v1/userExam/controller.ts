@@ -27,9 +27,9 @@ export const getAllUserExamsOfUser = async (req: RequestWithUser, res: Response)
   const author: ObjectId = req?.user?._id;
   const filter: UserExamFilter = req.query;
   const urlParams: URLParams = req.searchParams;
-  const result = await service.getAllUserExamsOfUser(author, filter, urlParams);
+  const { result, meta } = await service.getAllUserExamsOfUser(author, filter, urlParams);
 
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 
 export const getUserExamOfUser = async (req: RequestWithUser, res: Response) => {

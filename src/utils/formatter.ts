@@ -15,7 +15,8 @@ export class Formatter {
     time: number,
     message?: string,
     total?: number,
-    currentPage?: number
+    currentPage?: number,
+    pageSize?: number
   ): ApiResponse => {
     let numRecords: number = 0;
     let errors: Error = null;
@@ -39,7 +40,8 @@ export class Formatter {
       meta: {
         length: numRecords,
         took: time,
-        ...(isResultArray && { currentPage }),
+        currentPage,
+        pageSize,
         total: total ? total : numRecords,
       },
     };

@@ -10,11 +10,21 @@ export const getSubjects = async (input: QuerySubjectDto, urlParams: URLParams) 
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
-    const data = await SubjectModel.find(input)
+    const count = SubjectModel.countDocuments(input);
+    const data = SubjectModel.find(input)
       .skip(pageSize * currentPage)
       .limit(pageSize);
 
-    return data;
+    const resolveAll = await Promise.all([count, data]);
+
+    return {
+      result: resolveAll[1],
+      meta: {
+        total: resolveAll[0],
+        pageSize,
+        currentPage,
+      },
+    };
   } catch (error) {
     logger.error(`Error while get subjects: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);

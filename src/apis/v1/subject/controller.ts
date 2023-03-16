@@ -9,8 +9,8 @@ import URLParams from 'utils/rest/urlparams';
 export const getSubjects = async (req: RequestWithUser, res: Response) => {
   const urlParams: URLParams = req.searchParams;
   const input: QuerySubjectDto = req.query;
-  const result = await service.getSubjects(input, urlParams);
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  const { result, meta } = await service.getSubjects(input, urlParams);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 
 export const createSubject = async (req: RequestWithUser, res: Response) => {

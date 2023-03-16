@@ -10,9 +10,9 @@ import URLParams from 'utils/rest/urlparams';
 
 export const getExams = async (req: RequestWithUser, res: Response) => {
   const urlParams: URLParams = req.searchParams;
-  const result = await service.getExams(urlParams);
+  const { result, meta } = await service.getExams(urlParams);
 
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 
 export const getExamById = async (req: RequestWithUser, res: Response) => {
@@ -25,9 +25,9 @@ export const getExamById = async (req: RequestWithUser, res: Response) => {
 export const getExamBySubject = async (req: RequestWithUser, res: Response) => {
   const urlParams: URLParams = req.searchParams;
   const input: QueryExamDto = req.query;
-  const result = await service.getExamBySubject(input.subject_name, urlParams);
+  const { result, meta } = await service.getExamBySubject(input.subject_name, urlParams);
 
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 
 export const createExam = async (req: RequestWithUser, res: Response) => {

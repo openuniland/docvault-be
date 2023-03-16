@@ -20,14 +20,24 @@ export const getDocuments = async (urlParams: URLParams) => {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
-    const results = await DocumentModel.find({ is_approved: true })
+    const count = DocumentModel.countDocuments({ is_approved: true });
+
+    const results = DocumentModel.find({ is_approved: true })
       .skip(pageSize * currentPage)
       .limit(pageSize)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
     logger.info(`Get all documents successfully`);
-    return results;
+    const resolveAll = await Promise.all([count, results]);
+    return {
+      result: resolveAll[1],
+      meta: {
+        total: resolveAll[0],
+        pageSize,
+        currentPage,
+      },
+    };
   } catch (error) {
     logger.error(`Error while get documents: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
@@ -118,14 +128,25 @@ export const getDocumentsByAdmin = async (filter: DocumentFilter, urlParams: URL
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
-    const results = await DocumentModel.find({ ...filter })
+    const count = DocumentModel.countDocuments({ ...filter });
+
+    const results = DocumentModel.find({ ...filter })
       .skip(pageSize * currentPage)
       .limit(pageSize)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
     logger.info(`Get all documents successfully`);
-    return results;
+
+    const resultAll = await Promise.all([count, results]);
+    return {
+      result: resultAll[1],
+      meta: {
+        total: resultAll[0],
+        currentPage,
+        pageSize,
+      },
+    };
   } catch (error) {
     logger.error(`Error while get documents: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);

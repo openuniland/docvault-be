@@ -17,15 +17,15 @@ import URLParams from 'utils/rest/urlparams';
 
 export const getAllUserExams = async (req: RequestWithUser, res: Response) => {
   const urlParams: URLParams = req.searchParams;
-  const result = await userExamService.getAllUserExams(urlParams);
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  const { result, meta } = await userExamService.getAllUserExams(urlParams);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 
 export const getDocumentsByAdmin = async (req: RequestWithUser, res: Response) => {
   const query: DocumentFilter = req.query;
   const urlParams: URLParams = req.searchParams;
-  const result = await documentService.getDocumentsByAdmin(query, urlParams);
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  const { result, meta } = await documentService.getDocumentsByAdmin(query, urlParams);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 
 export const adminLogin = async (req: RequestWithUser, res: Response) => {

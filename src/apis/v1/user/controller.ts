@@ -16,8 +16,10 @@ export const createUser = async (request: RequestWithUser, response: Response) =
 
 export const getUsers = async (req: RequestWithUser, response: Response) => {
   const urlParams: URLParams = req.searchParams;
-  const result = await service.getUsers(urlParams);
-  response.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  const { result, meta } = await service.getUsers(urlParams);
+  response.send(
+    fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize)
+  );
 };
 
 export const updateUser = async (request: RequestWithUser, response: Response) => {

@@ -12,10 +12,13 @@ export const getExams = async (urlParams: URLParams) => {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
+    const order = urlParams.order || 'DESC';
+
     const count = ExamModel.countDocuments();
     const data = ExamModel.find()
       .skip(pageSize * currentPage)
       .limit(pageSize)
+      .sort({ created_at: order === 'DESC' ? -1 : 1 })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate({
         path: 'questions',
@@ -86,6 +89,7 @@ export const getExamBySubject = async (input: string, urlParams: URLParams) => {
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+    const order = urlParams.order || 'DESC';
 
     const subjectId = await SubjectModel.findOne({ subject_name: input });
 
@@ -93,6 +97,7 @@ export const getExamBySubject = async (input: string, urlParams: URLParams) => {
     const data = ExamModel.find({ subject: subjectId })
       .skip(pageSize * currentPage)
       .limit(pageSize)
+      .sort({ created_at: order === 'DESC' ? -1 : 1 })
       .populate('author')
       .populate({
         path: 'questions',

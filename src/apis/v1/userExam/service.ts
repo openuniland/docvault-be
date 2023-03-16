@@ -84,11 +84,14 @@ export const getAllUserExams = async (urlParams: URLParams) => {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
+    const order = urlParams.order || 'DESC';
+
     const count = UserExamModel.countDocuments();
 
     const result = UserExamModel.find()
       .skip(pageSize * currentPage)
       .limit(pageSize)
+      .sort({ created_at: order === 'DESC' ? -1 : 1 })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate({
         path: 'questions',
@@ -132,11 +135,14 @@ export const getAllUserExamsOfUser = async (userId: ObjectId, filter: UserExamFi
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
+    const order = urlParams.order || 'DESC';
+
     const count = UserExamModel.countDocuments({ author: userId, ...filter });
 
     const result = UserExamModel.find({ author: userId, ...filter })
       .skip(pageSize * currentPage)
       .limit(pageSize)
+      .sort({ created_at: order === 'DESC' ? -1 : 1 })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject')
       .populate({

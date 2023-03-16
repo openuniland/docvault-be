@@ -10,11 +10,21 @@ export const getAnswers = async (urlParams: URLParams) => {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
-    const data = await AnswerModel.find()
+    const count = AnswerModel.countDocuments();
+
+    const data = AnswerModel.find()
       .skip(pageSize * currentPage)
       .limit(pageSize);
 
-    return data;
+    const resolveAll = await Promise.all([count, data]);
+    return {
+      result: resolveAll[1],
+      meta: {
+        total: resolveAll[0],
+        pageSize,
+        currentPage,
+      },
+    };
   } catch (error) {
     logger.error(`Error while get answer: ${error}`);
   }

@@ -12,7 +12,8 @@ export const getExams = async (urlParams: URLParams) => {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
-    const data = await ExamModel.find()
+    const count = ExamModel.countDocuments();
+    const data = ExamModel.find()
       .skip(pageSize * currentPage)
       .limit(pageSize)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
@@ -35,7 +36,15 @@ export const getExams = async (urlParams: URLParams) => {
       })
       .populate('subject');
 
-    return data;
+    const resolveAll = await Promise.all([count, data]);
+    return {
+      result: resolveAll[1],
+      meta: {
+        total: resolveAll[0],
+        pageSize,
+        currentPage,
+      },
+    };
   } catch (error) {
     logger.error(`Error while get all exam: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
@@ -79,7 +88,9 @@ export const getExamBySubject = async (input: string, urlParams: URLParams) => {
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
     const subjectId = await SubjectModel.findOne({ subject_name: input });
-    const data = await ExamModel.find({ subject: subjectId })
+
+    const count = ExamModel.countDocuments({ subject: subjectId });
+    const data = ExamModel.find({ subject: subjectId })
       .skip(pageSize * currentPage)
       .limit(pageSize)
       .populate('author')
@@ -102,7 +113,16 @@ export const getExamBySubject = async (input: string, urlParams: URLParams) => {
       })
       .populate('subject');
 
-    return data;
+    const resolveAll = await Promise.all([count, data]);
+
+    return {
+      result: resolveAll[1],
+      meta: {
+        total: resolveAll[0],
+        pageSize,
+        currentPage,
+      },
+    };
   } catch (error) {
     logger.error(`Error while get exam by subject: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);

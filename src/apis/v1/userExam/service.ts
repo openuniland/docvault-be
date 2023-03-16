@@ -84,7 +84,9 @@ export const getAllUserExams = async (urlParams: URLParams) => {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
-    const result = await UserExamModel.find()
+    const count = UserExamModel.countDocuments();
+
+    const result = UserExamModel.find()
       .skip(pageSize * currentPage)
       .limit(pageSize)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
@@ -110,7 +112,15 @@ export const getAllUserExams = async (urlParams: URLParams) => {
 
     logger.info(`Get all user exams successfully`);
 
-    return result;
+    const resolveAll = await Promise.all([count, result]);
+    return {
+      meta: {
+        total: resolveAll[0],
+        pageSize,
+        currentPage,
+      },
+      result: resolveAll[1],
+    };
   } catch (error) {
     logger.error(`Error while get all user exams : ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
@@ -122,7 +132,9 @@ export const getAllUserExamsOfUser = async (userId: ObjectId, filter: UserExamFi
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
-    const result = await UserExamModel.find({ author: userId, ...filter })
+    const count = UserExamModel.countDocuments({ author: userId, ...filter });
+
+    const result = UserExamModel.find({ author: userId, ...filter })
       .skip(pageSize * currentPage)
       .limit(pageSize)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
@@ -149,7 +161,16 @@ export const getAllUserExamsOfUser = async (userId: ObjectId, filter: UserExamFi
 
     logger.info(`Get all user exams successfully`);
 
-    return result;
+    const resolveAll = await Promise.all([count, result]);
+
+    return {
+      meta: {
+        total: resolveAll[0],
+        pageSize,
+        currentPage,
+      },
+      result: resolveAll[1],
+    };
   } catch (error) {
     logger.error(`Error while get all user exams : ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);

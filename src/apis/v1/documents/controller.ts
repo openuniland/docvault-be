@@ -10,8 +10,8 @@ import URLParams from 'utils/rest/urlparams';
 
 export const getDocuments = async (req: RequestWithUser, res: Response) => {
   const urlParams: URLParams = req.searchParams;
-  const result = await service.getDocuments(urlParams);
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  const { result, meta } = await service.getDocuments(urlParams);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 
 export const createDocument = async (req: RequestWithUser, res: Response) => {

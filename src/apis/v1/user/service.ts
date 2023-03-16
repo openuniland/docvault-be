@@ -38,11 +38,21 @@ export const getUsers = async function (urlParams: URLParams) {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
-    const users = await UserModel.find()
+    const count = UserModel.countDocuments();
+    const users = UserModel.find()
       .skip(pageSize * currentPage)
       .limit(pageSize);
 
-    return users;
+    const resolveAll = await Promise.all([count, users]);
+
+    return {
+      result: resolveAll[1],
+      meta: {
+        total: resolveAll[0],
+        pageSize,
+        currentPage,
+      },
+    };
   } catch (error) {
     logger.error(`Error while get all user: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);

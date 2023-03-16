@@ -20,11 +20,14 @@ export const getDocuments = async (urlParams: URLParams) => {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
+    const order = urlParams.order || 'DESC';
+
     const count = DocumentModel.countDocuments({ is_approved: true });
 
     const results = DocumentModel.find({ is_approved: true })
       .skip(pageSize * currentPage)
       .limit(pageSize)
+      .sort({ created_at: order === 'DESC' ? -1 : 1 })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
@@ -128,11 +131,14 @@ export const getDocumentsByAdmin = async (filter: DocumentFilter, urlParams: URL
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
+    const order = urlParams.order || 'DESC';
+
     const count = DocumentModel.countDocuments({ ...filter });
 
     const results = DocumentModel.find({ ...filter })
       .skip(pageSize * currentPage)
       .limit(pageSize)
+      .sort({ created_at: order === 'DESC' ? -1 : 1 })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 

@@ -10,11 +10,14 @@ export const getAnswers = async (urlParams: URLParams) => {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
+    const order = urlParams.order || 'DESC';
+
     const count = AnswerModel.countDocuments();
 
     const data = AnswerModel.find()
       .skip(pageSize * currentPage)
-      .limit(pageSize);
+      .limit(pageSize)
+      .sort({ created_at: order === 'DESC' ? -1 : 1 });
 
     const resolveAll = await Promise.all([count, data]);
     return {

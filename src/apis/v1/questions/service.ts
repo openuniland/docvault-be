@@ -22,11 +22,13 @@ export const getQuestions = async function (urlParams: URLParams) {
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+    const order = urlParams.order || 'DESC';
 
     const count = QuestionModel.countDocuments();
     const question = QuestionModel.find()
       .skip(pageSize * currentPage)
       .limit(pageSize)
+      .sort({ created_at: order === 'DESC' ? -1 : 1 })
       .populate('subject')
       .populate('correct_answer')
       .populate('answers');

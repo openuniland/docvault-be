@@ -4,6 +4,8 @@ import UserModel from 'models/schema/User';
 import { logger } from 'utils/logger';
 
 import { UserDto, UpdateUserDto } from './dto/UserDto';
+import URLParams from 'utils/rest/urlparams';
+import { DEFAULT_PAGING } from 'utils/constants';
 
 export const createUser = async function (input: UserDto) {
   try {
@@ -31,9 +33,14 @@ export const createUser = async function (input: UserDto) {
   }
 };
 
-export const getUsers = async function () {
+export const getUsers = async function (urlParams: URLParams) {
   try {
-    const users = await UserModel.find();
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
+    const users = await UserModel.find()
+      .skip(pageSize * currentPage)
+      .limit(pageSize);
 
     return users;
   } catch (error) {

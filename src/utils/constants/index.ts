@@ -8,7 +8,7 @@ export const APP_CONSTANTS = {
 };
 
 export const DEFAULT_PAGING = {
-  limit: 100,
+  limit: 10,
   skip: 0,
 };
 

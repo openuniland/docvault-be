@@ -1,11 +1,18 @@
 import { ErrorCodes, HttpException } from 'exceptions';
 import { SubjectModel } from 'models';
+import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
+import URLParams from 'utils/rest/urlparams';
 import { SubjectDto, UpdateSubjectDto, QuerySubjectDto } from './dto/SubjectDto';
 
-export const getSubjects = async (input: QuerySubjectDto) => {
+export const getSubjects = async (input: QuerySubjectDto, urlParams: URLParams) => {
   try {
-    const data = await SubjectModel.find(input);
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
+    const data = await SubjectModel.find(input)
+      .skip(pageSize * currentPage)
+      .limit(pageSize);
 
     return data;
   } catch (error) {

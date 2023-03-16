@@ -4,9 +4,11 @@ import * as service from './service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 import { AnswerDto, ParamsAnswerDto, UpdateAnswerDto } from './dto/AnswerDto';
+import URLParams from 'utils/rest/urlparams';
 
 export const getAnswers = async (req: RequestWithUser, res: Response) => {
-  const result = await service.getAnswers();
+  const urlParams: URLParams = req.searchParams;
+  const result = await service.getAnswers(urlParams);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

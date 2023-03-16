@@ -1,11 +1,18 @@
 import { ErrorCodes, HttpException } from 'exceptions';
 import { AnswerModel } from 'models';
+import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
+import URLParams from 'utils/rest/urlparams';
 import { AnswerDto, UpdateAnswerDto } from './dto/AnswerDto';
 
-export const getAnswers = async () => {
+export const getAnswers = async (urlParams: URLParams) => {
   try {
-    const data = await AnswerModel.find();
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
+    const data = await AnswerModel.find()
+      .skip(pageSize * currentPage)
+      .limit(pageSize);
 
     return data;
   } catch (error) {

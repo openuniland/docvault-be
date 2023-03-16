@@ -5,9 +5,11 @@ import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 
 import { QuestionDto, UpdateQuestionDto, ParamsQuestionDto } from './dto/QuestionDto';
+import URLParams from 'utils/rest/urlparams';
 
 export const getQuestions = async (req: RequestWithUser, res: Response) => {
-  const result = await service.getQuestions();
+  const urlParams: URLParams = req.searchParams;
+  const result = await service.getQuestions(urlParams);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 

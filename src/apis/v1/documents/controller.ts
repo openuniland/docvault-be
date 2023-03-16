@@ -6,9 +6,11 @@ import RequestWithUser from 'utils/rest/request';
 
 import { DocumentDto, UpdateDocumentDto, ParamsDocumentDto } from './dto/DocumentsDto';
 import { ObjectId } from 'mongoose';
+import URLParams from 'utils/rest/urlparams';
 
 export const getDocuments = async (req: RequestWithUser, res: Response) => {
-  const result = await service.getDocuments();
+  const urlParams: URLParams = req.searchParams;
+  const result = await service.getDocuments(urlParams);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 

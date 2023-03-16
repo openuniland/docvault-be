@@ -19,7 +19,6 @@ export const getDocuments = async (urlParams: URLParams) => {
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
-
     const order = urlParams.order || 'DESC';
 
     const count = DocumentModel.countDocuments({ is_approved: true });
@@ -153,7 +152,6 @@ export const getDocumentsByAdmin = async (filter: DocumentFilter, urlParams: URL
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
-
     const order = urlParams.order || 'DESC';
 
     const count = DocumentModel.countDocuments({ ...filter });

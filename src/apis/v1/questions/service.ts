@@ -1,6 +1,8 @@
 import { ErrorCodes, HttpException } from 'exceptions';
 import QuestionModel from 'models/schema/Question';
+import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
+import URLParams from 'utils/rest/urlparams';
 
 import { QuestionDto, UpdateQuestionDto } from './dto/QuestionDto';
 
@@ -16,9 +18,17 @@ export const createQuestion = async function (input: QuestionDto) {
   }
 };
 
-export const getQuestions = async function () {
+export const getQuestions = async function (urlParams: URLParams) {
   try {
-    const question = await QuestionModel.find().populate('subject').populate('correct_answer').populate('answers');
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
+    const question = await QuestionModel.find()
+      .skip(pageSize * currentPage)
+      .limit(pageSize)
+      .populate('subject')
+      .populate('correct_answer')
+      .populate('answers');
     logger.info(`Get questions successfully`);
 
     return question;

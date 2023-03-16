@@ -8,6 +8,8 @@ import { getExamById } from 'apis/v1/exam/service';
 import { createUserAnswer } from 'apis/v1/userAnswer/service';
 import { UserAnswerModel } from 'models';
 import Question from 'models/types/Question';
+import URLParams from 'utils/rest/urlparams';
+import { DEFAULT_PAGING } from 'utils/constants';
 
 export const createUserExam = async (input: UserExamDto, author: ObjectId) => {
   try {
@@ -77,9 +79,14 @@ export const deleteUserExam = async (id: string) => {
   }
 };
 
-export const getAllUserExams = async () => {
+export const getAllUserExams = async (urlParams: URLParams) => {
   try {
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
     const result = await UserExamModel.find()
+      .skip(pageSize * currentPage)
+      .limit(pageSize)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate({
         path: 'questions',
@@ -110,9 +117,14 @@ export const getAllUserExams = async () => {
   }
 };
 
-export const getAllUserExamsOfUser = async (userId: ObjectId, filter: UserExamFilter) => {
+export const getAllUserExamsOfUser = async (userId: ObjectId, filter: UserExamFilter, urlParams: URLParams) => {
   try {
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
     const result = await UserExamModel.find({ author: userId, ...filter })
+      .skip(pageSize * currentPage)
+      .limit(pageSize)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject')
       .populate({

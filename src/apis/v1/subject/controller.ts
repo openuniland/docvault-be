@@ -4,10 +4,12 @@ import * as service from './service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 import { ParamsSubjectDto, SubjectDto, UpdateSubjectDto, QuerySubjectDto } from './dto/SubjectDto';
+import URLParams from 'utils/rest/urlparams';
 
 export const getSubjects = async (req: RequestWithUser, res: Response) => {
+  const urlParams: URLParams = req.searchParams;
   const input: QuerySubjectDto = req.query;
-  const result = await service.getSubjects(input);
+  const result = await service.getSubjects(input, urlParams);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 

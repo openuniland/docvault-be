@@ -5,6 +5,7 @@ import * as service from './service';
 import fmt from 'utils/formatter';
 
 import { UserDto, UpdateUserDto, ParamsUserDto } from './dto/UserDto';
+import URLParams from 'utils/rest/urlparams';
 
 export const createUser = async (request: RequestWithUser, response: Response) => {
   const input: UserDto = request.body;
@@ -13,9 +14,10 @@ export const createUser = async (request: RequestWithUser, response: Response) =
   response.send(fmt.formatResponse(result, Date.now() - request.startTime, 'OK'));
 };
 
-export const getUsers = async (request: RequestWithUser, response: Response) => {
-  const result = await service.getUsers();
-  response.send(fmt.formatResponse(result, Date.now() - request.startTime, 'OK'));
+export const getUsers = async (req: RequestWithUser, response: Response) => {
+  const urlParams: URLParams = req.searchParams;
+  const result = await service.getUsers(urlParams);
+  response.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
 export const updateUser = async (request: RequestWithUser, response: Response) => {

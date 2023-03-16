@@ -1,13 +1,20 @@
 import { ErrorCodes, HttpException } from 'exceptions';
 import { ExamModel, SubjectModel } from 'models';
 import { ObjectId } from 'mongoose';
+import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
+import URLParams from 'utils/rest/urlparams';
 import { ExamDto, UpdateExamDto } from './dto/ExamDto';
 
 //Get all user's exams
-export const getExams = async () => {
+export const getExams = async (urlParams: URLParams) => {
   try {
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
     const data = await ExamModel.find()
+      .skip(pageSize * currentPage)
+      .limit(pageSize)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate({
         path: 'questions',
@@ -66,10 +73,15 @@ export const getExamById = async (id: string) => {
   }
 };
 
-export const getExamBySubject = async (input: string) => {
+export const getExamBySubject = async (input: string, urlParams: URLParams) => {
   try {
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
     const subjectId = await SubjectModel.findOne({ subject_name: input });
     const data = await ExamModel.find({ subject: subjectId })
+      .skip(pageSize * currentPage)
+      .limit(pageSize)
       .populate('author')
       .populate({
         path: 'questions',

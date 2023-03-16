@@ -12,10 +12,17 @@ import {
   UpdateDocumentDto,
 } from './dto/DocumentsDto';
 import { SubjectModel } from 'models';
+import URLParams from 'utils/rest/urlparams';
+import { DEFAULT_PAGING } from 'utils/constants';
 
-export const getDocuments = async () => {
+export const getDocuments = async (urlParams: URLParams) => {
   try {
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
     const results = await DocumentModel.find({ is_approved: true })
+      .skip(pageSize * currentPage)
+      .limit(pageSize)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
@@ -106,9 +113,14 @@ export const getDocumentById = async (params: ParamsDocumentDto) => {
   }
 };
 
-export const getDocumentsByAdmin = async (filter: DocumentFilter) => {
+export const getDocumentsByAdmin = async (filter: DocumentFilter, urlParams: URLParams) => {
   try {
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
     const results = await DocumentModel.find({ ...filter })
+      .skip(pageSize * currentPage)
+      .limit(pageSize)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 

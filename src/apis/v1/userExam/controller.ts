@@ -6,6 +6,7 @@ import RequestWithUser from 'utils/rest/request';
 
 import { UserExamDto, ParamsUserExamDto, UserExamFilter, SubmitTheExamDto } from './dto/UserExamDto';
 import { ObjectId } from 'mongoose';
+import URLParams from 'utils/rest/urlparams';
 
 export const createUserExam = async (req: RequestWithUser, res: Response) => {
   const input: UserExamDto = req.body;
@@ -25,7 +26,8 @@ export const deleteUserExam = async (req: RequestWithUser, res: Response) => {
 export const getAllUserExamsOfUser = async (req: RequestWithUser, res: Response) => {
   const author: ObjectId = req?.user?._id;
   const filter: UserExamFilter = req.query;
-  const result = await service.getAllUserExamsOfUser(author, filter);
+  const urlParams: URLParams = req.searchParams;
+  const result = await service.getAllUserExamsOfUser(author, filter, urlParams);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

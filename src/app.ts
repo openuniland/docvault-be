@@ -10,6 +10,7 @@ import { logger } from 'utils/logger';
 import routers from 'apis';
 import configs from 'configs';
 import initializeResources from 'resources';
+import URLParams from 'utils/rest/urlparams';
 
 const app = express();
 
@@ -37,6 +38,7 @@ function initializeMiddlewares() {
   // use for computing processing time on response
   app.use((request: any, _response: Response, next: NextFunction) => {
     request.startTime = Date.now();
+    request.searchParams = request.query as URLParams;
     next();
   });
 }

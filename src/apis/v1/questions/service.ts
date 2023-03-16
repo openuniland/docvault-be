@@ -23,8 +23,12 @@ export const getQuestions = async function (urlParams: URLParams) {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
+<<<<<<< HEAD
     const count = QuestionModel.countDocuments();
     const question = QuestionModel.find()
+=======
+    const question = await QuestionModel.find()
+>>>>>>> master
       .skip(pageSize * currentPage)
       .limit(pageSize)
       .populate('subject')

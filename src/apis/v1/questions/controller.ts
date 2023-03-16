@@ -9,8 +9,13 @@ import URLParams from 'utils/rest/urlparams';
 
 export const getQuestions = async (req: RequestWithUser, res: Response) => {
   const urlParams: URLParams = req.searchParams;
+<<<<<<< HEAD
   const { result, meta } = await service.getQuestions(urlParams);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
+=======
+  const result = await service.getQuestions(urlParams);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+>>>>>>> master
 };
 
 export const createQuestion = async (req: RequestWithUser, res: Response) => {

@@ -177,3 +177,25 @@ export const deleteExam = async (id: string) => {
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
+
+export const getExamsBySubjectId = async (subjectId: string) => {
+  try {
+    const results = ExamModel.find({ is_approved: true, subject: subjectId })
+      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
+      .populate('question', '-is_blocked -roles -created_at -updated_at -__v')
+      .populate('subject', '-is_deleted -created_at -updated_at -__v');
+
+    const subject = SubjectModel.findOne({ _id: subjectId });
+
+    const resultAll = await Promise.all([results, subject]);
+
+    logger.info(`Get all exams by subjectId successfully`);
+    return {
+      exams: resultAll[0],
+      subject: resultAll[1],
+    };
+  } catch (error) {
+    logger.error(`Error while get exams by subjectId: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};

@@ -24,6 +24,13 @@ router.get(
   asyncRouteHandler(controller.getExamById)
 );
 
+router.get(
+  '/subject/:id',
+  authMiddleware,
+  validationMiddleware(ParamsExamDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.getExamsBySubjectId)
+);
+
 router.post(
   '/',
   authMiddleware,

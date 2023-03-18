@@ -52,3 +52,9 @@ export const deleteExam = async (req: RequestWithUser, res: Response) => {
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
+
+export const getExamsBySubjectId = async (req: RequestWithUser, res: Response) => {
+  const input: ParamsExamDto = req.params;
+  const result = await service.getExamsBySubjectId(input.id);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};

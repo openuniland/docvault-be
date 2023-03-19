@@ -2,7 +2,7 @@ import { IsString, IsDefined, IsBoolean, IsOptional } from 'class-validator';
 
 export class UserDto {
   @IsString()
-  @IsDefined()
+  @IsOptional()
   fullname: string;
 
   @IsString()

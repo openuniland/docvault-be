@@ -7,7 +7,7 @@ import { signAccessToken, signRefreshToken, verifyRefreshToken } from 'helpers/j
 import { logger } from 'utils/logger';
 import JWTPayload from 'utils/types';
 import { LoginDto } from './dto/LoginDto';
-import { createUser, getUserById } from '../user/service';
+import { createUser, getUserByEmail, getUserById } from '../user/service';
 import { HOU_ENDPOINT, ROLES } from 'utils/constants';
 import { UserDto } from '../user/dto/UserDto';
 import { RefreshTokenDto } from './dto/RefreshTokenDto';
@@ -52,7 +52,9 @@ export const verifyGoogleAccessToken = async (accessToken: string) => {
 
   const userInfo: UserinfoByGoogleApiResponse = res.data;
 
-  if (!organizationValidation(userInfo.email)) {
+  const userExisted = await getUserByEmail(userInfo.email);
+
+  if (!organizationValidation(userInfo.email) && !userExisted) {
     throw new HttpException(403, 'Does not belong to our organization', 'NOT_BELONG_TO_ORGANIZATION');
   }
 

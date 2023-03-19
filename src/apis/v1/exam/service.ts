@@ -181,7 +181,7 @@ export const deleteExam = async (id: string) => {
 export const getExamsBySubjectId = async (subjectId: string) => {
   try {
     const results = ExamModel.find({ is_approved: true, subject: subjectId })
-      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
+    .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('questions', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 

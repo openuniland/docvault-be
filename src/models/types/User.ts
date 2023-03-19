@@ -6,4 +6,5 @@ export default interface User extends Document {
   avatar?: string;
   is_blocked: boolean;
   roles: string;
+  is_deleted?: boolean;
 }

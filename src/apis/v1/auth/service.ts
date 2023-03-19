@@ -152,6 +152,9 @@ export const refreshToken = async function (input: RefreshTokenDto) {
     const res = verifyRefreshToken(input?.refreshToken);
     const user = await getUserById(res._id);
 
+    console.log('user', user);
+    console.log('res', res);
+
     const payload = {
       name: user.fullname,
       email: user.email,

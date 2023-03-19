@@ -1,8 +1,9 @@
-import { Model, model, Schema } from 'mongoose';
+import mongoose, { Model, model, Schema } from 'mongoose';
 import { MODELS } from 'utils/constants/models';
 
 import User from 'models/types/User';
 import { ROLES } from 'utils/constants';
+import { softDeletePlugin } from 'models/SoftDeleteModel';
 
 const UserSchema = new Schema<User>(
   {
@@ -16,6 +17,9 @@ const UserSchema = new Schema<User>(
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   }
 );
+
+mongoose.plugin(softDeletePlugin);
+
 UserSchema.index({ fullname: 1, email: 1 });
 const UserModel: Model<User> = model<User>(MODELS.user, UserSchema, MODELS.user);
 export default UserModel;

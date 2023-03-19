@@ -65,6 +65,7 @@ export const getUsers = async function (urlParams: URLParams) {
 export const getUserById = async function (id: ObjectId) {
   try {
     const user = await UserModel.findOne({ _id: id });
+
     return user;
   } catch (error) {
     logger.error(`Error while get user: ${error}`);

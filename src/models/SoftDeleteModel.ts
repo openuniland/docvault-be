@@ -2,10 +2,10 @@ import mongoose from 'mongoose';
 
 export type TWithSoftDeleted = {
   is_deleted: boolean;
-  deletedAt: Date | null;
+  deleted_at: Date | null;
 };
 
-type TDocument = TWithSoftDeleted & mongoose.Document;
+export type TDocument = TWithSoftDeleted & mongoose.Document;
 
 const softDeletePlugin = (schema: mongoose.Schema) => {
   schema.add({
@@ -14,7 +14,7 @@ const softDeletePlugin = (schema: mongoose.Schema) => {
       required: true,
       default: false,
     },
-    deletedAt: {
+    deleted_at: {
       type: Date,
       default: null,
     },
@@ -22,6 +22,9 @@ const softDeletePlugin = (schema: mongoose.Schema) => {
 
   const typesFindQueryMiddleware = [
     'count',
+    'countDocuments',
+    'findById',
+    'findByIdAndUpdate',
     'find',
     'findOne',
     'findOneAndDelete',
@@ -32,13 +35,6 @@ const softDeletePlugin = (schema: mongoose.Schema) => {
     'updateMany',
   ];
 
-  const setDocumentIsDeleted = async (doc: TDocument) => {
-    doc.is_deleted = true;
-    doc.deletedAt = new Date();
-    doc.$isDeleted(true);
-    await doc.save();
-  };
-
   const excludeInFindQueriesIsDeleted = async function (this: any, next: any) {
     this.where({ is_deleted: false });
     next();
@@ -48,11 +44,6 @@ const softDeletePlugin = (schema: mongoose.Schema) => {
     this.pipeline().unshift({ $match: { is_deleted: false } });
     next();
   };
-
-  schema.pre('remove', async function (this: TDocument, next: any) {
-    await setDocumentIsDeleted(this);
-    next();
-  });
 
   typesFindQueryMiddleware.forEach((type: any) => {
     schema.pre(type, excludeInFindQueriesIsDeleted);

@@ -74,7 +74,7 @@ export const updateQuestion = async function (input: UpdateQuestionDto, id: stri
 
 export const deleteQuestion = async function (id: string) {
   try {
-    const question = await QuestionModel.findOneAndDelete({ _id: id });
+    const question = await QuestionModel.updateOne({ _id: id }, { deleted_at: new Date(), is_deleted: true });
     logger.info(`Delete question successfully`);
 
     return question;

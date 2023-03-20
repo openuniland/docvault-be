@@ -69,7 +69,7 @@ export const calculateScore = async (userExamId: string, userAnswerId: string) =
 
 export const deleteUserExam = async (id: string) => {
   try {
-    const userExam = await UserExamModel.findOneAndDelete({ _id: id });
+    const userExam = await UserExamModel.updateOne({ _id: id }, { deleted_at: new Date(), is_deleted: true });
     logger.info(`Delete user exam successfully`);
 
     return userExam;

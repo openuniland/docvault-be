@@ -102,7 +102,7 @@ export const updateDocument = async (input: UpdateDocumentDto, id: string) => {
 
 export const deleteDocument = async (id: string) => {
   try {
-    const Document = await DocumentModel.findOneAndDelete({ _id: id });
+    const Document = await DocumentModel.updateOne({ _id: id }, { deleted_at: new Date(), is_deleted: true });
 
     logger.info(`Delete document successfully`);
     return Document;
@@ -183,7 +183,6 @@ export const getDocumentsBySubjectId = async (subjectId: string) => {
 export const approveTheDocument = async (input: DocumentApproveRequest, id: string) => {
   try {
     logger.error(`Error while update approveTheDocument: ${(input.is_approved, id)}`);
-    console.log('input.is_approved', input.is_approved);
 
     const Document = await DocumentModel.findOneAndUpdate(
       { _id: id },

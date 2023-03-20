@@ -1,4 +1,4 @@
-import mongoose, { Model, model, Schema } from 'mongoose';
+import { Model, model, Schema } from 'mongoose';
 import { MODELS } from 'utils/constants/models';
 
 import User from 'models/types/User';
@@ -18,7 +18,7 @@ const UserSchema = new Schema<User>(
   }
 );
 
-mongoose.plugin(softDeletePlugin);
+UserSchema.plugin(softDeletePlugin);
 
 UserSchema.index({ fullname: 1, email: 1 });
 const UserModel: Model<User> = model<User>(MODELS.user, UserSchema, MODELS.user);

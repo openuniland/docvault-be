@@ -69,7 +69,7 @@ export const updateSubject = async (input: UpdateSubjectDto, id: string) => {
 
 export const deleteSubject = async (id: string) => {
   try {
-    const data = await SubjectModel.findOneAndDelete({ _id: id });
+    const data = await SubjectModel.updateOne({ _id: id }, { deleted_at: new Date(), is_deleted: true });
 
     return data;
   } catch (error) {

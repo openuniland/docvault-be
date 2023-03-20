@@ -169,7 +169,7 @@ export const updateExam = async (id: string, input: UpdateExamDto) => {
 
 export const deleteExam = async (id: string) => {
   try {
-    const data = await ExamModel.findOneAndDelete({ _id: id });
+    const data = await ExamModel.updateOne({ _id: id }, { deleted_at: new Date(), is_deleted: true });
 
     return data;
   } catch (error) {

@@ -2,6 +2,7 @@ import { model, Model, Schema } from 'mongoose';
 
 import { MODELS } from 'utils/constants/models';
 import Question from 'models/types/Question';
+import { softDeletePlugin } from 'models/SoftDeleteModel';
 
 const QuestionSchema = new Schema<Question>(
   {
@@ -24,6 +25,9 @@ const QuestionSchema = new Schema<Question>(
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   }
 );
+
+QuestionSchema.plugin(softDeletePlugin);
+
 QuestionSchema.index({ content: 1, subject: 1 });
 const QuestionModel: Model<Question> = model<Question>(MODELS.question, QuestionSchema, MODELS.question);
 export default QuestionModel;

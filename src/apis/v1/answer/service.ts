@@ -64,7 +64,7 @@ export const updateAnswer = async (input: UpdateAnswerDto, id: string) => {
 
 export const deleteAnswer = async (id: string) => {
   try {
-    const data = await AnswerModel.findOneAndDelete({ _id: id });
+    const data = await AnswerModel.updateOne({ _id: id }, { deleted_at: new Date(), is_deleted: true });
 
     return data;
   } catch (error) {

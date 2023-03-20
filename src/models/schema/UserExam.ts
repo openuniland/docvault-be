@@ -2,6 +2,7 @@ import { Model, model, Schema } from 'mongoose';
 
 import { MODELS } from 'utils/constants/models';
 import UserExam from 'models/types/UserExam';
+import { softDeletePlugin } from 'models/SoftDeleteModel';
 
 const UserExamSchema = new Schema<UserExam>(
   {
@@ -28,6 +29,8 @@ const UserExamSchema = new Schema<UserExam>(
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   }
 );
+
+UserExamSchema.plugin(softDeletePlugin);
 
 UserExamSchema.index({ author: 1 });
 const UserExamModel: Model<UserExam> = model<UserExam>(MODELS.user_exam, UserExamSchema, MODELS.user_exam);

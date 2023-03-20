@@ -65,6 +65,7 @@ export const getUsers = async function (urlParams: URLParams) {
 export const getUserById = async function (id: ObjectId) {
   try {
     const user = await UserModel.findOne({ _id: id });
+
     return user;
   } catch (error) {
     logger.error(`Error while get user: ${error}`);
@@ -102,7 +103,7 @@ export const updateUser = async function (input: UpdateUserDto, id: string) {
 
 export const deleteUser = async function (id: string) {
   try {
-    const users = await UserModel.findOneAndDelete({ _id: id });
+    const users = await UserModel.updateOne({ _id: id }, { deleted_at: new Date(), is_deleted: true });
     logger.info(`Delete user have id: ${id} successfully`);
 
     return users;

@@ -16,9 +16,7 @@ export const getDocuments = async (req: RequestWithUser, res: Response) => {
 export const createDocument = async (req: RequestWithUser, res: Response) => {
   const input: DocumentDto = req.body;
   const author: string = req?.user?._id;
-
   const result = await service.createDocument(input, author);
-
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
@@ -27,7 +25,6 @@ export const updateDocumentByOwner = async (req: RequestWithUser, res: Response)
   const input: UpdateDocumentByOwnerDto = req.body;
   const author: string = req?.user?._id;
   const result = await service.updateDocumentByOwner(input, params.id, author);
-
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 

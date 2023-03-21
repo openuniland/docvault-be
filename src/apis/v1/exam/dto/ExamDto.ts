@@ -35,7 +35,7 @@ export class ExamDto {
   school_year: string;
 }
 
-export class UpdateExamByOwnDto {
+export class UpdateExamByOwnerDto {
   @IsArray()
   @IsOptional()
   questions: ObjectId[];

@@ -4,7 +4,7 @@ import * as controller from './controller';
 import { validationMiddleware } from 'middlewares/validation';
 import { APP_CONSTANTS } from 'utils/constants';
 import { asyncRouteHandler, authMiddleware } from 'middlewares';
-import { ExamDto, ParamsExamDto, QueryExamDto, UpdateExamByOwnDto } from './dto/ExamDto';
+import { ExamDto, ParamsExamDto, QueryExamDto, UpdateExamByOwnerDto } from './dto/ExamDto';
 
 const router = Router();
 
@@ -41,9 +41,9 @@ router.post(
 router.put(
   '/:id',
   authMiddleware,
-  validationMiddleware(UpdateExamByOwnDto, APP_CONSTANTS.body),
+  validationMiddleware(UpdateExamByOwnerDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsExamDto, APP_CONSTANTS.params),
-  asyncRouteHandler(controller.updateExamByOwn)
+  asyncRouteHandler(controller.updateExamByOwner)
 );
 router.delete(
   '/:id',

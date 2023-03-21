@@ -4,7 +4,7 @@ import { ObjectId } from 'mongoose';
 import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
-import { ExamDto, UpdateExamByAdminDto, UpdateExamByOwnDto } from './dto/ExamDto';
+import { ExamDto, UpdateExamByAdminDto, UpdateExamByOwnerDto } from './dto/ExamDto';
 
 //Get all user's exams
 export const getExams = async (urlParams: URLParams) => {
@@ -149,7 +149,7 @@ export const createExam = async (input: ExamDto, author: ObjectId) => {
   }
 };
 
-export const updateExamByOwn = async (examId: string, ownId: ObjectId, input: UpdateExamByOwnDto) => {
+export const updateExamByOwner = async (examId: string, ownId: ObjectId, input: UpdateExamByOwnerDto) => {
   try {
     const data = await ExamModel.updateOne(
       {

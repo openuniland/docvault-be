@@ -5,7 +5,7 @@ import { validationMiddleware } from 'middlewares/validation';
 import { APP_CONSTANTS } from 'utils/constants';
 import * as controller from './controller';
 
-import { DocumentDto, UpdateDocumentByOwnDto, ParamsDocumentDto } from './dto/DocumentsDto';
+import { DocumentDto, UpdateDocumentByOwnerDto, ParamsDocumentDto } from './dto/DocumentsDto';
 
 const router = Router();
 
@@ -21,9 +21,9 @@ router.post(
 router.put(
   '/:id',
   authMiddleware,
-  validationMiddleware(UpdateDocumentByOwnDto, APP_CONSTANTS.body),
+  validationMiddleware(UpdateDocumentByOwnerDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsDocumentDto, APP_CONSTANTS.params),
-  asyncRouteHandler(controller.updateDocumentByOwn)
+  asyncRouteHandler(controller.updateDocumentByOwner)
 );
 
 router.delete(

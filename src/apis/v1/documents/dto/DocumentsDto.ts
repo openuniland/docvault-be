@@ -56,7 +56,7 @@ export class CreateDocumentRequestForAdmin {
   @IsArray()
   content: Array<Content>;
 }
-export class UpdateDocumentByOwnDto {
+export class UpdateDocumentByOwnerDto {
   @IsDefined()
   @IsString()
   title: string;

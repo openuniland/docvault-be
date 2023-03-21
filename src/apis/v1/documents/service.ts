@@ -9,7 +9,7 @@ import {
   DocumentFilter,
   ParamsDocumentDto,
   UpdateDocumentByAdminDto,
-  UpdateDocumentByOwnDto,
+  UpdateDocumentByOwnerDto,
 } from './dto/DocumentsDto';
 import { SubjectModel } from 'models';
 import URLParams from 'utils/rest/urlparams';
@@ -81,7 +81,7 @@ export const createDocumentByAdmin = async (input: CreateDocumentRequestForAdmin
   }
 };
 
-export const updateDocumentByOwn = async (input: UpdateDocumentByOwnDto, documentId: string, ownId: ObjectId) => {
+export const updateDocumentByOwner = async (input: UpdateDocumentByOwnerDto, documentId: string, ownId: ObjectId) => {
   try {
     const Document = await DocumentModel.updateOne(
       { _id: documentId, author: ownId },

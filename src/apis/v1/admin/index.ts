@@ -5,9 +5,10 @@ import { validationMiddleware } from 'middlewares/validation';
 import { APP_CONSTANTS } from 'utils/constants';
 import {
   CreateDocumentRequestForAdmin,
-  DocumentApproveRequest,
+  UpdateDocumentByAdminDto,
   ParamsDocumentDto,
 } from '../documents/dto/DocumentsDto';
+import { ParamsExamDto, UpdateExamByAdminDto } from '../exam/dto/ExamDto';
 import * as controller from './controller';
 
 const router = Router();
@@ -18,9 +19,9 @@ router.patch(
   '/documents/:id',
   authMiddleware,
   adminMiddleware,
-  validationMiddleware(DocumentApproveRequest, APP_CONSTANTS.body),
+  validationMiddleware(UpdateDocumentByAdminDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsDocumentDto, APP_CONSTANTS.params),
-  asyncRouteHandler(controller.approveTheDocumentByAdmin)
+  asyncRouteHandler(controller.updateDocumentByAdmin)
 );
 router.post(
   '/documents',
@@ -30,5 +31,13 @@ router.post(
   asyncRouteHandler(controller.createNewDocumentByAdmin)
 );
 router.post('/login', asyncRouteHandler(controller.adminLogin));
+router.patch(
+  '/exams/:id',
+  authMiddleware,
+  adminMiddleware,
+  validationMiddleware(UpdateExamByAdminDto, APP_CONSTANTS.body),
+  validationMiddleware(ParamsExamDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.updateExamByAdmin)
+);
 
 export default router;

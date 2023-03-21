@@ -3,17 +3,19 @@ import { Response } from 'express';
 import * as userExamService from 'apis/v1/userExam/service';
 import * as documentService from 'apis/v1/documents/service';
 import * as authService from 'apis/v1/auth/service';
+import * as examService from 'apis/v1/exam/service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 import {
   CreateDocumentRequestForAdmin,
-  DocumentApproveRequest,
   DocumentFilter,
   ParamsDocumentDto,
+  UpdateDocumentByAdminDto,
 } from '../documents/dto/DocumentsDto';
 import { LoginDto } from '../auth/dto/LoginDto';
 import { ObjectId } from 'mongoose';
 import URLParams from 'utils/rest/urlparams';
+import { ParamsExamDto, UpdateExamByAdminDto } from '../exam/dto/ExamDto';
 
 export const getAllUserExams = async (req: RequestWithUser, res: Response) => {
   const urlParams: URLParams = req.searchParams;
@@ -37,11 +39,11 @@ export const adminLogin = async (req: RequestWithUser, res: Response) => {
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
-export const approveTheDocumentByAdmin = async (req: RequestWithUser, res: Response) => {
-  const body: DocumentApproveRequest = req.body;
+export const updateDocumentByAdmin = async (req: RequestWithUser, res: Response) => {
+  const body: UpdateDocumentByAdminDto = req.body;
   const params: ParamsDocumentDto = req.params;
 
-  const result = await documentService.approveTheDocument(body, params.id);
+  const result = await documentService.updateDocumentByAdmin(body, params.id);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
@@ -50,5 +52,13 @@ export const createNewDocumentByAdmin = async (req: RequestWithUser, res: Respon
   const author: ObjectId = req?.user?._id;
 
   const result = await documentService.createDocumentByAdmin(body, author);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};
+
+export const updateExamByAdmin = async (req: RequestWithUser, res: Response) => {
+  const body: UpdateExamByAdminDto = req.body;
+  const params: ParamsExamDto = req.params;
+
+  const result = await examService.updateExamByAdmin(params.id, body);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

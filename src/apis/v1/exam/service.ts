@@ -4,7 +4,7 @@ import { ObjectId } from 'mongoose';
 import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
-import { ExamDto, UpdateExamDto } from './dto/ExamDto';
+import { ExamDto, UpdateExamByAdminDto, UpdateExamByOwnDto } from './dto/ExamDto';
 
 //Get all user's exams
 export const getExams = async (urlParams: URLParams) => {
@@ -149,11 +149,12 @@ export const createExam = async (input: ExamDto, author: ObjectId) => {
   }
 };
 
-export const updateExam = async (id: string, input: UpdateExamDto) => {
+export const updateExamByOwn = async (examId: string, ownId: ObjectId, input: UpdateExamByOwnDto) => {
   try {
-    const data = await ExamModel.findByIdAndUpdate(
+    const data = await ExamModel.updateOne(
       {
-        _id: id,
+        _id: examId,
+        author: ownId,
       },
       {
         $set: input,
@@ -196,6 +197,24 @@ export const getExamsBySubjectId = async (subjectId: string) => {
     };
   } catch (error) {
     logger.error(`Error while get exams by subjectId: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const updateExamByAdmin = async (examId: string, input: UpdateExamByAdminDto) => {
+  try {
+    const data = await ExamModel.findOneAndUpdate(
+      {
+        _id: examId,
+      },
+      {
+        $set: input,
+      }
+    );
+
+    return data;
+  } catch (error) {
+    logger.error(`Error while update exam by admin: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

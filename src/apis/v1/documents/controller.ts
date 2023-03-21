@@ -4,7 +4,7 @@ import * as service from './service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 
-import { DocumentDto, UpdateDocumentDto, ParamsDocumentDto } from './dto/DocumentsDto';
+import { DocumentDto, UpdateDocumentByOwnDto, ParamsDocumentDto } from './dto/DocumentsDto';
 import { ObjectId } from 'mongoose';
 import URLParams from 'utils/rest/urlparams';
 
@@ -23,10 +23,11 @@ export const createDocument = async (req: RequestWithUser, res: Response) => {
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
-export const updateDocument = async (req: RequestWithUser, res: Response) => {
+export const updateDocumentByOwn = async (req: RequestWithUser, res: Response) => {
   const params: ParamsDocumentDto = req.params;
-  const input: UpdateDocumentDto = req.body;
-  const result = await service.updateDocument(input, params.id);
+  const input: UpdateDocumentByOwnDto = req.body;
+  const author: ObjectId = req?.user?._id;
+  const result = await service.updateDocumentByOwn(input, params.id, author);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

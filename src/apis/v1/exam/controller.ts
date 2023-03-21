@@ -4,7 +4,7 @@ import * as service from './service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 
-import { ParamsExamDto, QueryExamDto, ExamDto, UpdateExamDto } from './dto/ExamDto';
+import { ParamsExamDto, QueryExamDto, ExamDto, UpdateExamByOwnDto } from './dto/ExamDto';
 import { ObjectId } from 'mongoose';
 import URLParams from 'utils/rest/urlparams';
 
@@ -38,10 +38,11 @@ export const createExam = async (req: RequestWithUser, res: Response) => {
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
-export const updateExam = async (req: RequestWithUser, res: Response) => {
+export const updateExamByOwn = async (req: RequestWithUser, res: Response) => {
   const params: ParamsExamDto = req.params;
-  const input: UpdateExamDto = req.body;
-  const result = await service.updateExam(params.id, input);
+  const input: UpdateExamByOwnDto = req.body;
+  const author: ObjectId = req?.user?._id;
+  const result = await service.updateExamByOwn(params.id, author, input);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

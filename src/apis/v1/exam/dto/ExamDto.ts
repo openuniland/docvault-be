@@ -35,7 +35,7 @@ export class ExamDto {
   school_year: string;
 }
 
-export class UpdateExamDto {
+export class UpdateExamByOwnerDto {
   @IsArray()
   @IsOptional()
   questions: ObjectId[];
@@ -46,13 +46,7 @@ export class UpdateExamDto {
 
   @IsString()
   @IsDefined()
-  title: ObjectId;
-
-  @IsBoolean()
-  is_deleted: boolean;
-
-  @IsBoolean()
-  is_approved: boolean;
+  title: string;
 
   @IsNumber()
   @IsDefined()
@@ -61,4 +55,30 @@ export class UpdateExamDto {
   @IsString()
   @IsDefined()
   school_year: string;
+}
+
+export class UpdateExamByAdminDto {
+  @IsArray()
+  @IsOptional()
+  questions: ObjectId[];
+
+  @IsString()
+  @IsOptional()
+  subject: ObjectId;
+
+  @IsString()
+  @IsOptional()
+  title: string;
+
+  @IsNumber()
+  @IsOptional()
+  semester: number;
+
+  @IsString()
+  @IsOptional()
+  school_year: string;
+
+  @IsBoolean()
+  @IsOptional()
+  is_approved?: boolean;
 }

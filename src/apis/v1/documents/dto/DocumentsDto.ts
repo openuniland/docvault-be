@@ -56,7 +56,7 @@ export class CreateDocumentRequestForAdmin {
   @IsArray()
   content: Array<Content>;
 }
-export class UpdateDocumentDto {
+export class UpdateDocumentByOwnerDto {
   @IsDefined()
   @IsString()
   title: string;
@@ -66,12 +66,20 @@ export class UpdateDocumentDto {
   description: string;
 
   @IsOptional()
-  @IsBoolean()
-  is_approved: boolean;
-
-  @IsDefined()
   @IsArray()
   content: Array<Content>;
+
+  @IsDefined()
+  @IsString()
+  subject: ObjectId;
+
+  @IsDefined()
+  @IsNumber()
+  semester: number;
+
+  @IsDefined()
+  @IsString()
+  school_year: string;
 }
 export class ParamsDocumentDto {
   @IsDefined()
@@ -85,7 +93,31 @@ export class DocumentFilter {
   is_approved?: boolean;
 }
 
-export class DocumentApproveRequest {
+export class UpdateDocumentByAdminDto {
+  @IsOptional()
+  @IsString()
+  title: string;
+
+  @IsString()
+  @IsOptional()
+  description: string;
+
+  @IsOptional()
+  @IsArray()
+  content: Array<Content>;
+
+  @IsOptional()
+  @IsString()
+  subject: ObjectId;
+
+  @IsOptional()
+  @IsNumber()
+  semester: number;
+
+  @IsOptional()
+  @IsString()
+  school_year: string;
+
   @IsBoolean()
   @IsOptional()
   is_approved?: boolean;

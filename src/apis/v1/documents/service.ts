@@ -5,11 +5,11 @@ import { logger } from 'utils/logger';
 import { ErrorCodes, HttpException } from 'exceptions';
 import {
   CreateDocumentRequestForAdmin,
-  DocumentApproveRequest,
   DocumentDto,
   DocumentFilter,
   ParamsDocumentDto,
-  UpdateDocumentDto,
+  UpdateDocumentByAdminDto,
+  UpdateDocumentByOwnerDto,
 } from './dto/DocumentsDto';
 import { SubjectModel } from 'models';
 import URLParams from 'utils/rest/urlparams';
@@ -81,21 +81,19 @@ export const createDocumentByAdmin = async (input: CreateDocumentRequestForAdmin
   }
 };
 
-export const updateDocument = async (input: UpdateDocumentDto, id: string) => {
+export const updateDocumentByOwner = async (input: UpdateDocumentByOwnerDto, documentId: string, ownId: ObjectId) => {
   try {
-    const Document = await DocumentModel.findOneAndUpdate(
-      { _id: id },
+    const Document = await DocumentModel.updateOne(
+      { _id: documentId, author: ownId },
       {
-        title: input.title,
-        description: input.description,
-        content: input.content,
+        $set: input,
       }
     );
 
-    logger.info(`Update document successfully`);
+    logger.info(`Update document by own successfully`);
     return Document;
   } catch (error) {
-    logger.error(`Error while update document: ${error}`);
+    logger.error(`Error while update document by own: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -180,21 +178,19 @@ export const getDocumentsBySubjectId = async (subjectId: string) => {
   }
 };
 
-export const approveTheDocument = async (input: DocumentApproveRequest, id: string) => {
+export const updateDocumentByAdmin = async (input: UpdateDocumentByAdminDto, documentId: string) => {
   try {
-    logger.error(`Error while update approveTheDocument: ${(input.is_approved, id)}`);
-
-    const Document = await DocumentModel.findOneAndUpdate(
-      { _id: id },
+    const document = await DocumentModel.findByIdAndUpdate(
+      { _id: documentId },
       {
-        is_approved: input.is_approved,
+        $set: input,
       }
     );
 
-    logger.info(`Update approveTheDocument successfully`);
-    return Document;
+    logger.info(`Update document by admin successfully`);
+    return document;
   } catch (error) {
-    logger.error(`Error while update approveTheDocument: ${error}`);
+    logger.error(`Error while update document by admin: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

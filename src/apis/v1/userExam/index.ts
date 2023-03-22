@@ -9,9 +9,9 @@ import { UserExamDto, ParamsUserExamDto, SubmitTheExamDto } from './dto/UserExam
 
 const router = Router();
 
-router.get('/', authMiddleware, asyncRouteHandler(controller.getAllUserExamsOfUser));
+router.get('/', authMiddleware, asyncRouteHandler(controller.getAllUserExamsByOwner));
 
-router.get('/:id', authMiddleware, asyncRouteHandler(controller.getUserExamOfUser));
+router.get('/:id', authMiddleware, asyncRouteHandler(controller.getUserExamByOwner));
 
 router.post(
   '/',

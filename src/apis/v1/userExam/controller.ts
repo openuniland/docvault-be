@@ -23,20 +23,20 @@ export const deleteUserExam = async (req: RequestWithUser, res: Response) => {
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
-export const getAllUserExamsOfUser = async (req: RequestWithUser, res: Response) => {
-  const author: ObjectId = req?.user?._id;
+export const getAllUserExamsByOwner = async (req: RequestWithUser, res: Response) => {
+  const author = req?.user?._id;
   const filter: UserExamFilter = req.query;
   const urlParams: URLParams = req.searchParams;
-  const { result, meta } = await service.getAllUserExamsOfUser(author, filter, urlParams);
+  const { result, meta } = await service.getAllUserExamsByOwner(String(author), filter, urlParams);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 
-export const getUserExamOfUser = async (req: RequestWithUser, res: Response) => {
+export const getUserExamByOwner = async (req: RequestWithUser, res: Response) => {
   const author: string = req?.user?.email;
   const params: ParamsUserExamDto = req.params;
 
-  const result = await service.getUserExamOfUser(author, params.id);
+  const result = await service.getUserExamByOwner(author, params.id);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
 import QuestionModel from 'models/schema/Question';
 import { DEFAULT_PAGING } from 'utils/constants';
@@ -6,9 +7,13 @@ import URLParams from 'utils/rest/urlparams';
 
 import { QuestionDto, UpdateQuestionDto } from './dto/QuestionDto';
 
-export const createQuestion = async function (input: QuestionDto) {
+export const createQuestion = async function (input: QuestionDto, author: ObjectId) {
   try {
-    const question = await QuestionModel.create(input);
+    const data = {
+      author,
+      ...input,
+    };
+    const question = await QuestionModel.create(data);
     logger.info(`Create question successfully`);
 
     return question;
@@ -28,10 +33,7 @@ export const getQuestions = async function (urlParams: URLParams) {
     const question = QuestionModel.find()
       .skip(pageSize * currentPage)
       .limit(pageSize)
-      .sort({ created_at: order === 'DESC' ? -1 : 1 })
-      .populate('subject')
-      .populate('correct_answer')
-      .populate('answers');
+      .sort({ created_at: order === 'DESC' ? -1 : 1 });
     logger.info(`Get questions successfully`);
 
     const resolveAll = await Promise.all([count, question]);
@@ -49,25 +51,36 @@ export const getQuestions = async function (urlParams: URLParams) {
   }
 };
 
-export const updateQuestion = async function (input: UpdateQuestionDto, id: string) {
+export const updateQuestionByOwner = async function (input: UpdateQuestionDto, id: string, ownerId: ObjectId) {
   try {
-    const question = await QuestionModel.findOneAndUpdate(
-      { _id: id },
+    const question = await QuestionModel.updateOne(
+      { _id: id, author: ownerId },
       {
-        $set: {
-          content: input.content,
-          image: input.image,
-          subject: input.subject,
-          correct_answer: input.correct_answer,
-          answers: input.answers,
-        },
+        $set: input,
       }
     );
-    logger.info(`Update question successfully`);
+    logger.info(`Update question by owner successfully`);
 
     return question;
   } catch (error) {
-    logger.error(`Error while update question: ${error}`);
+    logger.error(`Error while update question by owner: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const updateQuestionByAdmin = async function (input: UpdateQuestionDto, id: string) {
+  try {
+    const question = await QuestionModel.findByIdAndUpdate(
+      { _id: id },
+      {
+        $set: input,
+      }
+    );
+    logger.info(`Update question by admin successfully`);
+
+    return question;
+  } catch (error) {
+    logger.error(`Error while update question by admin: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

@@ -7,19 +7,14 @@ import { softDeletePlugin } from 'models/SoftDeleteModel';
 const ExamSchema = new Schema<Exam>(
   {
     author: { type: Schema.Types.ObjectId, ref: MODELS.user, required: true },
-    questions: [
-      {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: MODELS.question,
-      },
-    ],
-    subject: { type: Schema.Types.ObjectId, required: true, ref: MODELS.subject },
-    title: { type: String, required: true },
-    semester: { type: Number, required: true },
-    school_year: { type: String, required: true },
+    subject: { type: Schema.Types.ObjectId, ref: MODELS.subject },
+    title: { type: String },
+    description: { type: String },
+    semester: { type: Number },
+    school_year: { type: String },
     is_deleted: { type: Boolean, default: false },
     is_approved: { type: Boolean, default: false },
+    is_draft: { type: Boolean, default: true },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

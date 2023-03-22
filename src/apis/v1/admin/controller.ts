@@ -17,9 +17,9 @@ import { ObjectId } from 'mongoose';
 import URLParams from 'utils/rest/urlparams';
 import { ParamsExamDto, UpdateExamByAdminDto } from '../exam/dto/ExamDto';
 
-export const getAllUserExams = async (req: RequestWithUser, res: Response) => {
+export const getAllUserExamsByAdmin = async (req: RequestWithUser, res: Response) => {
   const urlParams: URLParams = req.searchParams;
-  const { result, meta } = await userExamService.getAllUserExams(urlParams);
+  const { result, meta } = await userExamService.getAllUserExamsByAdmin(urlParams);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 

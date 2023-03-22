@@ -4,18 +4,11 @@ import * as controller from './controller';
 import { validationMiddleware } from 'middlewares/validation';
 import { APP_CONSTANTS } from 'utils/constants';
 import { asyncRouteHandler, authMiddleware } from 'middlewares';
-import { ExamDto, ParamsExamDto, QueryExamDto, UpdateExamByOwnerDto } from './dto/ExamDto';
+import { ExamDto, ParamsExamDto, UpdateExamByOwnerDto } from './dto/ExamDto';
 
 const router = Router();
 
 router.get('/', authMiddleware, asyncRouteHandler(controller.getExams));
-
-router.get(
-  '/subjectname',
-  authMiddleware,
-  validationMiddleware(QueryExamDto, APP_CONSTANTS.query),
-  asyncRouteHandler(controller.getExamBySubject)
-);
 
 router.get(
   '/:id',

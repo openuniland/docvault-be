@@ -4,7 +4,7 @@ import * as service from './service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 
-import { ParamsExamDto, QueryExamDto, ExamDto, UpdateExamByOwnerDto } from './dto/ExamDto';
+import { ParamsExamDto, ExamDto, UpdateExamByOwnerDto } from './dto/ExamDto';
 import { ObjectId } from 'mongoose';
 import URLParams from 'utils/rest/urlparams';
 
@@ -22,10 +22,10 @@ export const getExamById = async (req: RequestWithUser, res: Response) => {
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 
-export const getExamBySubject = async (req: RequestWithUser, res: Response) => {
+export const getExamsBySubjectId = async (req: RequestWithUser, res: Response) => {
   const urlParams: URLParams = req.searchParams;
-  const input: QueryExamDto = req.query;
-  const { result, meta } = await service.getExamBySubject(input.subject_name, urlParams);
+  const input: ParamsExamDto = req.params;
+  const { result, meta } = await service.getExamsBySubjectId(input.id, urlParams);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
@@ -51,11 +51,5 @@ export const deleteExam = async (req: RequestWithUser, res: Response) => {
   const params: ParamsExamDto = req.params;
   const result = await service.deleteExam(params.id);
 
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
-};
-
-export const getExamsBySubjectId = async (req: RequestWithUser, res: Response) => {
-  const input: ParamsExamDto = req.params;
-  const result = await service.getExamsBySubjectId(input.id);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

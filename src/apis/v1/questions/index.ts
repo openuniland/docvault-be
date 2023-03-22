@@ -23,7 +23,7 @@ router.put(
   authMiddleware,
   validationMiddleware(UpdateQuestionDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsQuestionDto, APP_CONSTANTS.params),
-  asyncRouteHandler(controller.updateQuestion)
+  asyncRouteHandler(controller.updateQuestionByOwner)
 );
 
 router.delete(

@@ -1,17 +1,19 @@
-import { ObjectId } from 'mongoose';
-
+/* eslint-disable @typescript-eslint/naming-convention */
+import { ObjectId } from 'mongodb';
+import { ObjectId as ObjectIdType, PipelineStage } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
 import UserExamModel from 'models/schema/UserExam';
 import { logger } from 'utils/logger';
-import { UserExamDto, UserExamFilter } from './dto/UserExamDto';
+import { SubmitTheExamDto, UserExamDto, UserExamFilter } from './dto/UserExamDto';
 import { getExamById } from 'apis/v1/exam/service';
 import { createUserAnswer } from 'apis/v1/userAnswer/service';
 import { UserAnswerModel } from 'models';
 import Question from 'models/types/Question';
 import URLParams from 'utils/rest/urlparams';
 import { DEFAULT_PAGING } from 'utils/constants';
+import UserExam from 'models/types/UserExam';
 
-export const createUserExam = async (input: UserExamDto, author: ObjectId) => {
+export const createUserExam = async (input: UserExamDto, author: ObjectIdType) => {
   try {
     const exam = await getExamById(input.exam_id);
     const userAnswer = await createUserAnswer({
@@ -22,13 +24,13 @@ export const createUserExam = async (input: UserExamDto, author: ObjectId) => {
     const userExam = {
       author,
       original_exam: input.exam_id,
-      title: exam.title,
+      title: exam?.title,
       subject: exam?.subject,
-      questions: exam.questions,
-      user_answer_id: userAnswer._id,
+      questions: exam?.questions,
+      user_answer_id: userAnswer?._id,
       duration: input.duration,
-      semester: exam.semester,
-      school_year: exam.school_year,
+      semester: exam?.semester,
+      school_year: exam?.school_year,
     };
     const result = await UserExamModel.create(userExam);
     logger.info(`Create a user exam succesfully`);
@@ -42,24 +44,19 @@ export const createUserExam = async (input: UserExamDto, author: ObjectId) => {
   }
 };
 
-export const calculateScore = async (userExamId: string, userAnswerId: string) => {
+export const calculateScore = async (userExam: UserExam, userAnswerId: string) => {
   try {
-    const userExam = UserExamModel.findOne({ _id: userExamId }).populate({
-      path: 'questions',
-      model: 'question',
-    });
-    const userAnswer = UserAnswerModel.findOne({ _id: userAnswerId });
-    const resolveAll = await Promise.all([userExam, userAnswer]);
+    const userAnswer = await UserAnswerModel.findOne({ _id: userAnswerId });
 
     let score = 0;
 
-    for (let i = 0; i < resolveAll[0].questions.length; i++) {
-      if (resolveAll[0].questions[i].correct_answer.toString() === resolveAll[1].answers_id[i]) {
+    for (let i = 0; i < userExam?.questions.length; i++) {
+      if (userExam?.questions[i].correct_answer.id === userAnswer.answers_id[i]) {
         score++;
       }
     }
 
-    await UserExamModel.findOneAndUpdate({ _id: userExamId }, { is_completed: true, score });
+    await UserExamModel.findOneAndUpdate({ _id: userExam?._id }, { is_completed: true, score });
 
     return score;
   } catch (error) {
@@ -79,7 +76,7 @@ export const deleteUserExam = async (id: string) => {
   }
 };
 
-export const getAllUserExams = async (urlParams: URLParams) => {
+export const getAllUserExamsByAdmin = async (urlParams: URLParams) => {
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
@@ -87,31 +84,54 @@ export const getAllUserExams = async (urlParams: URLParams) => {
     const order = urlParams.order || 'DESC';
 
     const count = UserExamModel.countDocuments();
-
-    const result = UserExamModel.find()
-      .skip(pageSize * currentPage)
-      .limit(pageSize)
-      .sort({ created_at: order === 'DESC' ? -1 : 1 })
-      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
-      .populate({
-        path: 'questions',
-        model: 'question',
-        populate: [
-          {
-            path: 'subject',
-            model: 'subject',
-          },
-          {
-            path: 'correct_answer',
-            model: 'answer',
-          },
-          {
-            path: 'answers',
-            model: 'answer',
-          },
-        ],
-      })
-      .populate('user_answer_id');
+    const result = UserExamModel.aggregate([
+      {
+        $lookup: {
+          from: 'question',
+          localField: 'original_exam',
+          foreignField: 'exam_id',
+          as: 'questions',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $lookup: {
+          from: 'subject',
+          localField: 'subject',
+          foreignField: '_id',
+          as: 'subject',
+        },
+      },
+      {
+        $unwind: '$subject',
+      },
+      {
+        $project: {
+          'author.is_blocked': 0,
+          'author.roles': 0,
+          'author.created_at': 0,
+          'author.updated_at': 0,
+          'author.__v': 0,
+          'questions.author': 0,
+        },
+      },
+      {
+        $sort: { created_at: order === 'DESC' ? -1 : 1 },
+      },
+      {
+        $skip: pageSize * currentPage,
+      },
+      {
+        $limit: pageSize,
+      },
+    ]);
 
     logger.info(`Get all user exams successfully`);
 
@@ -130,40 +150,83 @@ export const getAllUserExams = async (urlParams: URLParams) => {
   }
 };
 
-export const getAllUserExamsOfUser = async (userId: ObjectId, filter: UserExamFilter, urlParams: URLParams) => {
+export const getAllUserExamsByOwner = async (userId: string, filter: UserExamFilter, urlParams: URLParams) => {
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
 
     const order = urlParams.order || 'DESC';
+    const _id = new ObjectId(userId);
 
     const count = UserExamModel.countDocuments({ author: userId, ...filter });
 
-    const result = UserExamModel.find({ author: userId, ...filter })
-      .skip(pageSize * currentPage)
-      .limit(pageSize)
-      .sort({ created_at: order === 'DESC' ? -1 : 1 })
-      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
-      .populate('subject')
-      .populate({
-        path: 'questions',
-        model: 'question',
-        populate: [
-          {
-            path: 'subject',
-            model: 'subject',
-          },
-          {
-            path: 'correct_answer',
-            model: 'answer',
-          },
-          {
-            path: 'answers',
-            model: 'answer',
-          },
-        ],
-      })
-      .populate('user_answer_id');
+    let matchCondition: any = [{ author: _id }];
+    switch (filter.is_completed) {
+      case 'true':
+        matchCondition.push({ is_completed: true });
+        break;
+      case 'false':
+        matchCondition.push({ is_completed: false });
+        break;
+      default:
+        break;
+    }
+
+    const pipeline: PipelineStage[] = [
+      {
+        $match: {
+          $and: matchCondition,
+        },
+      },
+      {
+        $lookup: {
+          from: 'question',
+          localField: 'original_exam',
+          foreignField: 'exam_id',
+          as: 'questions',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $lookup: {
+          from: 'subject',
+          localField: 'subject',
+          foreignField: '_id',
+          as: 'subject',
+        },
+      },
+      {
+        $unwind: '$subject',
+      },
+      {
+        $project: {
+          'author.is_blocked': 0,
+          'author.roles': 0,
+          'author.created_at': 0,
+          'author.updated_at': 0,
+          'author.__v': 0,
+          'questions.author': 0,
+        },
+      },
+      {
+        $sort: { created_at: order === 'DESC' ? -1 : 1 },
+      },
+      {
+        $skip: pageSize * currentPage,
+      },
+      {
+        $limit: pageSize,
+      },
+    ];
+
+    const result = UserExamModel.aggregate(pipeline);
 
     logger.info(`Get all user exams successfully`);
 
@@ -183,48 +246,74 @@ export const getAllUserExamsOfUser = async (userId: ObjectId, filter: UserExamFi
   }
 };
 
-export const getUserExamOfUser = async (userEmail: string, userExamId: string) => {
+export const getUserExamByOwner = async (userEmail: string, userExamId: string) => {
   try {
-    const userExam = await UserExamModel.findOne({ _id: userExamId })
-      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
-      .populate('subject')
-      .populate({
-        path: 'questions',
-        model: 'question',
-        populate: [
-          {
-            path: 'subject',
-            model: 'subject',
-          },
-          {
-            path: 'correct_answer',
-            model: 'answer',
-          },
-          {
-            path: 'answers',
-            model: 'answer',
-          },
-        ],
-      })
-      .populate('user_answer_id');
+    const _id = new ObjectId(userExamId);
 
-    if (userExam?.author?.email !== userEmail) {
+    const pipeline: PipelineStage[] = [
+      {
+        $match: { _id },
+      },
+      {
+        $lookup: {
+          from: 'question',
+          localField: 'original_exam',
+          foreignField: 'exam_id',
+          as: 'questions',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $lookup: {
+          from: 'subject',
+          localField: 'subject',
+          foreignField: '_id',
+          as: 'subject',
+        },
+      },
+      {
+        $unwind: '$subject',
+      },
+      {
+        $unwind: '$author',
+      },
+      {
+        $project: {
+          'author.is_blocked': 0,
+          'author.roles': 0,
+          'author.created_at': 0,
+          'author.updated_at': 0,
+          'author.__v': 0,
+          'questions.author': 0,
+        },
+      },
+    ];
+    const userExam = await UserExamModel.aggregate(pipeline);
+
+    if (userExam[0]?.author?.email !== userEmail) {
       throw new HttpException(403, 'not allowed', ErrorCodes.BAD_REQUEST.CODE);
     }
 
-    if (userExam?.is_completed) {
-      return userExam;
+    if (userExam[0]?.is_completed) {
+      return userExam[0];
     }
 
     //duration is in milliseconds
-    const time = new Date().getTime() - userExam.updated_at.getTime();
-    const { duration } = userExam;
+    const time = new Date().getTime() - userExam[0].updated_at.getTime();
+    const { duration } = userExam[0];
 
-    if (time > duration && !userExam.is_completed) {
-      const score = await calculateScore(userExam._id, userExam.user_answer_id._id);
+    if (time > duration && !userExam[0].is_completed) {
+      const score = await calculateScore(userExam[0], userExam[0].user_answer_id);
 
       return {
-        ...userExam,
+        ...userExam[0],
         score,
         is_completed: true,
       };
@@ -232,11 +321,10 @@ export const getUserExamOfUser = async (userEmail: string, userExamId: string) =
 
     logger.info(`Get userExam of user successfully`);
     return {
-      ...userExam.toObject(),
-      questions: userExam.toObject().questions.map((question: Question) => {
+      ...userExam[0],
+      questions: userExam[0].questions.map((question: Question) => {
         return {
           answers: question?.answers,
-          subject: question?.subject,
           content: question?.content,
           _id: question._id,
         };
@@ -252,12 +340,54 @@ export const getUserExamOfUser = async (userEmail: string, userExamId: string) =
   }
 };
 
-export const submitTheExam = async (userId: ObjectId, userExamId: ObjectId) => {
+export const submitTheExam = async (input: SubmitTheExamDto, userEmail: string) => {
   try {
-    const result = await UserExamModel.findOneAndUpdate({ _id: userExamId, author: userId }, { is_completed: true });
+    const _id = new ObjectId(input.user_exam_id);
+
+    const pipeline: PipelineStage[] = [
+      {
+        $match: { _id },
+      },
+      {
+        $lookup: {
+          from: 'question',
+          localField: 'original_exam',
+          foreignField: 'exam_id',
+          as: 'questions',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $unwind: '$author',
+      },
+      {
+        $project: {
+          'author.is_blocked': 0,
+          'author.roles': 0,
+          'author.created_at': 0,
+          'author.updated_at': 0,
+          'author.__v': 0,
+          'questions.author': 0,
+        },
+      },
+    ];
+    const userExam = await UserExamModel.aggregate(pipeline);
+
+    if (userExam[0]?.author?.email !== userEmail) {
+      throw new HttpException(403, 'not allowed', ErrorCodes.BAD_REQUEST.CODE);
+    }
+
+    await calculateScore(userExam[0], userExam[0]?.user_answer_id);
     logger.info(`Submit the exam successfully`);
 
-    return result;
+    return 'OK';
   } catch (error) {
     logger.error(`Error while submit the exam: ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);

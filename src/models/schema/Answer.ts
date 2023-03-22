@@ -1,21 +1,13 @@
-import { model, Model, Schema } from 'mongoose';
-import { MODELS } from 'utils/constants/models';
+import { Schema } from 'mongoose';
 import Answer from 'models/types/Answer';
-import { softDeletePlugin } from 'models/SoftDeleteModel';
 
 const AnswerSchema = new Schema<Answer>(
   {
+    id: { type: String },
     content: { type: String, required: true },
-    is_deleted: { type: Boolean, default: false },
     status: { type: Boolean },
   },
-  {
-    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
-  }
+  { _id: false }
 );
 
-AnswerSchema.plugin(softDeletePlugin);
-
-AnswerSchema.index({ content: 1 });
-const AnswerModel: Model<Answer> = model<Answer>(MODELS.answer, AnswerSchema, MODELS.answer);
-export default AnswerModel;
+export default AnswerSchema;

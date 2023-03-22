@@ -1,6 +1,6 @@
 import Document from 'mongoose';
 export default interface Answer extends Document {
+  id: string;
   content: string;
-  is_deleted: boolean;
   status: boolean;
 }

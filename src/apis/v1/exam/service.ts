@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+import { ObjectId } from 'mongodb';
+import { ObjectId as ObjectIdType } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
-import { ExamModel, SubjectModel } from 'models';
-import { ObjectId } from 'mongoose';
+import { ExamModel } from 'models';
 import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
@@ -15,29 +17,54 @@ export const getExams = async (urlParams: URLParams) => {
     const order = urlParams.order || 'DESC';
 
     const count = ExamModel.countDocuments();
-    const data = ExamModel.find()
-      .skip(pageSize * currentPage)
-      .limit(pageSize)
-      .sort({ created_at: order === 'DESC' ? -1 : 1 })
-      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
-      .populate({
-        path: 'questions',
-        populate: [
-          {
-            path: 'subject',
-            model: 'subject',
-          },
-          {
-            path: 'correct_answer',
-            model: 'answer',
-          },
-          {
-            path: 'answers',
-            model: 'answer',
-          },
-        ],
-      })
-      .populate('subject');
+    const data = ExamModel.aggregate([
+      {
+        $lookup: {
+          from: 'question',
+          localField: '_id',
+          foreignField: 'exam_id',
+          as: 'questions',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $lookup: {
+          from: 'subject',
+          localField: 'subject',
+          foreignField: '_id',
+          as: 'subject',
+        },
+      },
+      {
+        $unwind: '$subject',
+      },
+      {
+        $project: {
+          'author.is_blocked': 0,
+          'author.roles': 0,
+          'author.created_at': 0,
+          'author.updated_at': 0,
+          'author.__v': 0,
+          'questions.author': 0,
+        },
+      },
+      {
+        $sort: { created_at: order === 'DESC' ? -1 : 1 },
+      },
+      {
+        $skip: pageSize * currentPage,
+      },
+      {
+        $limit: pageSize,
+      },
+    ]);
 
     const resolveAll = await Promise.all([count, data]);
     return {
@@ -56,67 +83,141 @@ export const getExams = async (urlParams: URLParams) => {
 
 //Get a user's exam by id
 export const getExamById = async (id: string) => {
+  const _id = new ObjectId(id);
   try {
-    const data = await ExamModel.findById({ _id: id })
-      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
-      .populate({
-        path: 'questions',
-        populate: [
-          {
-            path: 'subject',
-            model: 'subject',
+    const data = await ExamModel.aggregate([
+      {
+        $match: { _id },
+      },
+      {
+        $lookup: {
+          from: 'question',
+          localField: '_id',
+          foreignField: 'exam_id',
+          as: 'questions',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $lookup: {
+          from: 'subject',
+          localField: 'subject',
+          foreignField: '_id',
+          as: 'subject',
+        },
+      },
+      {
+        $unwind: '$author',
+      },
+      {
+        $unwind: '$subject',
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          description: 1,
+          author: {
+            _id: '$author._id',
+            fullname: '$author.fullname',
+            email: '$author.email',
           },
-          {
-            path: 'correct_answer',
-            model: 'answer',
+          subject: {
+            _id: '$subject._id',
+            subject_name: '$subject.subject_name',
           },
-          {
-            path: 'answers',
-            model: 'answer',
+          questions: {
+            $map: {
+              input: '$questions',
+              as: 'question',
+              in: {
+                _id: '$$question._id',
+                content: '$$question.content',
+                image: '$$question.image',
+                correct_answer: '$$question.correct_answer',
+                answers: '$$question.answers',
+                is_essay: '$$question.is_essay',
+                accuracy: '$$question.accuracy',
+              },
+            },
           },
-        ],
-      })
-      .populate('subject');
+        },
+      },
+    ]);
 
-    return data;
+    return data[0];
   } catch (error) {
     logger.error(`Error while get exam: ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
 
-export const getExamBySubject = async (input: string, urlParams: URLParams) => {
+export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParams) => {
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
     const order = urlParams.order || 'DESC';
 
-    const subjectId = await SubjectModel.findOne({ subject_name: input });
-
+    const _id = new ObjectId(subjectId);
     const count = ExamModel.countDocuments({ subject: subjectId });
-    const data = ExamModel.find({ subject: subjectId })
-      .skip(pageSize * currentPage)
-      .limit(pageSize)
-      .sort({ created_at: order === 'DESC' ? -1 : 1 })
-      .populate('author')
-      .populate({
-        path: 'questions',
-        populate: [
-          {
-            path: 'subject',
-            model: 'subject',
-          },
-          {
-            path: 'correct_answer',
-            model: 'answer',
-          },
-          {
-            path: 'answers',
-            model: 'answer',
-          },
-        ],
-      })
-      .populate('subject');
+    const data = ExamModel.aggregate([
+      {
+        $match: { subject: _id },
+      },
+      {
+        $lookup: {
+          from: 'question',
+          localField: '_id',
+          foreignField: 'exam_id',
+          as: 'questions',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $lookup: {
+          from: 'subject',
+          localField: 'subject',
+          foreignField: '_id',
+          as: 'subject',
+        },
+      },
+      {
+        $unwind: '$subject',
+      },
+      {
+        $project: {
+          'author.is_blocked': 0,
+          'author.roles': 0,
+          'author.created_at': 0,
+          'author.updated_at': 0,
+          'author.__v': 0,
+          'questions.author': 0,
+        },
+      },
+      {
+        $sort: { created_at: order === 'DESC' ? -1 : 1 },
+      },
+      {
+        $skip: pageSize * currentPage,
+      },
+      {
+        $limit: pageSize,
+      },
+    ]);
 
     const resolveAll = await Promise.all([count, data]);
 
@@ -129,12 +230,12 @@ export const getExamBySubject = async (input: string, urlParams: URLParams) => {
       },
     };
   } catch (error) {
-    logger.error(`Error while get exam by subject: ${error}`);
+    logger.error(`Error while get exam by subjectId: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
 
-export const createExam = async (input: ExamDto, author: ObjectId) => {
+export const createExam = async (input: ExamDto, author: ObjectIdType) => {
   try {
     const exam = {
       author,
@@ -149,7 +250,7 @@ export const createExam = async (input: ExamDto, author: ObjectId) => {
   }
 };
 
-export const updateExamByOwner = async (examId: string, ownId: ObjectId, input: UpdateExamByOwnerDto) => {
+export const updateExamByOwner = async (examId: string, ownId: ObjectIdType, input: UpdateExamByOwnerDto) => {
   try {
     const data = await ExamModel.updateOne(
       {
@@ -175,28 +276,6 @@ export const deleteExam = async (id: string) => {
     return data;
   } catch (error) {
     logger.error(`Error while delete exam: ${error}`);
-    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
-  }
-};
-
-export const getExamsBySubjectId = async (subjectId: string) => {
-  try {
-    const results = ExamModel.find({ is_approved: true, subject: subjectId })
-      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
-      .populate('questions', '-is_blocked -roles -created_at -updated_at -__v')
-      .populate('subject', '-is_deleted -created_at -updated_at -__v');
-
-    const subject = SubjectModel.findOne({ _id: subjectId });
-
-    const resultAll = await Promise.all([results, subject]);
-
-    logger.info(`Get all exams by subjectId successfully`);
-    return {
-      exams: resultAll[0],
-      subject: resultAll[1],
-    };
-  } catch (error) {
-    logger.error(`Error while get exams by subjectId: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

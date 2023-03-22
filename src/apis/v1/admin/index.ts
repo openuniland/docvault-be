@@ -13,7 +13,7 @@ import * as controller from './controller';
 
 const router = Router();
 
-router.get('/user-exams', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getAllUserExams));
+router.get('/user-exams', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getAllUserExamsByAdmin));
 router.get('/documents', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getDocumentsByAdmin));
 router.patch(
   '/documents/:id',

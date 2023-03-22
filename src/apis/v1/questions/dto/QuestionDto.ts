@@ -1,6 +1,11 @@
-import { IsString, IsDefined, IsArray, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsDefined, IsArray, IsOptional, IsBoolean, IsObject } from 'class-validator';
+import Answer from 'models/types/Answer';
 import { ObjectId } from 'mongoose';
 export class QuestionDto {
+  @IsString()
+  @IsDefined()
+  exam_id: ObjectId;
+
   @IsString()
   @IsDefined()
   content: string;
@@ -10,16 +15,12 @@ export class QuestionDto {
   image: string;
 
   @IsDefined()
-  @IsString()
-  subject: ObjectId;
-
-  @IsDefined()
-  @IsString()
-  correct_answer: ObjectId;
+  @IsObject()
+  correct_answer: Answer;
 
   @IsOptional()
   @IsArray()
-  answers: ObjectId[];
+  answers: Answer[];
 
   @IsDefined()
   @IsString()
@@ -44,16 +45,20 @@ export class UpdateQuestionDto {
   image: string;
 
   @IsDefined()
-  @IsString()
-  subject: ObjectId;
-
-  @IsDefined()
-  @IsString()
-  correct_answer: ObjectId;
+  @IsObject()
+  correct_answer: Answer;
 
   @IsOptional()
   @IsArray()
-  answers: ObjectId[];
+  answers: Answer[];
+
+  @IsDefined()
+  @IsString()
+  accuracy: string;
+
+  @IsOptional()
+  @IsBoolean()
+  is_essay: boolean;
 }
 export class ParamsQuestionDto {
   @IsDefined()

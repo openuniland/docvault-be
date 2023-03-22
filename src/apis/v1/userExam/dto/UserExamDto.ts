@@ -1,4 +1,4 @@
-import { IsDefined, IsString, IsNumber, IsBoolean, IsOptional } from 'class-validator';
+import { IsDefined, IsString, IsNumber, IsOptional } from 'class-validator';
 import { ObjectId } from 'mongoose';
 export class UserExamDto {
   @IsNumber()
@@ -22,13 +22,13 @@ export class ParamsUserExamDto {
 }
 
 export class UserExamFilter {
-  @IsBoolean()
+  @IsString()
   @IsOptional()
-  is_completed?: boolean;
+  is_completed?: string;
 }
 
 export class SubmitTheExamDto {
   @IsString()
   @IsDefined()
-  user_exam_id: ObjectId;
+  user_exam_id: string;
 }

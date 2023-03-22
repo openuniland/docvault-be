@@ -7,46 +7,40 @@ export class ParamsExamDto {
   id: string;
 }
 
-export class QueryExamDto {
-  @IsString()
-  @IsDefined()
-  subject_name?: string;
-}
-
 export class ExamDto {
-  @IsArray()
-  @IsDefined()
-  questions: ObjectId[];
-
   @IsString()
-  @IsDefined()
+  @IsOptional()
   subject: ObjectId;
 
   @IsString()
-  @IsDefined()
+  @IsOptional()
   title: string;
 
+  @IsString()
+  @IsOptional()
+  description: string;
+
   @IsNumber()
-  @IsDefined()
+  @IsOptional()
   semester: number;
 
   @IsString()
-  @IsDefined()
+  @IsOptional()
   school_year: string;
 }
 
 export class UpdateExamByOwnerDto {
-  @IsArray()
-  @IsOptional()
-  questions: ObjectId[];
-
   @IsString()
-  @IsOptional()
+  @IsDefined()
   subject: ObjectId;
 
   @IsString()
   @IsDefined()
   title: string;
+
+  @IsString()
+  @IsOptional()
+  description: string;
 
   @IsNumber()
   @IsDefined()
@@ -70,6 +64,10 @@ export class UpdateExamByAdminDto {
   @IsOptional()
   title: string;
 
+  @IsString()
+  @IsOptional()
+  description: string;
+
   @IsNumber()
   @IsOptional()
   semester: number;
@@ -81,4 +79,8 @@ export class UpdateExamByAdminDto {
   @IsBoolean()
   @IsOptional()
   is_approved?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  is_draft?: boolean;
 }

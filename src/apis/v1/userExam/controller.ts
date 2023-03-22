@@ -42,10 +42,10 @@ export const getUserExamByOwner = async (req: RequestWithUser, res: Response) =>
 };
 
 export const submitTheExam = async (req: RequestWithUser, res: Response) => {
-  const author: ObjectId = req?.user?._id;
   const input: SubmitTheExamDto = req.body;
+  const author: string = req?.user?.email;
 
-  const result = await service.submitTheExam(author, input.user_exam_id);
+  const result = await service.submitTheExam(input, author);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

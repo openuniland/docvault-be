@@ -26,7 +26,7 @@ export const createUserAnswer = async (input: UserAnswerDto) => {
   }
 };
 
-export const updateUserAnswer = async (userAnswerId: string, input: UpdateUserAnswerDto) => {
+export const updateUserAnswer = async (userAnswerId: string, input: UpdateUserAnswerDto, userEmail: string) => {
   try {
     const { user_exam_id } = input;
 
@@ -44,6 +44,17 @@ export const updateUserAnswer = async (userAnswerId: string, input: UpdateUserAn
         },
       },
       {
+        $lookup: {
+          from: 'user',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $unwind: '$author',
+      },
+      {
         $project: {
           'questions.author': 0,
         },
@@ -51,9 +62,11 @@ export const updateUserAnswer = async (userAnswerId: string, input: UpdateUserAn
     ];
     const userExam = await UserExamModel.aggregate(pipeline);
 
-    console.log('userExam[0]', userExam[0]);
+    if (userExam[0]?.author?.email !== userEmail) {
+      throw new HttpException(403, 'not allowed', ErrorCodes.BAD_REQUEST.CODE);
+    }
 
-    if (userExam[0].user_answer_id._id.toString() !== userAnswerId) {
+    if (userExam[0].user_answer_id.toString() !== userAnswerId) {
       throw new HttpException(400, 'UserAnswer is not belong to UserExam', 'USER_ANSWER_IS_NOT_BELONG_TO_USER_EXAM');
     }
 
@@ -66,11 +79,12 @@ export const updateUserAnswer = async (userAnswerId: string, input: UpdateUserAn
       //duration is in milliseconds
       const time = new Date().getTime() - userExam[0].updated_at.getTime();
       if (time > duration && !userExam[0].is_completed) {
-        calculateScore(userExam[0]._id, userExam[0].user_answer_id);
+        calculateScore(userExam[0], userExam[0].user_answer_id);
 
         throw new HttpException(400, 'Time is up', 'TIME_IS_UP');
       }
     }
+
     const data = await UserAnswerModel.findByIdAndUpdate(
       {
         _id: userAnswerId,

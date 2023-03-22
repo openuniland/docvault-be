@@ -30,5 +30,5 @@ export class UserExamFilter {
 export class SubmitTheExamDto {
   @IsString()
   @IsDefined()
-  user_exam_id: ObjectId;
+  user_exam_id: string;
 }

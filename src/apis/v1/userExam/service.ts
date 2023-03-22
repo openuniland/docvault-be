@@ -4,13 +4,14 @@ import { ObjectId as ObjectIdType, PipelineStage } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
 import UserExamModel from 'models/schema/UserExam';
 import { logger } from 'utils/logger';
-import { UserExamDto, UserExamFilter } from './dto/UserExamDto';
+import { SubmitTheExamDto, UserExamDto, UserExamFilter } from './dto/UserExamDto';
 import { getExamById } from 'apis/v1/exam/service';
 import { createUserAnswer } from 'apis/v1/userAnswer/service';
 import { UserAnswerModel } from 'models';
 import Question from 'models/types/Question';
 import URLParams from 'utils/rest/urlparams';
 import { DEFAULT_PAGING } from 'utils/constants';
+import UserExam from 'models/types/UserExam';
 
 export const createUserExam = async (input: UserExamDto, author: ObjectIdType) => {
   try {
@@ -43,47 +44,19 @@ export const createUserExam = async (input: UserExamDto, author: ObjectIdType) =
   }
 };
 
-export const calculateScore = async (userExamId: string, userAnswerId: string) => {
+export const calculateScore = async (userExam: UserExam, userAnswerId: string) => {
   try {
-    const _id = new ObjectId(userExamId);
-    const pipeline: PipelineStage[] = [
-      {
-        $match: { _id },
-      },
-      {
-        $lookup: {
-          from: 'question',
-          localField: 'original_exam',
-          foreignField: 'exam_id',
-          as: 'questions',
-        },
-      },
-      {
-        $project: {
-          'questions.author': 0,
-        },
-      },
-    ];
-    const userExam = UserExamModel.aggregate(pipeline);
-    const userAnswer = UserAnswerModel.findOne({ _id: userAnswerId });
-    const resolveAll = await Promise.all([userExam, userAnswer]);
+    const userAnswer = await UserAnswerModel.findOne({ _id: userAnswerId });
 
     let score = 0;
 
-    console.log('resolveAll[0][0]?.questions.length', resolveAll[0][0]?.questions.length);
-    console.log('resolveAll[0][0]', resolveAll[0][0]);
-    console.log('resolveAll[1]', resolveAll[1]);
-
-    for (let i = 0; i < resolveAll[0][0]?.questions.length; i++) {
-      console.log('resolveAll[0][0]?.questions[i].correct_answer.id', resolveAll[0][0]?.questions[i].correct_answer.id);
-      console.log('resolveAll[1].answers_id[i]', resolveAll[1].answers_id[i]);
-
-      if (resolveAll[0][0]?.questions[i].correct_answer.id === resolveAll[1].answers_id[i]) {
+    for (let i = 0; i < userExam?.questions.length; i++) {
+      if (userExam?.questions[i].correct_answer.id === userAnswer.answers_id[i]) {
         score++;
       }
     }
 
-    await UserExamModel.findOneAndUpdate({ _id: userExamId }, { is_completed: true, score });
+    await UserExamModel.findOneAndUpdate({ _id: userExam?._id }, { is_completed: true, score });
 
     return score;
   } catch (error) {
@@ -337,7 +310,7 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
     const { duration } = userExam[0];
 
     if (time > duration && !userExam[0].is_completed) {
-      const score = await calculateScore(userExam[0]._id, userExam[0].user_answer_id);
+      const score = await calculateScore(userExam[0], userExam[0].user_answer_id);
 
       return {
         ...userExam[0],
@@ -367,12 +340,54 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
   }
 };
 
-export const submitTheExam = async (userId: ObjectIdType, userExamId: ObjectIdType) => {
+export const submitTheExam = async (input: SubmitTheExamDto, userEmail: string) => {
   try {
-    const result = await UserExamModel.findOneAndUpdate({ _id: userExamId, author: userId }, { is_completed: true });
+    const _id = new ObjectId(input.user_exam_id);
+
+    const pipeline: PipelineStage[] = [
+      {
+        $match: { _id },
+      },
+      {
+        $lookup: {
+          from: 'question',
+          localField: 'original_exam',
+          foreignField: 'exam_id',
+          as: 'questions',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $unwind: '$author',
+      },
+      {
+        $project: {
+          'author.is_blocked': 0,
+          'author.roles': 0,
+          'author.created_at': 0,
+          'author.updated_at': 0,
+          'author.__v': 0,
+          'questions.author': 0,
+        },
+      },
+    ];
+    const userExam = await UserExamModel.aggregate(pipeline);
+
+    if (userExam[0]?.author?.email !== userEmail) {
+      throw new HttpException(403, 'not allowed', ErrorCodes.BAD_REQUEST.CODE);
+    }
+
+    await calculateScore(userExam[0], userExam[0]?.user_answer_id);
     logger.info(`Submit the exam successfully`);
 
-    return result;
+    return 'OK';
   } catch (error) {
     logger.error(`Error while submit the exam: ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);

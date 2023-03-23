@@ -28,6 +28,17 @@ jobs:
         run: |
           echo "TZ=Asia/Ho_Chi_Minh" >> .env
           echo "PORT=8080" >> .env
+          echo "NODE_ENV=dev" >> .env
+          echo "MONGODB_PROTOCOL=" >> .env
+          echo "MONGODB_USERNAME=" >> .env
+          echo "MONGODB_PASSWORD=" >> .env
+          echo "MONGODB_HOST=" >> .env
+          echo "MONGODB_NAME=" >> .env
+          echo "ACCESS_TOKEN_SECRET=" >> .env
+          echo "REFRESH_TOKEN_SECRET=" >> .env
+          echo "ACCESS_TOKEN_EXPIRES_IN=" >> .env
+          echo "REFRESH_TOKEN_EXPIRES_IN=" >> .env
+          echo "GOOGLE_CLIENT_ID=" >> .env
 
       - run: npm run build --if-present
       - run: npm start

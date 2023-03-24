@@ -247,6 +247,15 @@ export const createExam = async (input: ExamDto, author: ObjectIdType) => {
       author,
       ...input,
     };
+    const DraftExamExist = await ExamModel.findOne({
+      author,
+      is_draft: true,
+    }).sort({ created_at: -1 });
+
+    if (DraftExamExist) {
+      return DraftExamExist;
+    }
+
     const data = await ExamModel.create(exam);
 
     return data;
@@ -300,6 +309,17 @@ export const updateExamByAdmin = async (examId: string, input: UpdateExamByAdmin
     return data;
   } catch (error) {
     logger.error(`Error while update exam by admin: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const getDraftExam = async (author: ObjectIdType) => {
+  try {
+    const data = await ExamModel.findOne({ author, is_draft: true }).sort({ created_at: -1 });
+
+    return data;
+  } catch (error) {
+    logger.error(`Error while create exam: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

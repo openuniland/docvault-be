@@ -53,3 +53,10 @@ export const deleteExam = async (req: RequestWithUser, res: Response) => {
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
+
+export const getDraftExam = async (req: RequestWithUser, res: Response) => {
+  const author: ObjectId = req?.user?._id;
+  const result = await service.getDraftExam(author);
+
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};

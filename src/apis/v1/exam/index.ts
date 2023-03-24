@@ -10,6 +10,8 @@ const router = Router();
 
 router.get('/', authMiddleware, asyncRouteHandler(controller.getExams));
 
+router.get('/draft-exam', authMiddleware, asyncRouteHandler(controller.getDraftExam));
+
 router.get(
   '/:id',
   authMiddleware,

@@ -46,6 +46,9 @@ export const getExams = async (urlParams: URLParams) => {
         $unwind: '$subject',
       },
       {
+        $unwind: '$author',
+      },
+      {
         $project: {
           'author.is_blocked': 0,
           'author.roles': 0,
@@ -197,6 +200,9 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
       },
       {
         $unwind: '$subject',
+      },
+      {
+        $unwind: '$author',
       },
       {
         $project: {

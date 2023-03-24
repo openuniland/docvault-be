@@ -29,7 +29,7 @@ export const getDocuments = async (urlParams: URLParams) => {
       .skip(pageSize * currentPage)
       .limit(pageSize)
       .sort({ created_at: order === 'DESC' ? -1 : 1 })
-      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
+      .populate('author', '-is_deleted -is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
     logger.info(`Get all documents successfully`);
@@ -147,7 +147,7 @@ export const getDocumentsByAdmin = async (filter: DocumentFilter, urlParams: URL
       .skip(pageSize * currentPage)
       .limit(pageSize)
       .sort({ created_at: order === 'DESC' ? -1 : 1 })
-      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
+      .populate('author', '-is_deleted -is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
     logger.info(`Get all documents successfully`);
@@ -179,7 +179,9 @@ export const getDocumentsBySubjectId = async (subjectId: string) => {
 
     logger.info(`Get all documents by subjectId successfully`);
     return {
-      documents: resultAll[0],
+      documents: resultAll[0].map((documents: any) => {
+        return { ...documents.toObject(), author: hideUserInfoIfRequired(documents?.author) };
+      }),
       subject: resultAll[1],
     };
   } catch (error) {

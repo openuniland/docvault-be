@@ -7,6 +7,7 @@ import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
 import { ExamDto, UpdateExamByAdminDto, UpdateExamByOwnerDto } from './dto/ExamDto';
+import { hideUserInfoIfRequired } from 'utils';
 
 //Get all user's exams
 export const getExams = async (urlParams: URLParams) => {
@@ -68,7 +69,9 @@ export const getExams = async (urlParams: URLParams) => {
 
     const resolveAll = await Promise.all([count, data]);
     return {
-      result: resolveAll[1],
+      result: resolveAll[1].map((exam: any) => {
+        return { ...exam, author: hideUserInfoIfRequired(exam?.author[0]) };
+      }),
       meta: {
         total: resolveAll[0],
         pageSize,
@@ -128,6 +131,8 @@ export const getExamById = async (id: string) => {
             _id: '$author._id',
             fullname: '$author.fullname',
             email: '$author.email',
+            nickname: '$author.nickname',
+            is_show_info: '$author.is_show_info',
           },
           subject: {
             _id: '$subject._id',
@@ -152,7 +157,10 @@ export const getExamById = async (id: string) => {
       },
     ]);
 
-    return data[0];
+    return {
+      ...data[0],
+      author: hideUserInfoIfRequired(data[0].author),
+    };
   } catch (error) {
     logger.error(`Error while get exam: ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
@@ -222,7 +230,9 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
     const resolveAll = await Promise.all([count, data]);
 
     return {
-      result: resolveAll[1],
+      result: resolveAll[1].map((exam: any) => {
+        return { ...exam, author: hideUserInfoIfRequired(exam?.author[0]) };
+      }),
       meta: {
         total: resolveAll[0],
         pageSize,

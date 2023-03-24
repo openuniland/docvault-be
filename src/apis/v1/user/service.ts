@@ -6,6 +6,7 @@ import { logger } from 'utils/logger';
 import { UserDto, UpdateUserDto } from './dto/UserDto';
 import URLParams from 'utils/rest/urlparams';
 import { DEFAULT_PAGING } from 'utils/constants';
+import { hideUserInfoIfRequired } from 'utils';
 
 export const createUser = async function (input: UserDto) {
   try {
@@ -76,7 +77,7 @@ export const getUserById = async function (id: ObjectId) {
 export const getUserByEmail = async function (email: string) {
   try {
     const user = await UserModel.findOne({ email });
-    return user;
+    return hideUserInfoIfRequired(user);
   } catch (error) {
     logger.error(`Error while get user by email: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
@@ -88,9 +89,7 @@ export const updateUser = async function (input: UpdateUserDto, id: string) {
     const users = await UserModel.findOneAndUpdate(
       { _id: id },
       {
-        fullname: input.fullname,
-        roles: input.role,
-        is_blocked: input.is_blocked,
+        $set: input,
       }
     );
     logger.info(`Update for user have id: ${id} successfully`);

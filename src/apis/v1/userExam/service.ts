@@ -126,10 +126,10 @@ export const getAllUserExamsByAdmin = async (urlParams: URLParams) => {
         $sort: { created_at: order === 'DESC' ? -1 : 1 },
       },
       {
-        $skip: pageSize * currentPage,
+        $skip: Number(pageSize * currentPage),
       },
       {
-        $limit: pageSize,
+        $limit: Number(pageSize),
       },
     ]);
 
@@ -219,10 +219,10 @@ export const getAllUserExamsByOwner = async (userId: string, filter: UserExamFil
         $sort: { created_at: order === 'DESC' ? -1 : 1 },
       },
       {
-        $skip: pageSize * currentPage,
+        $skip: Number(pageSize * currentPage),
       },
       {
-        $limit: pageSize,
+        $limit: Number(pageSize),
       },
     ];
 

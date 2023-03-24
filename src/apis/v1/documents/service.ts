@@ -14,6 +14,7 @@ import {
 import { SubjectModel } from 'models';
 import URLParams from 'utils/rest/urlparams';
 import { DEFAULT_PAGING } from 'utils/constants';
+import { hideUserInfoIfRequired } from 'utils';
 
 export const getDocuments = async (urlParams: URLParams) => {
   try {
@@ -33,8 +34,14 @@ export const getDocuments = async (urlParams: URLParams) => {
 
     logger.info(`Get all documents successfully`);
     const resolveAll = await Promise.all([count, results]);
+
     return {
-      result: resolveAll[1],
+      result: resolveAll[1].map((document: any) => {
+        return {
+          ...document.toObject(),
+          author: hideUserInfoIfRequired(document?.author),
+        };
+      }),
       meta: {
         total: resolveAll[0],
         pageSize,
@@ -112,12 +119,15 @@ export const deleteDocument = async (id: string) => {
 
 export const getDocumentById = async (params: ParamsDocumentDto) => {
   try {
-    const results = await DocumentModel.findOne({ _id: params.id })
+    const results: any = await DocumentModel.findOne({ _id: params.id })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
     logger.info(`Get a document successfully`);
-    return results;
+    return {
+      ...results.toObject(),
+      author: hideUserInfoIfRequired(results?.author),
+    };
   } catch (error) {
     logger.error(`Error while get a document: ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);

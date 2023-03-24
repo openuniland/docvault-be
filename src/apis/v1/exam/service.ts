@@ -59,10 +59,10 @@ export const getExams = async (urlParams: URLParams) => {
         $sort: { created_at: order === 'DESC' ? -1 : 1 },
       },
       {
-        $skip: pageSize * currentPage,
+        $skip: Number(pageSize * currentPage),
       },
       {
-        $limit: pageSize,
+        $limit: Number(pageSize),
       },
     ]);
 
@@ -212,10 +212,10 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
         $sort: { created_at: order === 'DESC' ? -1 : 1 },
       },
       {
-        $skip: pageSize * currentPage,
+        $skip: Number(pageSize * currentPage),
       },
       {
-        $limit: pageSize,
+        $limit: Number(pageSize),
       },
     ]);
 

@@ -15,6 +15,7 @@ import { SubjectModel } from 'models';
 import URLParams from 'utils/rest/urlparams';
 import { DEFAULT_PAGING } from 'utils/constants';
 import { hideUserInfoIfRequired } from 'utils';
+import DocumentType from 'models/types/Document';
 
 export const getDocuments = async (urlParams: URLParams) => {
   try {
@@ -152,11 +153,13 @@ export const getDocumentsByAdmin = async (filter: DocumentFilter, urlParams: URL
 
     logger.info(`Get all documents successfully`);
 
-    const resultAll = await Promise.all([count, results]);
+    const resolveAll = await Promise.all([count, results]);
     return {
-      result: resultAll[1],
+      result: resolveAll[1].map((document: DocumentType) => {
+        return { ...document.toObject(), author: hideUserInfoIfRequired(document?.author) };
+      }),
       meta: {
-        total: resultAll[0],
+        total: resolveAll[0],
         currentPage,
         pageSize,
       },

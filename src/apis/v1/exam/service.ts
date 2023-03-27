@@ -8,6 +8,7 @@ import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
 import { ExamDto, UpdateExamByAdminDto, UpdateExamByOwnerDto } from './dto/ExamDto';
 import { hideUserInfoIfRequired } from 'utils';
+import Exam from 'models/types/Exam';
 
 //Get all user's exams
 export const getExams = async (urlParams: URLParams) => {
@@ -72,8 +73,8 @@ export const getExams = async (urlParams: URLParams) => {
 
     const resolveAll = await Promise.all([count, data]);
     return {
-      result: resolveAll[1].map((exam: any) => {
-        return { ...exam, author: hideUserInfoIfRequired(exam?.author[0]) };
+      result: resolveAll[1].map((exam: Exam) => {
+        return { ...exam, author: hideUserInfoIfRequired(exam.author) };
       }),
       meta: {
         total: resolveAll[0],
@@ -236,8 +237,8 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
     const resolveAll = await Promise.all([count, data]);
 
     return {
-      result: resolveAll[1].map((exam: any) => {
-        return { ...exam, author: hideUserInfoIfRequired(exam?.author[0]) };
+      result: resolveAll[1].map((exam: Exam) => {
+        return { ...exam, author: hideUserInfoIfRequired(exam?.author) };
       }),
       meta: {
         total: resolveAll[0],

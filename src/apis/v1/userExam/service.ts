@@ -12,7 +12,6 @@ import Question from 'models/types/Question';
 import URLParams from 'utils/rest/urlparams';
 import { DEFAULT_PAGING } from 'utils/constants';
 import UserExam from 'models/types/UserExam';
-
 import { hideUserInfoIfRequired } from 'utils';
 
 export const createUserExam = async (input: UserExamDto, author: ObjectIdType) => {
@@ -241,7 +240,7 @@ export const getAllUserExamsByOwner = async (userId: string, filter: UserExamFil
         currentPage,
       },
       result: resolveAll[1].map((userExam: any) => {
-        return { ...userExam, author: hideUserInfoIfRequired(userExam?.author[0]) };
+        return { ...userExam, author: hideUserInfoIfRequired(userExam?.author) };
       }),
     };
   } catch (error) {

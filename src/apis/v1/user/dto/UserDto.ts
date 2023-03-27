@@ -20,6 +20,14 @@ export class UserDto {
   @IsOptional()
   @IsString()
   role: string;
+
+  @IsOptional()
+  @IsString()
+  nickname: string;
+
+  @IsOptional()
+  @IsBoolean()
+  is_show_info: boolean;
 }
 
 export class UpdateUserDto {
@@ -34,9 +42,22 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   role: string;
+
+  @IsOptional()
+  @IsString()
+  nickname: string;
+
+  @IsOptional()
+  @IsBoolean()
+  is_show_info: boolean;
 }
 export class ParamsUserDto {
   @IsString()
   @IsDefined()
   id: string;
+}
+export class QueryUserDto {
+  @IsString()
+  @IsOptional()
+  email?: string;
 }

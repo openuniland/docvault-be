@@ -12,6 +12,7 @@ import Question from 'models/types/Question';
 import URLParams from 'utils/rest/urlparams';
 import { DEFAULT_PAGING } from 'utils/constants';
 import UserExam from 'models/types/UserExam';
+import { hideUserInfoIfRequired } from 'utils';
 
 export const createUserExam = async (input: UserExamDto, author: ObjectIdType) => {
   try {
@@ -238,7 +239,9 @@ export const getAllUserExamsByOwner = async (userId: string, filter: UserExamFil
         pageSize,
         currentPage,
       },
-      result: resolveAll[1],
+      result: resolveAll[1].map((userExam: any) => {
+        return { ...userExam, author: hideUserInfoIfRequired(userExam?.author) };
+      }),
     };
   } catch (error) {
     logger.error(`Error while get all user exams : ${error}`);
@@ -302,7 +305,7 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
     }
 
     if (userExam[0]?.is_completed) {
-      return userExam[0];
+      return { ...userExam[0], author: hideUserInfoIfRequired(userExam[0]?.author) };
     }
 
     //duration is in milliseconds
@@ -329,6 +332,7 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
           _id: question._id,
         };
       }),
+      author: hideUserInfoIfRequired(userExam[0]?.author),
     };
   } catch (error) {
     logger.error(`Error while get userExam of user : ${error}`);

@@ -16,6 +16,7 @@ router.post(
   asyncRouteHandler(controller.createUser)
 );
 router.get('/', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getUsers));
+router.get('/email', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getUserByEmail));
 
 router.put(
   '/:id',

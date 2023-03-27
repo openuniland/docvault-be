@@ -237,7 +237,11 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
 
     return {
       result: resolveAll[1].map((exam: Exam) => {
+<<<<<<< HEAD
         return { ...exam, author: hideUserInfoIfRequired(exam?.author), subject: resolveAll[2] };
+=======
+        return { ...exam, author: hideUserInfoIfRequired(exam?.author) };
+>>>>>>> 4e1daec50f1d24f823174950da33c7e0760addfa
       }),
       meta: {
         total: resolveAll[0],

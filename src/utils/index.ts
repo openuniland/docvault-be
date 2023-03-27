@@ -6,7 +6,7 @@ export const hideUserInfoIfRequired = (user: User) => {
   }
 
   return {
-    _id: user._id,
+    _id: user?._id,
     nickname: user?.nickname,
   };
 };

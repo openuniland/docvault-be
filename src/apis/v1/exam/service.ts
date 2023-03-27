@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ObjectId } from 'mongodb';
-import { ObjectId as ObjectIdType } from 'mongoose';
+import { ObjectId as ObjectIdType, PipelineStage } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
 import { ExamModel } from 'models';
 import { DEFAULT_PAGING } from 'utils/constants';
@@ -323,11 +323,51 @@ export const updateExamByAdmin = async (examId: string, input: UpdateExamByAdmin
   }
 };
 
-export const getDraftExam = async (author: ObjectIdType) => {
+export const getDraftExam = async (author: string) => {
   try {
-    const data = await ExamModel.findOne({ author, is_draft: true }).sort({ created_at: -1 });
+    const _id = new ObjectId(author);
 
-    return data;
+    const pipeline: PipelineStage[] = [
+      {
+        $match: { author: _id, is_draft: true },
+      },
+      {
+        $lookup: {
+          from: 'question',
+          localField: '_id',
+          foreignField: 'exam_id',
+          as: 'questions',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          description: 1,
+          questions: {
+            $map: {
+              input: '$questions',
+              as: 'question',
+              in: {
+                _id: '$$question._id',
+                content: '$$question.content',
+                image: '$$question.image',
+                correct_answer: '$$question.correct_answer',
+                answers: '$$question.answers',
+                is_essay: '$$question.is_essay',
+                accuracy: '$$question.accuracy',
+              },
+            },
+          },
+        },
+      },
+      {
+        $sort: { created_at: -1 },
+      },
+    ];
+    const data = await ExamModel.aggregate(pipeline);
+
+    return data[0];
   } catch (error) {
     logger.error(`Error while create exam: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);

@@ -26,7 +26,6 @@ export const getExamsBySubjectId = async (req: RequestWithUser, res: Response) =
   const urlParams: URLParams = req.searchParams;
   const input: ParamsExamDto = req.params;
   const { result, meta } = await service.getExamsBySubjectId(input.id, urlParams);
-
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 

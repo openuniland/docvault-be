@@ -2,7 +2,7 @@
 import { ObjectId } from 'mongodb';
 import { ObjectId as ObjectIdType, PipelineStage } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
-import { ExamModel } from 'models';
+import { ExamModel, SubjectModel } from 'models';
 import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
@@ -70,7 +70,6 @@ export const getExams = async (urlParams: URLParams) => {
         $limit: Number(pageSize),
       },
     ]);
-
     const resolveAll = await Promise.all([count, data]);
     return {
       result: resolveAll[1].map((exam: Exam) => {
@@ -233,13 +232,17 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
         $limit: Number(pageSize),
       },
     ]);
-
-    const resolveAll = await Promise.all([count, data]);
+    const subject = SubjectModel.findOne({ _id: subjectId });
+    const resolveAll = await Promise.all([count, data, subject]);
 
     return {
-      result: resolveAll[1].map((exam: Exam) => {
-        return { ...exam, author: hideUserInfoIfRequired(exam?.author) };
-      }),
+      result: {
+        exams: resolveAll[1].map((exam: Exam) => {
+          return { ...exam, author: hideUserInfoIfRequired(exam?.author) };
+        }),
+        subject: resolveAll[2],
+      },
+
       meta: {
         total: resolveAll[0],
         pageSize,

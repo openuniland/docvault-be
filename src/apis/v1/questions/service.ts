@@ -106,8 +106,7 @@ export const getQuestionsByExamId = async function (examId: string) {
       '-is_blocked -roles -created_at -updated_at -__v'
     );
 
-    const exam = ExamModel.findOne({ _id: examId });
-
+    const exam = ExamModel.findOne({ _id: examId }).populate('subject', '-is_deleted -created_at -updated_at -__v');
     const resultAll = await Promise.all([data, exam]);
 
     return {

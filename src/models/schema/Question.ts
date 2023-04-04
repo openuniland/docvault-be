@@ -7,7 +7,7 @@ import AnswerSchema from './Answer';
 
 const QuestionSchema = new Schema<Question>(
   {
-    author: { type: Schema.Types.ObjectId, ref: MODELS.user, required: true },
+    author: { type: Schema.Types.ObjectId, required: true },
     exam_id: { type: Schema.Types.ObjectId, required: true },
     content: { type: String, required: true },
     image: { type: String },

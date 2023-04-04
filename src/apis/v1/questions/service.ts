@@ -101,19 +101,19 @@ export const deleteQuestion = async function (id: string) {
 
 export const getQuestionsByExamId = async function (examId: string) {
   try {
-    const data = await QuestionModel.find({ exam_id: examId }).populate(
-      'author',
-      '-is_blocked -roles -created_at -updated_at -__v'
-    );
+    const data = await QuestionModel.find({ exam_id: examId });
 
-    const exam = ExamModel.findOne({ _id: examId }).populate('subject', '-is_deleted -created_at -updated_at -__v');
+    const exam = ExamModel.findOne({ _id: examId })
+      .populate('subject', '-is_deleted -created_at -updated_at -__v')
+      .populate('author', '-is_blocked -roles -created_at -updated_at -__v');
     const resultAll = await Promise.all([data, exam]);
 
     return {
-      quetions: resultAll[0].map((question: any) => {
-        return { ...question.toObject(), author: hideUserInfoIfRequired(question?.author) };
-      }),
-      exam: resultAll[1],
+      quetions: resultAll[0],
+      exam: {
+        ...resultAll[1].toObject(),
+        author: hideUserInfoIfRequired(resultAll[1].author),
+      },
     };
   } catch (error) {
     logger.error(`Error while get questions by examId: ${error}`);

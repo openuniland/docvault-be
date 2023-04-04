@@ -109,7 +109,7 @@ export const getQuestionsByExamId = async function (examId: string) {
     const resultAll = await Promise.all([data, exam]);
 
     return {
-      quetions: resultAll[0],
+      questions: resultAll[0],
       exam: {
         ...resultAll[1].toObject(),
         author: hideUserInfoIfRequired(resultAll[1].author),

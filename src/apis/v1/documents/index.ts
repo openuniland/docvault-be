@@ -9,8 +9,10 @@ import { DocumentDto, UpdateDocumentByOwnerDto, ParamsDocumentDto } from './dto/
 
 const router = Router();
 
-router.get('/owner', authMiddleware, asyncRouteHandler(controller.getDocumentsByOwner));
 router.get('/', authMiddleware, asyncRouteHandler(controller.getDocuments));
+
+router.get('/owner', authMiddleware, asyncRouteHandler(controller.getDocumentsByOwner));
+
 router.post(
   '/',
   authMiddleware,

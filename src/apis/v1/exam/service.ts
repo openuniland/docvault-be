@@ -130,6 +130,7 @@ export const getExamById = async (id: string) => {
           _id: 1,
           title: 1,
           description: 1,
+          is_approved: 1,
           author: {
             _id: '$author._id',
             fullname: '$author.fullname',
@@ -180,7 +181,7 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
     const count = ExamModel.countDocuments({ subject: subjectId });
     const data = ExamModel.aggregate([
       {
-        $match: { subject: _id },
+        $match: { subject: _id, is_approved: true },
       },
       {
         $lookup: {
@@ -254,7 +255,69 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
-
+export const getExamsByOwner = async (authorId: string) => {
+  try {
+    const _id = new ObjectId(authorId);
+    const count = ExamModel.countDocuments({ author: authorId });
+    const data = ExamModel.aggregate([
+      {
+        $match: { author: _id },
+      },
+      {
+        $lookup: {
+          from: 'question',
+          localField: '_id',
+          foreignField: 'exam_id',
+          as: 'questions',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $lookup: {
+          from: 'subject',
+          localField: 'subject',
+          foreignField: '_id',
+          as: 'subject',
+        },
+      },
+      {
+        $unwind: '$subject',
+      },
+      {
+        $unwind: '$author',
+      },
+      {
+        $project: {
+          'author.is_blocked': 0,
+          'author.roles': 0,
+          'author.created_at': 0,
+          'author.updated_at': 0,
+          'author.__v': 0,
+          'questions.author': 0,
+        },
+      },
+      {
+        $sort: { created_at: -1 },
+      },
+    ]);
+    const resolveAll = await Promise.all([count, data]);
+    return {
+      exams: resolveAll[1].map((exam: Exam) => {
+        return { ...exam, author: hideUserInfoIfRequired(exam?.author) };
+      }),
+    };
+  } catch (error) {
+    logger.error(`Error while get exam by Owner: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
 export const createExam = async (input: ExamDto, author: ObjectIdType) => {
   try {
     const exam = {

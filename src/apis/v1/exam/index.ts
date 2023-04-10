@@ -12,6 +12,8 @@ router.get('/', authMiddleware, asyncRouteHandler(controller.getExams));
 
 router.get('/draft-exam', authMiddleware, asyncRouteHandler(controller.getDraftExam));
 
+router.get('/owner', authMiddleware, asyncRouteHandler(controller.getExamsByOwner));
+
 router.get(
   '/:id',
   authMiddleware,

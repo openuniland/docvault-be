@@ -11,6 +11,8 @@ const router = Router();
 
 router.get('/', authMiddleware, asyncRouteHandler(controller.getDocuments));
 
+router.get('/owner', authMiddleware, asyncRouteHandler(controller.getDocumentsByOwner));
+
 router.post(
   '/',
   authMiddleware,
@@ -46,4 +48,5 @@ router.get(
   validationMiddleware(ParamsDocumentDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.getDocumentsBySubjectId)
 );
+
 export default router;

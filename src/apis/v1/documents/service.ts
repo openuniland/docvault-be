@@ -193,6 +193,23 @@ export const getDocumentsBySubjectId = async (subjectId: string) => {
   }
 };
 
+export const getDocumentsByOwner = async (authorId: ObjectId) => {
+  try {
+    const results = await DocumentModel.find({ author: authorId })
+      .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
+      .populate('subject', '-is_deleted -created_at -updated_at -__v');
+
+    return {
+      documents: results.map((document) => {
+        return { ...document.toObject(), author: hideUserInfoIfRequired(document?.author) };
+      }),
+    };
+  } catch (error) {
+    logger.error(`Error while get documents by Owner: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
 export const updateDocumentByAdmin = async (input: UpdateDocumentByAdminDto, documentId: string) => {
   try {
     const document = await DocumentModel.findByIdAndUpdate(

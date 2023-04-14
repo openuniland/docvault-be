@@ -4,8 +4,10 @@ import QuestionModel from 'models/schema/Question';
 import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
+import { hideUserInfoIfRequired } from 'utils';
 
 import { QuestionDto, UpdateQuestionDto } from './dto/QuestionDto';
+import { ExamModel } from 'models';
 
 export const createQuestion = async function (input: QuestionDto, author: ObjectId) {
   try {
@@ -93,6 +95,28 @@ export const deleteQuestion = async function (id: string) {
     return question;
   } catch (error) {
     logger.error(`Error while delete question: ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const getQuestionsByExamId = async function (examId: string) {
+  try {
+    const data = await QuestionModel.find({ exam_id: examId });
+
+    const exam = ExamModel.findOne({ _id: examId })
+      .populate('subject', '-is_deleted -created_at -updated_at -__v')
+      .populate('author', '-is_blocked -roles -created_at -updated_at -__v');
+    const resultAll = await Promise.all([data, exam]);
+
+    return {
+      questions: resultAll[0],
+      exam: {
+        ...resultAll[1].toObject(),
+        author: hideUserInfoIfRequired(resultAll[1].author),
+      },
+    };
+  } catch (error) {
+    logger.error(`Error while get questions by examId: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

@@ -37,3 +37,10 @@ export const deleteQuestion = async (req: RequestWithUser, res: Response) => {
   const result = await service.deleteQuestion(params.id);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
+
+export const getQuestionsByExamId = async (req: RequestWithUser, res: Response) => {
+  const params: ParamsQuestionDto = req.params;
+
+  const result = await service.getQuestionsByExamId(params.id);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};

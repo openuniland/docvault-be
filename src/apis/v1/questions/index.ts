@@ -10,6 +10,12 @@ import { QuestionDto, UpdateQuestionDto, ParamsQuestionDto } from './dto/Questio
 const router = Router();
 
 router.get('/', authMiddleware, asyncRouteHandler(controller.getQuestions));
+router.get(
+  '/exam/:id',
+  authMiddleware,
+  validationMiddleware(ParamsQuestionDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.getQuestionsByExamId)
+);
 
 router.post(
   '/',

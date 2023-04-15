@@ -1,6 +1,10 @@
 import User from 'models/types/User';
 
 export const hideUserInfoIfRequired = (user: User) => {
+  if (!user) {
+    return null;
+  }
+
   if (user?.is_show_info) {
     return user;
   }

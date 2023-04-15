@@ -48,17 +48,25 @@ export const verifyCredentials = async (tokenGoogle: string) => {
 };
 
 export const verifyGoogleAccessToken = async (accessToken: string) => {
-  const res = await axios.get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`);
+  try {
+    const res = await axios.get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`);
 
-  const userInfo: UserinfoByGoogleApiResponse = res.data;
+    const userInfo: UserinfoByGoogleApiResponse = res.data;
+    const userExisted = await getUserByEmail(userInfo.email);
 
-  const userExisted = await getUserByEmail(userInfo.email);
+    if (userExisted) {
+      return userInfo;
+    }
 
-  if (!organizationValidation(userInfo.email) && !userExisted) {
+    if (organizationValidation(userInfo.email)) {
+      return userInfo;
+    }
+
     throw new HttpException(403, 'Does not belong to our organization', 'NOT_BELONG_TO_ORGANIZATION');
+  } catch (error) {
+    logger.error(`Error while verifyGoogleAccessToken: ${error}`);
+    throw new HttpException(403, error?.message, error?.errorCode);
   }
-
-  return userInfo;
 };
 
 export const login = async function (input: LoginDto) {
@@ -68,9 +76,9 @@ export const login = async function (input: LoginDto) {
     const result = await verifyGoogleAccessToken(googleToken);
 
     const newUser = {
-      fullname: result.name,
-      email: result.email,
-      avatar: result.picture,
+      fullname: result?.name,
+      email: result?.email,
+      avatar: result?.picture,
     } as UserDto;
 
     const user = await createUser(newUser);

@@ -14,6 +14,8 @@ const UserSchema = new Schema<User>(
     is_blocked: { type: Boolean, default: false },
     is_show_info: { type: Boolean, default: true },
     roles: { type: String, default: ROLES.USER },
+    rank: { type: String, default: 'NOVICE' },
+    dedication_score: { type: Number, default: 0 },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

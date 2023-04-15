@@ -15,6 +15,7 @@ const ExamSchema = new Schema<Exam>(
     is_deleted: { type: Boolean, default: false },
     is_approved: { type: Boolean, default: false },
     is_draft: { type: Boolean, default: true },
+    rank: { type: String, default: 'NOVICE' },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

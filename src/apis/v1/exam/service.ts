@@ -7,7 +7,7 @@ import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
 import { ExamDto, UpdateExamByAdminDto, UpdateExamByOwnerDto } from './dto/ExamDto';
-import { hideUserInfoIfRequired } from 'utils';
+import { checkRankCompatibility, hideUserInfoIfRequired } from 'utils';
 import Exam from 'models/types/Exam';
 
 //Get all user's exams
@@ -88,7 +88,7 @@ export const getExams = async (urlParams: URLParams) => {
 };
 
 //Get a user's exam by id
-export const getExamById = async (id: string) => {
+export const getExamById = async (id: string, userRank: string) => {
   const _id = new ObjectId(id);
   try {
     const data = await ExamModel.aggregate([
@@ -157,9 +157,23 @@ export const getExamById = async (id: string) => {
               },
             },
           },
+          rank: 1,
         },
       },
     ]);
+
+    const checker = checkRankCompatibility(userRank, data[0].rank);
+
+    if (!checker) {
+      return {
+        notice: {
+          message: 'You do not have permission to view this document',
+          code: 'PERMISSION_DENIED',
+          minimum_required_rank: data[0].rank,
+          your_rank: userRank,
+        },
+      };
+    }
 
     return {
       ...data[0],

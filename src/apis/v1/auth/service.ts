@@ -90,6 +90,7 @@ export const login = async function (input: LoginDto) {
       role: user.roles,
       is_blocked: user.is_blocked,
       _id: user._id,
+      rank: user?.rank || 'NOVICE',
     };
 
     const accessToken = signAccessToken(payload);
@@ -135,6 +136,7 @@ export const adminLogin = async function (input: LoginDto) {
       role: user.roles,
       is_blocked: user.is_blocked,
       _id: user._id,
+      rank: user?.rank || 'NOVICE',
     };
 
     const accessToken = signAccessToken(payload);
@@ -167,6 +169,7 @@ export const refreshToken = async function (input: RefreshTokenDto) {
       is_blocked: user.is_blocked,
       _id: res._id,
       avatar: user.avatar,
+      rank: user?.rank || 'NOVICE',
     };
 
     const accessToken = signAccessToken(payload);

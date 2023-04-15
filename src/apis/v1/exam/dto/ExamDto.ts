@@ -27,6 +27,10 @@ export class ExamDto {
   @IsString()
   @IsOptional()
   school_year: string;
+
+  @IsString()
+  @IsOptional()
+  rank: string;
 }
 
 export class UpdateExamByOwnerDto {

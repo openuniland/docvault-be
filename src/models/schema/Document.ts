@@ -16,6 +16,7 @@ const DocumentSchema = new Schema<DocumentType>(
     is_approved: { type: Boolean, required: true, default: false },
     is_deleted: { type: Boolean, default: false },
     content: Array<Content>,
+    rank: { type: String, default: 'NOVICE' },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

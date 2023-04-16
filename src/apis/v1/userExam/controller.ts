@@ -11,8 +11,9 @@ import URLParams from 'utils/rest/urlparams';
 export const createUserExam = async (req: RequestWithUser, res: Response) => {
   const input: UserExamDto = req.body;
   const author: ObjectId = req?.user?._id;
+  const userRank = req?.user?.rank;
 
-  const result = await service.createUserExam(input, author);
+  const result = await service.createUserExam(input, author, userRank);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 

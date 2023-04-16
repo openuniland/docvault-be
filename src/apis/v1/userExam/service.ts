@@ -14,9 +14,15 @@ import { DEFAULT_PAGING } from 'utils/constants';
 import UserExam from 'models/types/UserExam';
 import { hideUserInfoIfRequired } from 'utils';
 
-export const createUserExam = async (input: UserExamDto, author: ObjectIdType) => {
+export const createUserExam = async (input: UserExamDto, author: ObjectIdType, userRank: string) => {
   try {
-    const exam = await getExamById(input.exam_id);
+    const exam = await getExamById(input.exam_id, userRank);
+    if (exam?.notice?.code === 'PERMISSION_DENIED') {
+      return {
+        notice: exam?.notice,
+      };
+    }
+
     const userAnswer = await createUserAnswer({
       number_of_answers: exam?.questions?.length,
       user_exam_id: input.exam_id,

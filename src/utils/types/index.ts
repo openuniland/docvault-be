@@ -7,6 +7,7 @@ export default interface JWTPayload {
   avatar: string;
   is_blocked: boolean;
   _id: ObjectId;
+  rank?: string;
 }
 
 export interface Content {

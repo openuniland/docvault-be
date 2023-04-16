@@ -12,4 +12,5 @@ export default interface Exam extends Document {
   is_deleted: boolean;
   is_approved: boolean;
   is_draft: boolean;
+  rank: string;
 }

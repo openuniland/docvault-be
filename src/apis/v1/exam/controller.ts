@@ -17,7 +17,9 @@ export const getExams = async (req: RequestWithUser, res: Response) => {
 
 export const getExamById = async (req: RequestWithUser, res: Response) => {
   const input: ParamsExamDto = req.params;
-  const result = await service.getExamById(input.id);
+  const userRank = req?.user?.rank;
+
+  const result = await service.getExamById(input.id, userRank);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

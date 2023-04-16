@@ -21,6 +21,9 @@ export const checkRankCompatibility = (userRank: string, postRank: string) => {
   const levelOfUserRank = RANK_TYPE[userRank];
   const levelOfPostRank = RANK_TYPE[postRank];
 
+  if (!levelOfPostRank) {
+    return true;
+  }
   if (levelOfUserRank?.level >= levelOfPostRank?.level) {
     return true;
   }

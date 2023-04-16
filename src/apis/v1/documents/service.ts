@@ -11,9 +11,9 @@ import {
   UpdateDocumentByAdminDto,
   UpdateDocumentByOwnerDto,
 } from './dto/DocumentsDto';
-import { SubjectModel } from 'models';
+import { SubjectModel, UserModel } from 'models';
 import URLParams from 'utils/rest/urlparams';
-import { DEFAULT_PAGING } from 'utils/constants';
+import { DEFAULT_PAGING, RANK_TYPE } from 'utils/constants';
 import { checkRankCompatibility, hideUserInfoIfRequired } from 'utils';
 import DocumentType from 'models/types/Document';
 
@@ -118,7 +118,7 @@ export const deleteDocument = async (id: string) => {
   }
 };
 
-export const getDocumentById = async (params: ParamsDocumentDto, userRank: string) => {
+export const getDocumentById = async (params: ParamsDocumentDto, userRank: string, userEmail: string) => {
   try {
     const results: any = await DocumentModel.findOne({ _id: params.id })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
@@ -127,12 +127,15 @@ export const getDocumentById = async (params: ParamsDocumentDto, userRank: strin
     const checker = checkRankCompatibility(userRank, results.rank);
 
     if (!checker) {
+      const user = await UserModel.findOne({ email: userEmail });
       return {
         notice: {
           message: 'You do not have permission to view this document',
           code: 'PERMISSION_DENIED',
           minimum_required_rank: results.rank,
           your_rank: userRank,
+          your_dedication_score: user?.dedication_score,
+          minimum_required_score: RANK_TYPE[results?.rank].score,
         },
       };
     }

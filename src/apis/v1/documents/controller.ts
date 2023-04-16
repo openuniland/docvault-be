@@ -41,7 +41,8 @@ export const deleteDocument = async (req: RequestWithUser, res: Response) => {
 export const getDocumentById = async (req: RequestWithUser, res: Response) => {
   const params: ParamsDocumentDto = req.params;
   const userRank = req?.user?.rank;
-  const result = await service.getDocumentById(params, userRank);
+  const userEmail = req?.user?.email;
+  const result = await service.getDocumentById(params, userRank, userEmail);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 

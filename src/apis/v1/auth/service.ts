@@ -125,7 +125,7 @@ export const adminLogin = async function (input: LoginDto) {
 
     const user = await createUser(newUser);
 
-    if (user.roles !== ROLES.ADMIN) {
+    if (user.roles !== ROLES.ADMIN.name && user.roles !== ROLES.APPROVER.name) {
       throw new HttpException(403, 'You are not admin', 'NOT_ADMIN');
     }
 
@@ -149,6 +149,7 @@ export const adminLogin = async function (input: LoginDto) {
         name: user.fullname,
         email: user.email,
         avatar: user.avatar,
+        role: user.roles,
       },
     };
   } catch (error) {
@@ -182,6 +183,7 @@ export const refreshToken = async function (input: RefreshTokenDto) {
         name: user.fullname,
         email: user.email,
         avatar: user.avatar,
+        role: user.roles,
       },
     };
   } catch (error) {

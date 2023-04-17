@@ -13,7 +13,7 @@ const UserSchema = new Schema<User>(
     nickname: { type: String },
     is_blocked: { type: Boolean, default: false },
     is_show_info: { type: Boolean, default: true },
-    roles: { type: String, default: ROLES.USER },
+    roles: { type: String, default: ROLES.USER.name },
     rank: { type: String, default: 'NOVICE' },
     dedication_score: { type: Number, default: 0 },
   },

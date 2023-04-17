@@ -1,5 +1,3 @@
-import { ObjectId } from 'mongoose';
-
 import DocumentModel from 'models/schema/Document';
 import { logger } from 'utils/logger';
 import { ErrorCodes, HttpException } from 'exceptions';
@@ -14,7 +12,7 @@ import {
 import { SubjectModel, UserModel } from 'models';
 import URLParams from 'utils/rest/urlparams';
 import { DEFAULT_PAGING, RANK_TYPE } from 'utils/constants';
-import { checkRankCompatibility, hideUserInfoIfRequired } from 'utils';
+import { checkDedicationScoreCompatibility, checkRankCompatibility, hideUserInfoIfRequired } from 'utils';
 import DocumentType from 'models/types/Document';
 
 export const getDocuments = async (urlParams: URLParams) => {
@@ -55,7 +53,7 @@ export const getDocuments = async (urlParams: URLParams) => {
   }
 };
 
-export const createDocument = async (input: DocumentDto, author: ObjectId) => {
+export const createDocument = async (input: DocumentDto, author: string) => {
   try {
     const document = {
       author,
@@ -72,7 +70,7 @@ export const createDocument = async (input: DocumentDto, author: ObjectId) => {
   }
 };
 
-export const createDocumentByAdmin = async (input: CreateDocumentRequestForAdmin, author: ObjectId) => {
+export const createDocumentByAdmin = async (input: CreateDocumentRequestForAdmin, author: string) => {
   try {
     const document = {
       author,
@@ -89,7 +87,7 @@ export const createDocumentByAdmin = async (input: CreateDocumentRequestForAdmin
   }
 };
 
-export const updateDocumentByOwner = async (input: UpdateDocumentByOwnerDto, documentId: string, ownId: ObjectId) => {
+export const updateDocumentByOwner = async (input: UpdateDocumentByOwnerDto, documentId: string, ownId: string) => {
   try {
     const Document = await DocumentModel.updateOne(
       { _id: documentId, author: ownId },
@@ -209,7 +207,7 @@ export const getDocumentsBySubjectId = async (subjectId: string) => {
   }
 };
 
-export const getDocumentsByOwner = async (authorId: ObjectId) => {
+export const getDocumentsByOwner = async (authorId: string) => {
   try {
     const results = await DocumentModel.find({ author: authorId })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
@@ -233,7 +231,22 @@ export const updateDocumentByAdmin = async (input: UpdateDocumentByAdminDto, doc
       {
         $set: input,
       }
-    );
+    ).populate('author', '-is_blocked -roles -created_at -updated_at -__v');
+
+    if (input.is_approved === true) {
+      const newRank = checkDedicationScoreCompatibility(document.author.dedication_score + 1);
+      await UserModel.findByIdAndUpdate({ _id: document.author._id }, { $inc: { dedication_score: 1 }, rank: newRank });
+    }
+
+    if (input.is_approved === false) {
+      const newRank = checkDedicationScoreCompatibility(document.author.dedication_score - 1);
+      const newDedicationScore = document?.author?.dedication_score > 0 ? -1 : 0;
+
+      await UserModel.findByIdAndUpdate(
+        { _id: document.author._id },
+        { $inc: { dedication_score: newDedicationScore }, rank: newRank }
+      );
+    }
 
     logger.info(`Update document by admin successfully`);
     return document;

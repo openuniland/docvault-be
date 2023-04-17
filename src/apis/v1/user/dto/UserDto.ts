@@ -32,24 +32,28 @@ export class UserDto {
 
 export class UpdateUserDto {
   @IsString()
-  @IsDefined()
-  fullname: string;
+  @IsOptional()
+  fullname?: string;
 
   @IsOptional()
   @IsBoolean()
-  is_blocked: boolean;
-
-  @IsOptional()
-  @IsString()
-  role: string;
-
-  @IsOptional()
-  @IsString()
-  nickname: string;
+  is_blocked?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  is_show_info: boolean;
+  is_deleted?: boolean;
+
+  @IsOptional()
+  @IsString()
+  roles?: string;
+
+  @IsOptional()
+  @IsString()
+  nickname?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  is_show_info?: boolean;
 }
 export class ParamsUserDto {
   @IsString()

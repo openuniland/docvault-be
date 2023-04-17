@@ -13,9 +13,18 @@ export const DEFAULT_PAGING = {
 };
 
 export const ROLES = {
-  ADMIN: 'ADMIN',
-  APPOVER: 'APPOVER',
-  USER: 'USER',
+  ADMIN: {
+    name: 'ADMIN',
+    value: 1,
+  },
+  APPROVER: {
+    name: 'APPROVER',
+    value: 2,
+  },
+  USER: {
+    name: 'USER',
+    value: 3,
+  },
 };
 
 export const HOU_ENDPOINT = '.hou.edu.vn';

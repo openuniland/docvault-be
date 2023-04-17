@@ -5,7 +5,6 @@ import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 
 import { DocumentDto, UpdateDocumentByOwnerDto, ParamsDocumentDto } from './dto/DocumentsDto';
-import { ObjectId } from 'mongoose';
 import URLParams from 'utils/rest/urlparams';
 
 export const getDocuments = async (req: RequestWithUser, res: Response) => {
@@ -16,7 +15,7 @@ export const getDocuments = async (req: RequestWithUser, res: Response) => {
 
 export const createDocument = async (req: RequestWithUser, res: Response) => {
   const input: DocumentDto = req.body;
-  const author: ObjectId = req?.user?._id;
+  const author: string = req?.user?._id;
 
   const result = await service.createDocument(input, author);
 
@@ -26,7 +25,7 @@ export const createDocument = async (req: RequestWithUser, res: Response) => {
 export const updateDocumentByOwner = async (req: RequestWithUser, res: Response) => {
   const params: ParamsDocumentDto = req.params;
   const input: UpdateDocumentByOwnerDto = req.body;
-  const author: ObjectId = req?.user?._id;
+  const author: string = req?.user?._id;
   const result = await service.updateDocumentByOwner(input, params.id, author);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
@@ -53,7 +52,7 @@ export const getDocumentsBySubjectId = async (req: RequestWithUser, res: Respons
 };
 
 export const getDocumentsByOwner = async (req: RequestWithUser, res: Response) => {
-  const author: ObjectId = req?.user?._id;
+  const author: string = req?.user?._id;
   const result = await service.getDocumentsByOwner(author);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

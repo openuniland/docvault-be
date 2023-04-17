@@ -87,7 +87,7 @@ export const getExams = async (urlParams: URLParams) => {
 };
 
 //Get a user's exam by id
-export const getExamById = async (id: string, userRank: string) => {
+export const getExamById = async (id: string, userRank: string, userEmail: string) => {
   const _id = new ObjectId(id);
   try {
     const data = await ExamModel.aggregate([
@@ -164,13 +164,15 @@ export const getExamById = async (id: string, userRank: string) => {
     const checker = checkRankCompatibility(userRank, data[0].rank);
 
     if (!checker) {
+      const user = await UserModel.findOne({ email: userEmail });
+
       return {
         notice: {
           message: 'You do not have permission to view this document',
           code: 'PERMISSION_DENIED',
           minimum_required_rank: data[0].rank,
           your_rank: userRank,
-          your_dedication_score: data[0]?.dedication_score,
+          your_dedication_score: user?.dedication_score,
           minimum_required_score: RANK_TYPE[data[0]?.rank].score,
         },
       };

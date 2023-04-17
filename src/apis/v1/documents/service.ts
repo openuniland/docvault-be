@@ -125,6 +125,7 @@ export const getDocumentById = async (params: ParamsDocumentDto, userRank: strin
 
     if (!checker) {
       const user = await UserModel.findOne({ email: userEmail });
+
       return {
         notice: {
           message: 'You do not have permission to view this document',

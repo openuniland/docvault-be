@@ -209,16 +209,33 @@ export const getDocumentsBySubjectId = async (subjectId: string) => {
   }
 };
 
-export const getDocumentsByOwner = async (authorId: ObjectId) => {
+export const getDocumentsByOwner = async (authorId: ObjectId, urlParams: URLParams) => {
   try {
-    const results = await DocumentModel.find({ author: authorId })
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
+    const order = urlParams.order || 'DESC';
+
+    const count = DocumentModel.countDocuments({ author: authorId });
+
+    const results = DocumentModel.find({ author: authorId })
+      .skip(pageSize * currentPage)
+      .limit(pageSize)
+      .sort({ created_at: order === 'DESC' ? -1 : 1 })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
+    const resolveAll = await Promise.all([count, results]);
     return {
-      documents: results.map((document) => {
+      result: resolveAll[1].map((document: DocumentType) => {
         return { ...document.toObject(), author: hideUserInfoIfRequired(document?.author) };
       }),
+      meta: {
+        total: resolveAll[0],
+        currentPage,
+        pageSize,
+      },
     };
   } catch (error) {
     logger.error(`Error while get documents by Owner: ${error}`);

@@ -63,8 +63,9 @@ export const getDraftExam = async (req: RequestWithUser, res: Response) => {
 };
 
 export const getExamsByOwner = async (req: RequestWithUser, res: Response) => {
+  const urlParams: URLParams = req.searchParams;
   const author = req?.user?._id;
-  const result = await service.getExamsByOwner(String(author));
+  const { result, meta } = await service.getExamsByOwner(String(author), urlParams);
 
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };

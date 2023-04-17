@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ObjectId } from 'mongodb';
-import { ObjectId as ObjectIdType, PipelineStage } from 'mongoose';
+import { PipelineStage } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
-import { ExamModel, SubjectModel } from 'models';
-import { DEFAULT_PAGING } from 'utils/constants';
+import { ExamModel, SubjectModel, UserModel } from 'models';
+import { DEFAULT_PAGING, RANK_TYPE } from 'utils/constants';
 import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
 import { ExamDto, UpdateExamByAdminDto, UpdateExamByOwnerDto } from './dto/ExamDto';
-import { checkRankCompatibility, hideUserInfoIfRequired } from 'utils';
+import { checkDedicationScoreCompatibility, checkRankCompatibility, hideUserInfoIfRequired } from 'utils';
 import Exam from 'models/types/Exam';
 
 //Get all user's exams
@@ -171,6 +171,8 @@ export const getExamById = async (id: string, userRank: string) => {
           code: 'PERMISSION_DENIED',
           minimum_required_rank: data[0].rank,
           your_rank: userRank,
+          your_dedication_score: data[0]?.dedication_score,
+          minimum_required_score: RANK_TYPE[data[0]?.rank].score,
         },
       };
     }
@@ -349,7 +351,7 @@ export const getExamsByOwner = async (authorId: string, urlParams: URLParams) =>
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
-export const createExam = async (input: ExamDto, author: ObjectIdType) => {
+export const createExam = async (input: ExamDto, author: string) => {
   try {
     const exam = {
       author,
@@ -373,7 +375,7 @@ export const createExam = async (input: ExamDto, author: ObjectIdType) => {
   }
 };
 
-export const updateExamByOwner = async (examId: string, ownId: ObjectIdType, input: UpdateExamByOwnerDto) => {
+export const updateExamByOwner = async (examId: string, ownId: string, input: UpdateExamByOwnerDto) => {
   try {
     const data = await ExamModel.updateOne(
       {
@@ -412,7 +414,22 @@ export const updateExamByAdmin = async (examId: string, input: UpdateExamByAdmin
       {
         $set: input,
       }
-    );
+    ).populate('author', '-is_blocked -roles -created_at -updated_at -__v');
+
+    if (input.is_approved === true) {
+      const newRank = checkDedicationScoreCompatibility(data.author.dedication_score + 1);
+      await UserModel.findByIdAndUpdate({ _id: data.author._id }, { $inc: { dedication_score: 1 }, rank: newRank });
+    }
+
+    if (input.is_approved === false) {
+      const newRank = checkDedicationScoreCompatibility(data.author.dedication_score - 1);
+      const newDedicationScore = data?.author?.dedication_score > 0 ? -1 : 0;
+
+      await UserModel.findByIdAndUpdate(
+        { _id: data.author._id },
+        { $inc: { dedication_score: newDedicationScore }, rank: newRank }
+      );
+    }
 
     return data;
   } catch (error) {

@@ -15,10 +15,12 @@ router.post(
   validationMiddleware(UserDto, APP_CONSTANTS.body),
   asyncRouteHandler(controller.createUser)
 );
+
 router.get('/', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getUsers));
+
 router.get('/email', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getUserByEmail));
 
-router.put(
+router.patch(
   '/:id',
   authMiddleware,
   adminMiddleware,
@@ -26,6 +28,7 @@ router.put(
   validationMiddleware(UpdateUserDto, APP_CONSTANTS.body),
   asyncRouteHandler(controller.updateUser)
 );
+
 router.delete(
   '/:id',
   authMiddleware,
@@ -42,6 +45,7 @@ router.put(
   validationMiddleware(UpdateUserDto, APP_CONSTANTS.body),
   asyncRouteHandler(controller.updateUser)
 );
+
 router.delete(
   '/:id',
   authMiddleware,

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ObjectId } from 'mongodb';
-import { ObjectId as ObjectIdType, PipelineStage } from 'mongoose';
+import { PipelineStage } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
 import UserExamModel from 'models/schema/UserExam';
 import { logger } from 'utils/logger';
@@ -14,7 +14,7 @@ import { DEFAULT_PAGING } from 'utils/constants';
 import UserExam from 'models/types/UserExam';
 import { hideUserInfoIfRequired } from 'utils';
 
-export const createUserExam = async (input: UserExamDto, author: ObjectIdType, userRank: string) => {
+export const createUserExam = async (input: UserExamDto, author: string, userRank: string) => {
   try {
     const exam = await getExamById(input.exam_id, userRank);
     if (exam?.notice?.code === 'PERMISSION_DENIED') {

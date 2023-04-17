@@ -5,12 +5,11 @@ import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 
 import { UserExamDto, ParamsUserExamDto, UserExamFilter, SubmitTheExamDto } from './dto/UserExamDto';
-import { ObjectId } from 'mongoose';
 import URLParams from 'utils/rest/urlparams';
 
 export const createUserExam = async (req: RequestWithUser, res: Response) => {
   const input: UserExamDto = req.body;
-  const author: ObjectId = req?.user?._id;
+  const author: string = req?.user?._id;
   const userRank = req?.user?.rank;
 
   const result = await service.createUserExam(input, author, userRank);

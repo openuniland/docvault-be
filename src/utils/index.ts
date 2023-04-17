@@ -30,3 +30,23 @@ export const checkRankCompatibility = (userRank: string, postRank: string) => {
 
   return false;
 };
+
+export const checkDedicationScoreCompatibility = (dedication_score: number) => {
+  if (dedication_score >= 40) {
+    return 'GURU';
+  }
+
+  if (dedication_score >= 30) {
+    return 'PASSIONATE';
+  }
+
+  if (dedication_score >= 20) {
+    return 'DEDICATED';
+  }
+
+  if (dedication_score >= 10) {
+    return 'ENTHUSIAST';
+  }
+
+  return 'NOVICE';
+};

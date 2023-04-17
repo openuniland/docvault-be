@@ -3,7 +3,7 @@ import dotenvSafe from 'dotenv-safe';
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 dotenvSafe.config({
-  allowEmptyValues: false,
+  allowEmptyValues: true,
 });
 
 export default {

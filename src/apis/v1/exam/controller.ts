@@ -17,8 +17,9 @@ export const getExams = async (req: RequestWithUser, res: Response) => {
 export const getExamById = async (req: RequestWithUser, res: Response) => {
   const input: ParamsExamDto = req.params;
   const userRank = req?.user?.rank;
+  const userEmail = req?.user?.email;
 
-  const result = await service.getExamById(input.id, userRank);
+  const result = await service.getExamById(input.id, userRank, userEmail);
 
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
@@ -62,8 +63,9 @@ export const getDraftExam = async (req: RequestWithUser, res: Response) => {
 };
 
 export const getExamsByOwner = async (req: RequestWithUser, res: Response) => {
+  const urlParams: URLParams = req.searchParams;
   const author = req?.user?._id;
-  const result = await service.getExamsByOwner(String(author));
+  const { result, meta } = await service.getExamsByOwner(String(author), urlParams);
 
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };

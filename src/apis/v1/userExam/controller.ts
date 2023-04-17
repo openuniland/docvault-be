@@ -11,8 +11,9 @@ export const createUserExam = async (req: RequestWithUser, res: Response) => {
   const input: UserExamDto = req.body;
   const author: string = req?.user?._id;
   const userRank = req?.user?.rank;
+  const userEmail = req?.user?.email;
 
-  const result = await service.createUserExam(input, author, userRank);
+  const result = await service.createUserExam(input, author, userRank, userEmail);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
 

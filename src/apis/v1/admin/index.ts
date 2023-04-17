@@ -31,6 +31,13 @@ router.post(
   validationMiddleware(CreateDocumentRequestForAdmin, APP_CONSTANTS.body),
   asyncRouteHandler(controller.createNewDocumentByAdmin)
 );
+router.post(
+  '/documents',
+  authMiddleware,
+  adminMiddleware,
+  validationMiddleware(CreateDocumentRequestForAdmin, APP_CONSTANTS.body),
+  asyncRouteHandler(controller.createNewDocumentByAdmin)
+);
 router.post('/login', asyncRouteHandler(controller.adminLogin));
 router.patch(
   '/exams/:id',

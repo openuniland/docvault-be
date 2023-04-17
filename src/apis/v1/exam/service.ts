@@ -15,7 +15,6 @@ export const getExams = async (urlParams: URLParams) => {
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
-
     const order = urlParams.order || 'DESC';
 
     const count = ExamModel.countDocuments();
@@ -88,7 +87,7 @@ export const getExams = async (urlParams: URLParams) => {
 };
 
 //Get a user's exam by id
-export const getExamById = async (id: string, userRank: string) => {
+export const getExamById = async (id: string, userRank: string, userEmail: string) => {
   const _id = new ObjectId(id);
   try {
     const data = await ExamModel.aggregate([
@@ -165,13 +164,15 @@ export const getExamById = async (id: string, userRank: string) => {
     const checker = checkRankCompatibility(userRank, data[0].rank);
 
     if (!checker) {
+      const user = await UserModel.findOne({ email: userEmail });
+
       return {
         notice: {
           message: 'You do not have permission to view this document',
           code: 'PERMISSION_DENIED',
           minimum_required_rank: data[0].rank,
           your_rank: userRank,
-          your_dedication_score: data[0]?.dedication_score,
+          your_dedication_score: user?.dedication_score,
           minimum_required_score: RANK_TYPE[data[0]?.rank].score,
         },
       };
@@ -271,8 +272,14 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
-export const getExamsByOwner = async (authorId: string) => {
+export const getExamsByOwner = async (authorId: string, urlParams: URLParams) => {
   try {
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
+    const order = urlParams.order || 'DESC';
+
     const _id = new ObjectId(authorId);
     const count = ExamModel.countDocuments({ author: authorId });
     const data = ExamModel.aggregate([
@@ -320,14 +327,25 @@ export const getExamsByOwner = async (authorId: string) => {
         },
       },
       {
-        $sort: { created_at: -1 },
+        $sort: { created_at: order === 'DESC' ? -1 : 1 },
+      },
+      {
+        $skip: Number(pageSize * currentPage),
+      },
+      {
+        $limit: Number(pageSize),
       },
     ]);
     const resolveAll = await Promise.all([count, data]);
     return {
-      exams: resolveAll[1].map((exam: Exam) => {
+      result: resolveAll[1].map((exam: any) => {
         return { ...exam, author: hideUserInfoIfRequired(exam?.author) };
       }),
+      meta: {
+        total: resolveAll[0],
+        currentPage,
+        pageSize,
+      },
     };
   } catch (error) {
     logger.error(`Error while get exam by Owner: ${error}`);

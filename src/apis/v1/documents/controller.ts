@@ -43,9 +43,10 @@ export const getDocumentById = async (req: RequestWithUser, res: Response) => {
 };
 
 export const getDocumentsBySubjectId = async (req: RequestWithUser, res: Response) => {
+  const urlParams: URLParams = req.searchParams;
   const input: ParamsDocumentDto = req.params;
-  const result = await service.getDocumentsBySubjectId(input.id);
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  const { result, meta } = await service.getDocumentsBySubjectId(input.id, urlParams);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 
 export const getDocumentsByOwner = async (req: RequestWithUser, res: Response) => {

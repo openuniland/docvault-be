@@ -288,6 +288,14 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
         },
       },
       {
+        $lookup: {
+          from: 'user_answer',
+          localField: 'user_answer_id',
+          foreignField: '_id',
+          as: 'user_answers',
+        },
+      },
+      {
         $unwind: '$subject',
       },
       {
@@ -301,6 +309,8 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
           'author.updated_at': 0,
           'author.__v': 0,
           'questions.author': 0,
+          'user_answers.is_deleted': 0,
+          'user_answers.deleted_at': 0,
         },
       },
     ];
@@ -319,7 +329,7 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
     const { duration } = userExam[0];
 
     if (time > duration && !userExam[0].is_completed) {
-      const score = await calculateScore(userExam[0], userExam[0].user_answer_id);
+      const score = await calculateScore(userExam[0], userExam[0]?.user_answers?._id);
 
       return {
         ...userExam[0],
@@ -329,6 +339,7 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
     }
 
     logger.info(`Get userExam of user successfully`);
+
     return {
       ...userExam[0],
       questions: userExam[0].questions.map((question: Question) => {

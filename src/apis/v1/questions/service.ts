@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
 import QuestionModel from 'models/schema/Question';
 import { DEFAULT_PAGING } from 'utils/constants';
@@ -9,7 +8,7 @@ import { hideUserInfoIfRequired } from 'utils';
 import { QuestionDto, UpdateQuestionDto } from './dto/QuestionDto';
 import { ExamModel } from 'models';
 
-export const createQuestion = async function (input: QuestionDto, author: ObjectId) {
+export const createQuestion = async function (input: QuestionDto, author: string) {
   try {
     const data = {
       author,
@@ -53,7 +52,7 @@ export const getQuestions = async function (urlParams: URLParams) {
   }
 };
 
-export const updateQuestionByOwner = async function (input: UpdateQuestionDto, id: string, ownerId: ObjectId) {
+export const updateQuestionByOwner = async function (input: UpdateQuestionDto, id: string, ownerId: string) {
   try {
     const question = await QuestionModel.updateOne(
       { _id: id, author: ownerId },

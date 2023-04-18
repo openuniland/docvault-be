@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ObjectId } from 'mongodb';
-import { ObjectId as ObjectIdType, PipelineStage } from 'mongoose';
+import { PipelineStage } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
-import { ExamModel, SubjectModel } from 'models';
-import { DEFAULT_PAGING } from 'utils/constants';
+import { ExamModel, SubjectModel, UserModel } from 'models';
+import { DEFAULT_PAGING, RANK_TYPE } from 'utils/constants';
 import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
 import { ExamDto, UpdateExamByAdminDto, UpdateExamByOwnerDto } from './dto/ExamDto';
-import { hideUserInfoIfRequired } from 'utils';
+import { checkDedicationScoreCompatibility, checkRankCompatibility, hideUserInfoIfRequired } from 'utils';
 import Exam from 'models/types/Exam';
 
 //Get all user's exams
@@ -15,7 +15,6 @@ export const getExams = async (urlParams: URLParams) => {
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
-
     const order = urlParams.order || 'DESC';
 
     const count = ExamModel.countDocuments();
@@ -88,7 +87,7 @@ export const getExams = async (urlParams: URLParams) => {
 };
 
 //Get a user's exam by id
-export const getExamById = async (id: string) => {
+export const getExamById = async (id: string, userRank: string, userEmail: string) => {
   const _id = new ObjectId(id);
   try {
     const data = await ExamModel.aggregate([
@@ -157,9 +156,27 @@ export const getExamById = async (id: string) => {
               },
             },
           },
+          rank: 1,
         },
       },
     ]);
+
+    const checker = checkRankCompatibility(userRank, data[0].rank);
+
+    if (!checker) {
+      const user = await UserModel.findOne({ email: userEmail });
+
+      return {
+        notice: {
+          message: 'You do not have permission to view this document',
+          code: 'PERMISSION_DENIED',
+          minimum_required_rank: data[0].rank,
+          your_rank: userRank,
+          your_dedication_score: user?.dedication_score,
+          minimum_required_score: RANK_TYPE[data[0]?.rank].score,
+        },
+      };
+    }
 
     return {
       ...data[0],
@@ -255,8 +272,14 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
-export const getExamsByOwner = async (authorId: string) => {
+export const getExamsByOwner = async (authorId: string, urlParams: URLParams) => {
   try {
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+
+    const order = urlParams.order || 'DESC';
+
     const _id = new ObjectId(authorId);
     const count = ExamModel.countDocuments({ author: authorId });
     const data = ExamModel.aggregate([
@@ -304,21 +327,32 @@ export const getExamsByOwner = async (authorId: string) => {
         },
       },
       {
-        $sort: { created_at: -1 },
+        $sort: { created_at: order === 'DESC' ? -1 : 1 },
+      },
+      {
+        $skip: Number(pageSize * currentPage),
+      },
+      {
+        $limit: Number(pageSize),
       },
     ]);
     const resolveAll = await Promise.all([count, data]);
     return {
-      exams: resolveAll[1].map((exam: Exam) => {
+      result: resolveAll[1].map((exam: any) => {
         return { ...exam, author: hideUserInfoIfRequired(exam?.author) };
       }),
+      meta: {
+        total: resolveAll[0],
+        currentPage,
+        pageSize,
+      },
     };
   } catch (error) {
     logger.error(`Error while get exam by Owner: ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
-export const createExam = async (input: ExamDto, author: ObjectIdType) => {
+export const createExam = async (input: ExamDto, author: string) => {
   try {
     const exam = {
       author,
@@ -342,7 +376,7 @@ export const createExam = async (input: ExamDto, author: ObjectIdType) => {
   }
 };
 
-export const updateExamByOwner = async (examId: string, ownId: ObjectIdType, input: UpdateExamByOwnerDto) => {
+export const updateExamByOwner = async (examId: string, ownId: string, input: UpdateExamByOwnerDto) => {
   try {
     const data = await ExamModel.updateOne(
       {
@@ -381,7 +415,22 @@ export const updateExamByAdmin = async (examId: string, input: UpdateExamByAdmin
       {
         $set: input,
       }
-    );
+    ).populate('author', '-is_blocked -roles -created_at -updated_at -__v');
+
+    if (input.is_approved === true) {
+      const newRank = checkDedicationScoreCompatibility(data.author.dedication_score + 1);
+      await UserModel.findByIdAndUpdate({ _id: data.author._id }, { $inc: { dedication_score: 1 }, rank: newRank });
+    }
+
+    if (input.is_approved === false) {
+      const newRank = checkDedicationScoreCompatibility(data.author.dedication_score - 1);
+      const newDedicationScore = data?.author?.dedication_score > 0 ? -1 : 0;
+
+      await UserModel.findByIdAndUpdate(
+        { _id: data.author._id },
+        { $inc: { dedication_score: newDedicationScore }, rank: newRank }
+      );
+    }
 
     return data;
   } catch (error) {

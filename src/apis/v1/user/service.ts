@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
 import UserModel from 'models/schema/User';
 import { logger } from 'utils/logger';
@@ -63,7 +62,7 @@ export const getUsers = async function (urlParams: URLParams) {
   }
 };
 
-export const getUserById = async function (id: ObjectId) {
+export const getUserById = async function (id: string) {
   try {
     const user = await UserModel.findOne({ _id: id });
 

@@ -4,6 +4,7 @@ import * as userExamService from 'apis/v1/userExam/service';
 import * as documentService from 'apis/v1/documents/service';
 import * as authService from 'apis/v1/auth/service';
 import * as examService from 'apis/v1/exam/service';
+import * as userService from 'apis/v1/user/service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
 import {
@@ -13,9 +14,9 @@ import {
   UpdateDocumentByAdminDto,
 } from '../documents/dto/DocumentsDto';
 import { LoginDto } from '../auth/dto/LoginDto';
-import { ObjectId } from 'mongoose';
 import URLParams from 'utils/rest/urlparams';
 import { ParamsExamDto, UpdateExamByAdminDto } from '../exam/dto/ExamDto';
+import { ParamsUserDto } from '../user/dto/UserDto';
 
 export const getAllUserExamsByAdmin = async (req: RequestWithUser, res: Response) => {
   const urlParams: URLParams = req.searchParams;
@@ -49,7 +50,7 @@ export const updateDocumentByAdmin = async (req: RequestWithUser, res: Response)
 
 export const createNewDocumentByAdmin = async (req: RequestWithUser, res: Response) => {
   const body: CreateDocumentRequestForAdmin = req.body;
-  const author: ObjectId = req?.user?._id;
+  const author: string = req?.user?._id;
 
   const result = await documentService.createDocumentByAdmin(body, author);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
@@ -60,5 +61,12 @@ export const updateExamByAdmin = async (req: RequestWithUser, res: Response) => 
   const params: ParamsExamDto = req.params;
 
   const result = await examService.updateExamByAdmin(params.id, body);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};
+
+export const getAUserByAdmin = async (req: RequestWithUser, res: Response) => {
+  const userId: ParamsUserDto = req.params;
+
+  const result = await userService.getUserById(userId.id);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };

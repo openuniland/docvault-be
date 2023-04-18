@@ -8,4 +8,6 @@ export default interface User extends Document {
   roles: string;
   is_show_info: boolean;
   nickname: string;
+  rank: string;
+  dedication_score: number;
 }

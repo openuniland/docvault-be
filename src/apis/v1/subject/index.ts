@@ -5,13 +5,14 @@ import { validationMiddleware } from 'middlewares/validation';
 import { APP_CONSTANTS } from 'utils/constants';
 import { adminMiddleware, asyncRouteHandler, authMiddleware } from 'middlewares';
 import { UpdateSubjectDto, SubjectDto, ParamsSubjectDto, QuerySubjectDto } from './dto/SubjectDto';
+import { approverMiddleware } from 'middlewares/auth';
 
 const router = Router();
 
 router.put(
   '/:id',
   authMiddleware,
-  adminMiddleware,
+  approverMiddleware,
   validationMiddleware(UpdateSubjectDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsSubjectDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.updateSubject)

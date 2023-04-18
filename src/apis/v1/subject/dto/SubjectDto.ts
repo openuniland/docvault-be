@@ -9,7 +9,7 @@ export class SubjectDto {
 export class UpdateSubjectDto {
   @IsString()
   @IsOptional()
-  subject_name: string;
+  subject_name?: string;
 
   @IsOptional()
   @IsBoolean()

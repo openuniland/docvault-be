@@ -10,18 +10,26 @@ import {
 } from '../documents/dto/DocumentsDto';
 import { ParamsExamDto, UpdateExamByAdminDto } from '../exam/dto/ExamDto';
 import * as controller from './controller';
+import { approverMiddleware } from 'middlewares/auth';
 
 const router = Router();
 
 router.get('/user-exams', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getAllUserExamsByAdmin));
-router.get('/documents', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getDocumentsByAdmin));
+router.get('/documents', authMiddleware, approverMiddleware, asyncRouteHandler(controller.getDocumentsByAdmin));
 router.patch(
   '/documents/:id',
   authMiddleware,
-  adminMiddleware,
+  approverMiddleware,
   validationMiddleware(UpdateDocumentByAdminDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsDocumentDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.updateDocumentByAdmin)
+);
+router.post(
+  '/documents',
+  authMiddleware,
+  approverMiddleware,
+  validationMiddleware(CreateDocumentRequestForAdmin, APP_CONSTANTS.body),
+  asyncRouteHandler(controller.createNewDocumentByAdmin)
 );
 router.post(
   '/documents',
@@ -34,10 +42,11 @@ router.post('/login', asyncRouteHandler(controller.adminLogin));
 router.patch(
   '/exams/:id',
   authMiddleware,
-  adminMiddleware,
+  approverMiddleware,
   validationMiddleware(UpdateExamByAdminDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsExamDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.updateExamByAdmin)
 );
+router.get('/users/:id', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getAUserByAdmin));
 
 export default router;

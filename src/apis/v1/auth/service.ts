@@ -48,17 +48,25 @@ export const verifyCredentials = async (tokenGoogle: string) => {
 };
 
 export const verifyGoogleAccessToken = async (accessToken: string) => {
-  const res = await axios.get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`);
+  try {
+    const res = await axios.get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`);
 
-  const userInfo: UserinfoByGoogleApiResponse = res.data;
+    const userInfo: UserinfoByGoogleApiResponse = res.data;
+    const userExisted = await getUserByEmail(userInfo.email);
 
-  const userExisted = await getUserByEmail(userInfo.email);
+    if (userExisted) {
+      return userInfo;
+    }
 
-  if (!organizationValidation(userInfo.email) && !userExisted) {
+    if (organizationValidation(userInfo.email)) {
+      return userInfo;
+    }
+
     throw new HttpException(403, 'Does not belong to our organization', 'NOT_BELONG_TO_ORGANIZATION');
+  } catch (error) {
+    logger.error(`Error while verifyGoogleAccessToken: ${error}`);
+    throw new HttpException(403, error?.message, error?.errorCode);
   }
-
-  return userInfo;
 };
 
 export const login = async function (input: LoginDto) {
@@ -68,9 +76,9 @@ export const login = async function (input: LoginDto) {
     const result = await verifyGoogleAccessToken(googleToken);
 
     const newUser = {
-      fullname: result.name,
-      email: result.email,
-      avatar: result.picture,
+      fullname: result?.name,
+      email: result?.email,
+      avatar: result?.picture,
     } as UserDto;
 
     const user = await createUser(newUser);
@@ -82,6 +90,7 @@ export const login = async function (input: LoginDto) {
       role: user.roles,
       is_blocked: user.is_blocked,
       _id: user._id,
+      rank: user?.rank || 'NOVICE',
     };
 
     const accessToken = signAccessToken(payload);
@@ -116,7 +125,7 @@ export const adminLogin = async function (input: LoginDto) {
 
     const user = await createUser(newUser);
 
-    if (user.roles !== ROLES.ADMIN) {
+    if (user.roles !== ROLES.ADMIN.name && user.roles !== ROLES.APPROVER.name) {
       throw new HttpException(403, 'You are not admin', 'NOT_ADMIN');
     }
 
@@ -127,6 +136,7 @@ export const adminLogin = async function (input: LoginDto) {
       role: user.roles,
       is_blocked: user.is_blocked,
       _id: user._id,
+      rank: user?.rank || 'NOVICE',
     };
 
     const accessToken = signAccessToken(payload);
@@ -139,6 +149,7 @@ export const adminLogin = async function (input: LoginDto) {
         name: user.fullname,
         email: user.email,
         avatar: user.avatar,
+        role: user.roles,
       },
     };
   } catch (error) {
@@ -159,6 +170,7 @@ export const refreshToken = async function (input: RefreshTokenDto) {
       is_blocked: user.is_blocked,
       _id: res._id,
       avatar: user.avatar,
+      rank: user?.rank || 'NOVICE',
     };
 
     const accessToken = signAccessToken(payload);
@@ -171,6 +183,7 @@ export const refreshToken = async function (input: RefreshTokenDto) {
         name: user.fullname,
         email: user.email,
         avatar: user.avatar,
+        role: user.roles,
       },
     };
   } catch (error) {

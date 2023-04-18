@@ -14,4 +14,5 @@ export default interface DocumentType extends Document {
   is_approved: boolean;
   is_deleted: boolean;
   content: Content[];
+  rank: string;
 }

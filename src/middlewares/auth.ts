@@ -35,19 +35,21 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
   }
 };
 
-const adminMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
-  try {
-    const user = req.user;
-    if (!user || user.role != ROLES.ADMIN) {
-      return next(new HttpException(401, 'Unauthorized', 'NOT_ADMIN'));
+const authorizationMiddleware = (allowedRoles: string[]) => {
+  return (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const user = req?.user;
+    const condition = !user || !allowedRoles.includes(user.role);
+
+    if (condition) {
+      return next(new HttpException(403, 'Unauthorized', 'NOT_AUTHORIZED'));
     } else {
       next();
     }
-  } catch (error) {
-    logger.error(`Error in adminMiddleware: ${error}`);
-    next(error);
-  }
+  };
 };
+
+const adminMiddleware = authorizationMiddleware([ROLES.ADMIN.name]);
+const approverMiddleware = authorizationMiddleware([ROLES.APPROVER.name, ROLES.ADMIN.name]);
 
 const houMailMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
   const user = req.user;
@@ -60,4 +62,4 @@ const houMailMiddleware = (req: RequestWithUser, res: Response, next: NextFuncti
     next();
   }
 };
-export { authMiddleware, adminMiddleware, houMailMiddleware };
+export { authMiddleware, adminMiddleware, houMailMiddleware, authorizationMiddleware, approverMiddleware };

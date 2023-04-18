@@ -25,6 +25,10 @@ export class DocumentDto {
   @IsOptional()
   @IsArray()
   content: Array<Content>;
+
+  @IsString()
+  @IsOptional()
+  rank: string;
 }
 
 export class CreateDocumentRequestForAdmin {

@@ -210,6 +210,14 @@ export const getAllUserExamsByOwner = async (userId: string, filter: UserExamFil
         },
       },
       {
+        $lookup: {
+          from: 'user_answer',
+          localField: 'user_answer_id',
+          foreignField: '_id',
+          as: 'user_answers',
+        },
+      },
+      {
         $unwind: '$subject',
       },
       {
@@ -408,7 +416,7 @@ export const submitTheExam = async (input: SubmitTheExamDto, userEmail: string) 
     await calculateScore(userExam[0], userExam[0]?.user_answer_id);
     logger.info(`Submit the exam successfully`);
 
-    return 'OK';
+    return userExam[0];
   } catch (error) {
     logger.error(`Error while submit the exam: ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);

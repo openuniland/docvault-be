@@ -346,7 +346,11 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
     }
 
     if (userExam[0]?.is_completed) {
-      return { ...userExam[0], author: hideUserInfoIfRequired(userExam[0]?.author) };
+      return {
+        ...userExam[0],
+        author: hideUserInfoIfRequired(userExam[0]?.author),
+        author_exam: hideUserInfoIfRequired(userExam[0]?.author_exam[0]),
+      };
     }
 
     //duration is in milliseconds
@@ -360,6 +364,8 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
         ...userExam[0],
         score,
         is_completed: true,
+        author_exam: hideUserInfoIfRequired(userExam[0]?.author_exam[0]),
+        author: hideUserInfoIfRequired(userExam[0]?.author),
       };
     }
 

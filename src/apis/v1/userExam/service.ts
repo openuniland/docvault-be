@@ -371,6 +371,8 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
         return {
           answers: question?.answers,
           content: question?.content,
+          image: question?.image,
+          accuracy: question?.accuracy,
           _id: question._id,
         };
       }),
@@ -434,7 +436,7 @@ export const submitTheExam = async (input: SubmitTheExamDto, userEmail: string) 
     await calculateScore(userExam[0], userExam[0]?.user_answer_id);
     logger.info(`Submit the exam successfully`);
 
-    return userExam[0];
+    return 'OK';
   } catch (error) {
     logger.error(`Error while submit the exam: ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);

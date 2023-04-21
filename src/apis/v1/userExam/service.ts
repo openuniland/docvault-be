@@ -289,6 +289,22 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
       },
       {
         $lookup: {
+          from: 'exam',
+          localField: 'original_exam',
+          foreignField: '_id',
+          as: 'exam',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'exam.author',
+          foreignField: '_id',
+          as: 'author_exam',
+        },
+      },
+      {
+        $lookup: {
           from: 'subject',
           localField: 'subject',
           foreignField: '_id',
@@ -319,6 +335,7 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
           'questions.author': 0,
           'user_answers.is_deleted': 0,
           'user_answers.deleted_at': 0,
+          exam: 0,
         },
       },
     ];
@@ -357,6 +374,7 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
           _id: question._id,
         };
       }),
+      author_exam: hideUserInfoIfRequired(userExam[0]?.author_exam[0]),
       author: hideUserInfoIfRequired(userExam[0]?.author),
     };
   } catch (error) {

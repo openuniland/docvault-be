@@ -439,10 +439,11 @@ export const submitTheExam = async (input: SubmitTheExamDto, userEmail: string) 
       throw new HttpException(403, 'not allowed', ErrorCodes.BAD_REQUEST.CODE);
     }
 
-    await calculateScore(userExam[0], userExam[0]?.user_answer_id);
+    const score = await calculateScore(userExam[0], userExam[0]?.user_answer_id);
+    const data = await UserExamModel.find({ _id });
     logger.info(`Submit the exam successfully`);
 
-    return 'OK';
+    return { user_exam_id: data[0]?._id, score, is_completed: data[0]?.is_completed };
   } catch (error) {
     logger.error(`Error while submit the exam: ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);

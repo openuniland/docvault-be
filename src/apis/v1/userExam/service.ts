@@ -58,7 +58,7 @@ export const calculateScore = async (userExam: UserExam, userAnswerId: string) =
     let score = 0;
 
     for (let i = 0; i < userExam?.questions.length; i++) {
-      if (userExam?.questions[i].correct_answer.id === userAnswer.answers_id[i]) {
+      if (userExam?.questions[i].correct_answer.id === userAnswer?.answers_id[i]) {
         score++;
       }
     }
@@ -67,6 +67,8 @@ export const calculateScore = async (userExam: UserExam, userAnswerId: string) =
 
     return score;
   } catch (error) {
+    logger.error(`Error while calculateScore`, error);
+
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -221,6 +223,9 @@ export const getAllUserExamsByOwner = async (userId: string, filter: UserExamFil
         $unwind: '$subject',
       },
       {
+        $unwind: '$user_answers',
+      },
+      {
         $project: {
           'author.is_blocked': 0,
           'author.roles': 0,
@@ -326,6 +331,9 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
         $unwind: '$author',
       },
       {
+        $unwind: '$user_answers',
+      },
+      {
         $project: {
           'author.is_blocked': 0,
           'author.roles': 0,
@@ -387,11 +395,7 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
     };
   } catch (error) {
     logger.error(`Error while get userExam of user : ${error}`);
-    throw new HttpException(
-      error.status || 400,
-      error.message || ErrorCodes.BAD_REQUEST.MESSAGE,
-      ErrorCodes.BAD_REQUEST.CODE
-    );
+    throw error;
   }
 };
 
@@ -439,10 +443,20 @@ export const submitTheExam = async (input: SubmitTheExamDto, userEmail: string) 
       throw new HttpException(403, 'not allowed', ErrorCodes.BAD_REQUEST.CODE);
     }
 
-    await calculateScore(userExam[0], userExam[0]?.user_answer_id);
+    if (userExam[0]?.is_completed) {
+      return {
+        score: userExam[0]?.score,
+        is_completed: userExam[0]?.is_completed,
+      };
+    }
+
+    const score = await calculateScore(userExam[0], userExam[0]?.user_answer_id);
     logger.info(`Submit the exam successfully`);
 
-    return 'OK';
+    return {
+      score,
+      is_completed: true,
+    };
   } catch (error) {
     logger.error(`Error while submit the exam: ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);

@@ -40,6 +40,7 @@ export const createUserExam = async (input: UserExamDto, author: string, userRan
       school_year: exam?.school_year,
     };
     const result = await UserExamModel.create(userExam);
+
     logger.info(`Create a user exam succesfully`);
 
     return {

@@ -131,6 +131,7 @@ export const getExamById = async (id: string, userRank: string, userEmail: strin
           description: 1,
           is_approved: 1,
           school_year: 1,
+          semester: 1,
           author: {
             _id: '$author._id',
             fullname: '$author.fullname',

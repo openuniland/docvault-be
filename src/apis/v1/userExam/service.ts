@@ -58,7 +58,7 @@ export const calculateScore = async (userExam: UserExam, userAnswerId: string) =
     let score = 0;
 
     for (let i = 0; i < userExam?.questions.length; i++) {
-      if (userExam?.questions[i].correct_answer.id === userAnswer.answers_id[i]) {
+      if (userExam?.questions[i].correct_answer.id === userAnswer?.answers_id[i]) {
         score++;
       }
     }
@@ -67,6 +67,8 @@ export const calculateScore = async (userExam: UserExam, userAnswerId: string) =
 
     return score;
   } catch (error) {
+    logger.error(`Error while calculateScore`, error);
+
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -210,7 +212,18 @@ export const getAllUserExamsByOwner = async (userId: string, filter: UserExamFil
         },
       },
       {
+        $lookup: {
+          from: 'user_answer',
+          localField: 'user_answer_id',
+          foreignField: '_id',
+          as: 'user_answers',
+        },
+      },
+      {
         $unwind: '$subject',
+      },
+      {
+        $unwind: '$user_answers',
       },
       {
         $project: {
@@ -281,10 +294,34 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
       },
       {
         $lookup: {
+          from: 'exam',
+          localField: 'original_exam',
+          foreignField: '_id',
+          as: 'exam',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'exam.author',
+          foreignField: '_id',
+          as: 'author_exam',
+        },
+      },
+      {
+        $lookup: {
           from: 'subject',
           localField: 'subject',
           foreignField: '_id',
           as: 'subject',
+        },
+      },
+      {
+        $lookup: {
+          from: 'user_answer',
+          localField: 'user_answer_id',
+          foreignField: '_id',
+          as: 'user_answers',
         },
       },
       {
@@ -294,6 +331,9 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
         $unwind: '$author',
       },
       {
+        $unwind: '$user_answers',
+      },
+      {
         $project: {
           'author.is_blocked': 0,
           'author.roles': 0,
@@ -301,6 +341,9 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
           'author.updated_at': 0,
           'author.__v': 0,
           'questions.author': 0,
+          'user_answers.is_deleted': 0,
+          'user_answers.deleted_at': 0,
+          exam: 0,
         },
       },
     ];
@@ -311,7 +354,11 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
     }
 
     if (userExam[0]?.is_completed) {
-      return { ...userExam[0], author: hideUserInfoIfRequired(userExam[0]?.author) };
+      return {
+        ...userExam[0],
+        author: hideUserInfoIfRequired(userExam[0]?.author),
+        author_exam: hideUserInfoIfRequired(userExam[0]?.author_exam[0]),
+      };
     }
 
     //duration is in milliseconds
@@ -319,34 +366,36 @@ export const getUserExamByOwner = async (userEmail: string, userExamId: string) 
     const { duration } = userExam[0];
 
     if (time > duration && !userExam[0].is_completed) {
-      const score = await calculateScore(userExam[0], userExam[0].user_answer_id);
+      const score = await calculateScore(userExam[0], userExam[0]?.user_answers?._id);
 
       return {
         ...userExam[0],
         score,
         is_completed: true,
+        author_exam: hideUserInfoIfRequired(userExam[0]?.author_exam[0]),
+        author: hideUserInfoIfRequired(userExam[0]?.author),
       };
     }
 
     logger.info(`Get userExam of user successfully`);
+
     return {
       ...userExam[0],
       questions: userExam[0].questions.map((question: Question) => {
         return {
           answers: question?.answers,
           content: question?.content,
+          image: question?.image,
+          accuracy: question?.accuracy,
           _id: question._id,
         };
       }),
+      author_exam: hideUserInfoIfRequired(userExam[0]?.author_exam[0]),
       author: hideUserInfoIfRequired(userExam[0]?.author),
     };
   } catch (error) {
     logger.error(`Error while get userExam of user : ${error}`);
-    throw new HttpException(
-      error.status || 400,
-      error.message || ErrorCodes.BAD_REQUEST.MESSAGE,
-      ErrorCodes.BAD_REQUEST.CODE
-    );
+    throw error;
   }
 };
 
@@ -394,10 +443,20 @@ export const submitTheExam = async (input: SubmitTheExamDto, userEmail: string) 
       throw new HttpException(403, 'not allowed', ErrorCodes.BAD_REQUEST.CODE);
     }
 
-    await calculateScore(userExam[0], userExam[0]?.user_answer_id);
+    if (userExam[0]?.is_completed) {
+      return {
+        score: userExam[0]?.score,
+        is_completed: userExam[0]?.is_completed,
+      };
+    }
+
+    const score = await calculateScore(userExam[0], userExam[0]?.user_answer_id);
     logger.info(`Submit the exam successfully`);
 
-    return 'OK';
+    return {
+      score,
+      is_completed: true,
+    };
   } catch (error) {
     logger.error(`Error while submit the exam: ${error}`);
     throw new HttpException(400, error, ErrorCodes.BAD_REQUEST.CODE);

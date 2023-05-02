@@ -183,22 +183,37 @@ export const getDocumentsByAdmin = async (filter: DocumentFilter, urlParams: URL
   }
 };
 
-export const getDocumentsBySubjectId = async (subjectId: string) => {
+export const getDocumentsBySubjectId = async (subjectId: string, urlParams: URLParams) => {
   try {
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+    const order = urlParams.order || 'DESC';
+
+    const count = DocumentModel.countDocuments({ is_approved: true, subject: subjectId });
     const results = DocumentModel.find({ is_approved: true, subject: subjectId })
+      .skip(pageSize * currentPage)
+      .limit(pageSize)
+      .sort({ created_at: order === 'DESC' ? -1 : 1 })
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
     const subject = SubjectModel.findOne({ _id: subjectId });
 
-    const resultAll = await Promise.all([results, subject]);
+    const resultAll = await Promise.all([count, results, subject]);
 
     logger.info(`Get all documents by subjectId successfully`);
     return {
-      documents: resultAll[0].map((documents: any) => {
-        return { ...documents.toObject(), author: hideUserInfoIfRequired(documents?.author) };
-      }),
-      subject: resultAll[1],
+      result: {
+        documents: resultAll[1].map((document: any) => {
+          return { ...document.toObject(), author: hideUserInfoIfRequired(document?.author) };
+        }),
+        subject: resultAll[2],
+      },
+      meta: {
+        total: resultAll[0],
+        currentPage,
+        pageSize,
+      },
     };
   } catch (error) {
     logger.error(`Error while get documents by subjectId: ${error}`);

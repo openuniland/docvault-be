@@ -9,14 +9,15 @@ export const getSubjects = async (input: QuerySubjectDto, urlParams: URLParams) 
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
-
     const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
 
     const count = SubjectModel.countDocuments(input);
     const data = SubjectModel.find(input)
       .skip(pageSize * currentPage)
       .limit(pageSize)
-      .sort({ created_at: order === 'DESC' ? -1 : 1 });
+      .sort(sortObj);
 
     const resolveAll = await Promise.all([count, data]);
 

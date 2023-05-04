@@ -20,13 +20,15 @@ export const getDocuments = async (urlParams: URLParams) => {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
     const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
 
     const count = DocumentModel.countDocuments({ is_approved: true });
 
     const results = DocumentModel.find({ is_approved: true })
       .skip(pageSize * currentPage)
       .limit(pageSize)
-      .sort({ created_at: order === 'DESC' ? -1 : 1 })
+      .sort(sortObj)
       .populate('author', '-is_deleted -is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
@@ -77,6 +79,12 @@ export const createDocumentByAdmin = async (input: CreateDocumentRequestForAdmin
     };
 
     const result = await DocumentModel.create(document);
+
+    if (input.is_approved === true) {
+      const user = await UserModel.findOne({ _id: author });
+      const newRank = checkDedicationScoreCompatibility(user?.dedication_score + 1);
+      await UserModel.findByIdAndUpdate({ _id: author }, { $inc: { dedication_score: 1 }, rank: newRank });
+    }
 
     logger.info(`Create new document by admin successfully`);
     return result;
@@ -154,13 +162,15 @@ export const getDocumentsByAdmin = async (filter: DocumentFilter, urlParams: URL
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
     const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
 
     const count = DocumentModel.countDocuments({ ...filter });
 
     const results = DocumentModel.find({ ...filter })
       .skip(pageSize * currentPage)
       .limit(pageSize)
-      .sort({ created_at: order === 'DESC' ? -1 : 1 })
+      .sort(sortObj)
       .populate('author', '-is_deleted -is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
@@ -188,12 +198,14 @@ export const getDocumentsBySubjectId = async (subjectId: string, urlParams: URLP
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
     const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
 
     const count = DocumentModel.countDocuments({ is_approved: true, subject: subjectId });
     const results = DocumentModel.find({ is_approved: true, subject: subjectId })
       .skip(pageSize * currentPage)
       .limit(pageSize)
-      .sort({ created_at: order === 'DESC' ? -1 : 1 })
+      .sort(sortObj)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
@@ -224,17 +236,17 @@ export const getDocumentsBySubjectId = async (subjectId: string, urlParams: URLP
 export const getDocumentsByOwner = async (authorId: string, urlParams: URLParams) => {
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
-
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
-
     const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
 
     const count = DocumentModel.countDocuments({ author: authorId });
 
     const results = DocumentModel.find({ author: authorId })
       .skip(pageSize * currentPage)
       .limit(pageSize)
-      .sort({ created_at: order === 'DESC' ? -1 : 1 })
+      .sort(sortObj)
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 

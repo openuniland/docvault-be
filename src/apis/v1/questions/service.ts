@@ -29,12 +29,14 @@ export const getQuestions = async function (urlParams: URLParams) {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
     const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
 
     const count = QuestionModel.countDocuments();
     const question = QuestionModel.find()
       .skip(pageSize * currentPage)
       .limit(pageSize)
-      .sort({ created_at: order === 'DESC' ? -1 : 1 });
+      .sort(sortObj);
     logger.info(`Get questions successfully`);
 
     const resolveAll = await Promise.all([count, question]);

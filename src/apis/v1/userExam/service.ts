@@ -90,8 +90,9 @@ export const getAllUserExamsByAdmin = async (urlParams: URLParams) => {
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
-
     const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
 
     const count = UserExamModel.countDocuments();
     const result = UserExamModel.aggregate([
@@ -133,7 +134,7 @@ export const getAllUserExamsByAdmin = async (urlParams: URLParams) => {
         },
       },
       {
-        $sort: { created_at: order === 'DESC' ? -1 : 1 },
+        $sort: sortObj,
       },
       {
         $skip: Number(pageSize * currentPage),
@@ -164,8 +165,10 @@ export const getAllUserExamsByOwner = async (userId: string, filter: UserExamFil
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
-
     const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
+
     const _id = new ObjectId(userId);
 
     const count = UserExamModel.countDocuments({ author: userId, ...filter });
@@ -237,7 +240,7 @@ export const getAllUserExamsByOwner = async (userId: string, filter: UserExamFil
         },
       },
       {
-        $sort: { created_at: order === 'DESC' ? -1 : 1 },
+        $sort: sortObj,
       },
       {
         $skip: Number(pageSize * currentPage),

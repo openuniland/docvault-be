@@ -16,6 +16,8 @@ export const getExams = async (urlParams: URLParams) => {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
     const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
 
     const count = ExamModel.countDocuments();
     const data = ExamModel.aggregate([
@@ -60,7 +62,7 @@ export const getExams = async (urlParams: URLParams) => {
         },
       },
       {
-        $sort: { created_at: order === 'DESC' ? -1 : 1 },
+        $sort: sortObj,
       },
       {
         $skip: Number(pageSize * currentPage),
@@ -195,6 +197,8 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
     const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
 
     const _id = new ObjectId(subjectId);
     const count = ExamModel.countDocuments({ subject: subjectId });
@@ -243,7 +247,7 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
         },
       },
       {
-        $sort: { created_at: order === 'DESC' ? -1 : 1 },
+        $sort: sortObj,
       },
       {
         $skip: Number(pageSize * currentPage),
@@ -277,10 +281,10 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
 export const getExamsByOwner = async (authorId: string, urlParams: URLParams) => {
   try {
     const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
-
     const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
-
     const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
 
     const _id = new ObjectId(authorId);
     const count = ExamModel.countDocuments({ author: authorId });
@@ -329,7 +333,7 @@ export const getExamsByOwner = async (authorId: string, urlParams: URLParams) =>
         },
       },
       {
-        $sort: { created_at: order === 'DESC' ? -1 : 1 },
+        $sort: sortObj,
       },
       {
         $skip: Number(pageSize * currentPage),

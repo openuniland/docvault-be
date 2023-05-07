@@ -9,7 +9,7 @@ import {
   UpdateDocumentByAdminDto,
   UpdateDocumentByOwnerDto,
 } from './dto/DocumentsDto';
-import { SubjectModel, UserModel } from 'models';
+import { UserModel } from 'models';
 import URLParams from 'utils/rest/urlparams';
 import { DEFAULT_PAGING, RANK_TYPE } from 'utils/constants';
 import { checkDedicationScoreCompatibility, checkRankCompatibility, hideUserInfoIfRequired } from 'utils';
@@ -206,12 +206,13 @@ export const getDocumentsBySubjectId = async (subjectId: string, urlParams: URLP
       .skip(pageSize * currentPage)
       .limit(pageSize)
       .sort(sortObj)
+      .select('-is_deleted -deleted_at -is_approved -__v -content')
       .populate('author', '-is_blocked -roles -created_at -updated_at -__v')
       .populate('subject', '-is_deleted -created_at -updated_at -__v');
 
-    const subject = SubjectModel.findOne({ _id: subjectId });
+    const resultAll = await Promise.all([count, results]);
 
-    const resultAll = await Promise.all([count, results, subject]);
+    const subject = resultAll[1]?.length > 0 ? resultAll[1][0]?.subject : {};
 
     logger.info(`Get all documents by subjectId successfully`);
     return {
@@ -219,7 +220,7 @@ export const getDocumentsBySubjectId = async (subjectId: string, urlParams: URLP
         documents: resultAll[1].map((document: any) => {
           return { ...document.toObject(), author: hideUserInfoIfRequired(document?.author) };
         }),
-        subject: resultAll[2],
+        subject: subject,
       },
       meta: {
         total: resultAll[0],

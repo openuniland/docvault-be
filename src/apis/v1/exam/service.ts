@@ -2,7 +2,7 @@
 import { ObjectId } from 'mongodb';
 import { PipelineStage } from 'mongoose';
 import { ErrorCodes, HttpException } from 'exceptions';
-import { ExamModel, SubjectModel, UserModel } from 'models';
+import { ExamModel, UserModel } from 'models';
 import { DEFAULT_PAGING, RANK_TYPE } from 'utils/constants';
 import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
@@ -243,7 +243,7 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
           'author.created_at': 0,
           'author.updated_at': 0,
           'author.__v': 0,
-          'questions.author': 0,
+          questions: 0,
         },
       },
       {
@@ -256,15 +256,16 @@ export const getExamsBySubjectId = async (subjectId: string, urlParams: URLParam
         $limit: Number(pageSize),
       },
     ]);
-    const subject = SubjectModel.findOne({ _id: subjectId });
-    const resolveAll = await Promise.all([count, data, subject]);
+
+    const resolveAll = await Promise.all([count, data]);
+    const subject = resolveAll[1]?.length > 0 ? resolveAll[1][0]?.subject : null;
 
     return {
       result: {
         exams: resolveAll[1].map((exam: Exam) => {
           return { ...exam, author: hideUserInfoIfRequired(exam?.author) };
         }),
-        subject: resolveAll[2],
+        subject,
       },
 
       meta: {

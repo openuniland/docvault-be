@@ -42,3 +42,18 @@ export const getUserByEmail = async (req: RequestWithUser, res: Response) => {
   const result = await service.getUserByEmail(query.email);
   res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
 };
+
+export const getUserById = async (req: RequestWithUser, res: Response) => {
+  const author = req.user._id;
+
+  const result = await service.getUserById(String(author));
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};
+
+export const updateUserByOwner = async (req: RequestWithUser, res: Response) => {
+  const author = req.user._id;
+  const input: UpdateUserDto = req.body;
+
+  const result = await service.updateUser(input, String(author));
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+};

@@ -19,7 +19,7 @@ router.post(
 router.get('/', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getUsers));
 router.get('/email', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getUserByEmail));
 
-router.get('/email', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getUserByEmail));
+router.get('/info', authMiddleware, asyncRouteHandler(controller.getUserById));
 
 router.patch(
   '/:id',
@@ -28,6 +28,13 @@ router.patch(
   validationMiddleware(ParamsUserDto, APP_CONSTANTS.params),
   validationMiddleware(UpdateUserDto, APP_CONSTANTS.body),
   asyncRouteHandler(controller.updateUser)
+);
+
+router.patch(
+  '/',
+  authMiddleware,
+  validationMiddleware(UpdateUserDto, APP_CONSTANTS.body),
+  asyncRouteHandler(controller.updateUserByOwner)
 );
 
 router.delete(

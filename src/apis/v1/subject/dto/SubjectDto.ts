@@ -26,4 +26,8 @@ export class QuerySubjectDto {
   @IsOptional()
   @IsString()
   is_approved?: string;
+
+  @IsOptional()
+  @IsString()
+  topic?: string;
 }

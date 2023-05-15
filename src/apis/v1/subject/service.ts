@@ -1,9 +1,10 @@
 import { ErrorCodes, HttpException } from 'exceptions';
-import { SubjectModel } from 'models';
+import { DocumentModel, ExamModel, SubjectModel } from 'models';
 import { DEFAULT_PAGING } from 'utils/constants';
 import { logger } from 'utils/logger';
 import URLParams from 'utils/rest/urlparams';
 import { SubjectDto, UpdateSubjectDto, QuerySubjectDto } from './dto/SubjectDto';
+import Subject from 'models/types/Subject';
 
 export const getSubjects = async (input: QuerySubjectDto, urlParams: URLParams) => {
   try {
@@ -21,8 +22,33 @@ export const getSubjects = async (input: QuerySubjectDto, urlParams: URLParams) 
 
     const resolveAll = await Promise.all([count, data]);
 
+    let countData: any = [];
+
+    if (input?.topic === 'documents') {
+      const res = resolveAll[1].map((item: Subject) => {
+        return DocumentModel.count({ subject: item?._id, is_approved: true });
+      });
+
+      countData = await Promise.all(res);
+    }
+
+    if (input?.topic === 'exams') {
+      const res = resolveAll[1].map((item: Subject) => {
+        return ExamModel.count({ subject: item?._id, is_approved: true });
+      });
+
+      countData = await Promise.all(res);
+    }
+
+    const result = resolveAll[1].map((item, index) => {
+      return {
+        ...item.toObject(),
+        count: countData[index],
+      };
+    });
+
     return {
-      result: resolveAll[1],
+      result,
       meta: {
         total: resolveAll[0],
         pageSize,

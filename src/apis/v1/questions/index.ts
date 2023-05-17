@@ -35,7 +35,6 @@ router.put(
 router.delete(
   '/:id',
   authMiddleware,
-  validationMiddleware(UpdateQuestionDto, APP_CONSTANTS.body),
   validationMiddleware(ParamsQuestionDto, APP_CONSTANTS.params),
   asyncRouteHandler(controller.deleteQuestion)
 );

@@ -90,7 +90,7 @@ export const updateQuestionByAdmin = async function (input: UpdateQuestionDto, i
 
 export const deleteQuestion = async function (id: string) {
   try {
-    const question = await QuestionModel.updateOne({ _id: id }, { deleted_at: new Date(), is_deleted: true });
+    const question = await QuestionModel.deleteOne({ _id: id });
     logger.info(`Delete question successfully`);
 
     return question;

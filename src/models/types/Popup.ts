@@ -9,8 +9,8 @@ export interface PopupContent {
 }
 
 export default interface Popup extends Document {
-  start_date: Date;
-  end_date: Date;
+  start_date: number;
+  end_date: number;
   priority: number;
   title: string;
   description: string;

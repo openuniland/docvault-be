@@ -1,14 +1,14 @@
-import { IsString, IsDefined, IsOptional, IsArray, IsNumber, IsDate, IsBoolean } from 'class-validator';
+import { IsString, IsDefined, IsOptional, IsArray, IsNumber, IsBoolean } from 'class-validator';
 import { PopupContent } from 'models/types/Popup';
 
 export class DocumentDto {
   @IsDefined()
-  @IsDate()
-  start_date: Date;
+  @IsNumber()
+  start_date: number;
 
   @IsDefined()
-  @IsDate()
-  end_date: Date;
+  @IsNumber()
+  end_date: number;
 
   @IsDefined()
   @IsNumber()
@@ -41,4 +41,20 @@ export class DocumentDto {
   @IsOptional()
   @IsArray()
   target_user: string[];
+}
+
+export class ParamsPopupDto {
+  @IsDefined()
+  @IsString()
+  id: string;
+}
+
+export class DateRangePopupDto {
+  @IsDefined()
+  @IsNumber()
+  start_date: number;
+
+  @IsDefined()
+  @IsNumber()
+  end_date: number;
 }

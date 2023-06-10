@@ -2,6 +2,8 @@ import { ErrorCodes, HttpException } from 'exceptions';
 import { PopupModel } from 'models';
 import { logger } from 'utils/logger';
 import { DocumentDto, UpdatePopupDto } from './dto/CreatePopupDto';
+import URLParams from 'utils/rest/urlparams';
+import { DEFAULT_PAGING } from 'utils/constants';
 
 export const createPopup = async (input: DocumentDto) => {
   try {
@@ -10,7 +12,6 @@ export const createPopup = async (input: DocumentDto) => {
 
     return data;
   } catch (error) {
-    logger.error(`Error while creating popup: ${error}`);
     throw new HttpException(
       400,
       error?.message || ErrorCodes.BAD_REQUEST.MESSAGE,
@@ -27,7 +28,6 @@ export const deletePopup = async (id: string) => {
     logger.info('Popup deleted successfully');
     return data;
   } catch (error) {
-    logger.error(`Error deleting popup: ${error} `);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -41,19 +41,37 @@ export const revokedPopup = async (id: string) => {
     logger.info(`Popup revoked successfully: ${data}`);
     return result;
   } catch (error) {
-    logger.error(`Error revoking popup: ${error} `);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
 
-export const getPopups = async () => {
+export const getPopups = async (urlParams: URLParams) => {
   try {
-    const data = await PopupModel.find();
+    const pageSize = urlParams.pageSize || DEFAULT_PAGING.limit;
+    const currentPage = urlParams.currentPage || DEFAULT_PAGING.skip;
+    const order = urlParams.order || 'DESC';
+    const sort = urlParams.sort || 'created_at';
+    const sortObj: any = { [sort]: order === 'DESC' ? -1 : 1 };
+
+    const count = PopupModel.countDocuments();
+
+    const data = await PopupModel.find()
+      .skip(pageSize * currentPage)
+      .limit(pageSize)
+      .sort(sortObj);
 
     logger.info('Popups fetched successfully');
-    return data;
+
+    const resolveAll = await Promise.all([count, data]);
+    return {
+      result: resolveAll[1],
+      meta: {
+        total: resolveAll[0],
+        pageSize,
+        currentPage,
+      },
+    };
   } catch (error) {
-    logger.error(`Error getting popup: ${error} `);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -69,7 +87,6 @@ export const getPopupsByDateRange = async () => {
     logger.info('Popups fetched successfully');
     return data;
   } catch (error) {
-    logger.error(`Error getting popup: ${error} `);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -86,7 +103,6 @@ export const updatePopup = async (id: string, input: UpdatePopupDto) => {
     logger.info('Popups updated successfully');
     return data;
   } catch (error) {
-    logger.error(`Error getting popup: ${error} `);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };

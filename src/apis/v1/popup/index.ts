@@ -4,7 +4,6 @@ import * as controller from './controller';
 import { validationMiddleware } from 'middlewares/validation';
 import { APP_CONSTANTS } from 'utils/constants';
 import { asyncRouteHandler, adminMiddleware, authMiddleware } from 'middlewares';
-// import { approverMiddleware } from 'middlewares/auth';
 import { DocumentDto, ParamsPopupDto } from './dto/CreatePopupDto';
 
 const router = Router();
@@ -31,7 +30,7 @@ router.patch(
   asyncRouteHandler(controller.revokedPopup)
 );
 
-router.get('/', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getPopups));
+router.get('/', authMiddleware, asyncRouteHandler(controller.getPopups));
 
 router.get('/daily', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getPopupsByDateRange));
 

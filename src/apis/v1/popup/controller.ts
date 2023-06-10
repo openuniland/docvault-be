@@ -1,5 +1,5 @@
 import { Response } from 'express';
-
+import URLParams from 'utils/rest/urlparams';
 import * as service from './service';
 import fmt from 'utils/formatter';
 import RequestWithUser from 'utils/rest/request';
@@ -26,8 +26,9 @@ export const revokedPopup = async (req: RequestWithUser, res: Response) => {
 };
 
 export const getPopups = async (req: RequestWithUser, res: Response) => {
-  const result = await service.getPopups();
-  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK'));
+  const urlParams: URLParams = req.searchParams;
+  const { result, meta } = await service.getPopups(urlParams);
+  res.send(fmt.formatResponse(result, Date.now() - req.startTime, 'OK', meta.total, meta.currentPage, meta.pageSize));
 };
 
 export const getPopupsByDateRange = async (req: RequestWithUser, res: Response) => {

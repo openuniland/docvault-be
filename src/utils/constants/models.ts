@@ -7,4 +7,5 @@ export const MODELS = {
   user_answer: 'user_answer',
   user_exam: 'user_exam',
   document: 'document',
+  popup: 'popup',
 };

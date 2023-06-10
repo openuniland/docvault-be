@@ -58,3 +58,25 @@ export class DateRangePopupDto {
   @IsNumber()
   end_date: number;
 }
+
+export class UpdatePopupDto {
+  @IsOptional()
+  @IsNumber()
+  priority: number;
+
+  @IsOptional()
+  @IsString()
+  title: string;
+
+  @IsOptional()
+  @IsString()
+  description: string;
+
+  @IsOptional()
+  @IsString()
+  cover_image: string;
+
+  @IsOptional()
+  @IsBoolean()
+  is_revoked: boolean;
+}

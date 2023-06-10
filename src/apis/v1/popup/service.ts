@@ -1,7 +1,7 @@
 import { ErrorCodes, HttpException } from 'exceptions';
 import { PopupModel } from 'models';
 import { logger } from 'utils/logger';
-import { DocumentDto } from './dto/CreatePopupDto';
+import { DocumentDto, UpdatePopupDto } from './dto/CreatePopupDto';
 
 export const createPopup = async (input: DocumentDto) => {
   try {
@@ -67,8 +67,23 @@ export const getPopupsByDateRange = async () => {
     }).sort({ priority: -1 });
 
     logger.info('Popups fetched successfully');
-    logger.info(data);
-    logger.info(currentTimestamp);
+    return data;
+  } catch (error) {
+    logger.error(`Error getting popup: ${error} `);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
+  }
+};
+
+export const updatePopup = async (id: string, input: UpdatePopupDto) => {
+  try {
+    const data = await PopupModel.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: input,
+      }
+    );
+
+    logger.info('Popups updated successfully');
     return data;
   } catch (error) {
     logger.error(`Error getting popup: ${error} `);

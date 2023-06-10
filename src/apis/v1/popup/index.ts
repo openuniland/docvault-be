@@ -35,4 +35,12 @@ router.get('/', authMiddleware, adminMiddleware, asyncRouteHandler(controller.ge
 
 router.get('/daily', authMiddleware, adminMiddleware, asyncRouteHandler(controller.getPopupsByDateRange));
 
+router.patch(
+  '/:id',
+  authMiddleware,
+  adminMiddleware,
+  validationMiddleware(ParamsPopupDto, APP_CONSTANTS.params),
+  asyncRouteHandler(controller.updatePopup)
+);
+
 export default router;

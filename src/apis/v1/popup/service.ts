@@ -77,7 +77,7 @@ export const getPopups = async (urlParams: URLParams) => {
 };
 
 export const getPopupsByDateRange = async () => {
-  const currentTimestamp = Math.floor(new Date().getTime() / 1000);
+  const currentTimestamp = new Date().getTime();
   try {
     const data = await PopupModel.findOne({
       start_date: { $lte: currentTimestamp },

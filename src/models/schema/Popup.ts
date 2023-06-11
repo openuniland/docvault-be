@@ -6,8 +6,8 @@ import Popup, { PopupContent } from 'models/types/Popup';
 
 const PopupSchema = new Schema<Popup>(
   {
-    start_date: { type: Date, required: true },
-    end_date: { type: Date, required: true },
+    start_date: { type: Number, required: true },
+    end_date: { type: Number, required: true },
     priority: { type: Number, required: true },
     title: { type: String, required: true },
     description: { type: String },

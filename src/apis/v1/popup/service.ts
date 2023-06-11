@@ -12,11 +12,8 @@ export const createPopup = async (input: DocumentDto) => {
 
     return data;
   } catch (error) {
-    throw new HttpException(
-      400,
-      error?.message || ErrorCodes.BAD_REQUEST.MESSAGE,
-      error?.code || ErrorCodes.BAD_REQUEST.CODE
-    );
+    logger.error(`Error creating popup : ${error}`);
+    throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
 
@@ -28,6 +25,7 @@ export const deletePopup = async (id: string) => {
     logger.info('Popup deleted successfully');
     return data;
   } catch (error) {
+    logger.error(`Error deleting popup : ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -41,6 +39,7 @@ export const revokedPopup = async (id: string) => {
     logger.info(`Popup revoked successfully: ${data}`);
     return result;
   } catch (error) {
+    logger.error(`Error revoking popup : ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -72,6 +71,7 @@ export const getPopups = async (urlParams: URLParams) => {
       },
     };
   } catch (error) {
+    logger.error(`Error getting popup : ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -87,6 +87,7 @@ export const getPopupsByDateRange = async () => {
     logger.info('Popups fetched successfully');
     return data;
   } catch (error) {
+    logger.error(`Error getting popup : ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
@@ -103,6 +104,7 @@ export const updatePopup = async (id: string, input: UpdatePopupDto) => {
     logger.info('Popups updated successfully');
     return data;
   } catch (error) {
+    logger.error(`Error updating popup : ${error}`);
     throw new HttpException(400, ErrorCodes.BAD_REQUEST.MESSAGE, ErrorCodes.BAD_REQUEST.CODE);
   }
 };
